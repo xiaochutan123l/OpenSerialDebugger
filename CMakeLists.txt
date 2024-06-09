@@ -31,6 +31,8 @@ set(PROJECT_SOURCES
         qcustomplot.h
         qcustomplot.cpp
 
+        clickablecombobox.h
+        #clickablecombobox.cpp
 
 #        qcustomplot.h
 #        qcustomplot.cpp

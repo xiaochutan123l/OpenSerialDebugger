@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "qcustomplot.h"
+#include "serialController.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -24,7 +25,12 @@ private slots:
   void xAxisChanged(QCPRange range);
   void yAxisChanged(QCPRange range);
 
+  void portListUpdate(QList<QString> &port_name_list);
+
+
 private:
     Ui::MainWindow *ui;
+
+    SerialController m_serial_controller;
 };
 #endif // MAINWINDOW_H

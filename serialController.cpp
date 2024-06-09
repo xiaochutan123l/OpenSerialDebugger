@@ -1,13 +1,27 @@
 #include "serialController.h"
 #include <iostream>
 
+QList<qint32> BaudRateList = {1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200};
+QList<QSerialPort::Parity> ParityList = {
+    QSerialPort::NoParity, QSerialPort::EvenParity, QSerialPort::OddParity,
+    QSerialPort::MarkParity, QSerialPort::SpaceParity
+};
+QList<QSerialPort::DataBits> DataBitsList = {
+    QSerialPort::Data5, QSerialPort::Data6, QSerialPort::Data7, QSerialPort::Data8
+};
+QList<QSerialPort::StopBits> StopBitsList = {
+    QSerialPort::OneStop, QSerialPort::OneAndHalfStop, QSerialPort::TwoStop
+};
+QList<QSerialPort::FlowControl> FlowControlList = {
+    QSerialPort::NoFlowControl, QSerialPort::HardwareControl, QSerialPort::SoftwareControl
+};
 
-Serial_controller::Serial_controller(){
+SerialController::SerialController(){
     m_port = new QSerialPort();
     m_portInfo = new QSerialPortInfo();
 }
 
-//void Serial_controller::resetMotors() {
+//void SerialController::resetMotors() {
 //    if(m_port->isWritable()){
 //        for (int i = 1; i < 7; i++) {
 //            QString data = QString::number(i) + "," + QString::number(1500) + "," + QString::number(2000) + '\n';
@@ -18,32 +32,7 @@ Serial_controller::Serial_controller(){
 //    }
 //}
 
-void Serial_controller::listPorts() {
-    std::cout << "Ports number: ";
-    m_port_list = QSerialPortInfo::availablePorts();
-    std::cout << m_port_list.length() << std::endl;
-
-    Q_FOREACH(QSerialPortInfo p, QSerialPortInfo::availablePorts()) {
-        const QString label = p.portName();
-        std::cout << label.toStdString() << std::endl;
-        //const auto items = ui->listWidget->findItems(label, Qt::MatchExactly);
-        //ui->portList->addItem(label);
-        emit portFound(label);
-        m_port_list_map.insert(std::make_pair(label, p));
-    }
-}
-
-void Serial_controller::portListClickHandler(QListWidgetItem *item) {
-    m_port = &m_port_list_map[item->text()];
-}
-
-void Serial_controller::portSelectClickHandler() {
-    std::cout << "portselect" << std::endl;
-    emit portSelected(m_port->portName());
-    openPort();
-}
-
-//void Serial_controller::sendMsg(int motorId, int toPosition, int time) {
+//void SerialController::sendMsg(int motorId, int toPosition, int time) {
 //    int t = m_motor_mgr->calc_move_time(motorId, toPosition);
 
 //    if(m_port->isWritable()){
@@ -56,25 +45,75 @@ void Serial_controller::portSelectClickHandler() {
 //    }
 //    else{
 //        std::cout <<  "device open failed" << std::endl;
-//        // if serial port not writable, new position should not be updated.
+//        // if serial port not writable, new position should not be Selectedd.
 //        //m_motor_mgr->setMotorPosition(motorId, toPosition);
 //    }
 //}
 
-void Serial_controller::openPort() {
-    m_port->setBaudRate(QSerialPort::Baud9600);
-    m_port->setParity(QSerialPort::NoParity);
-    m_port->setDataBits(QSerialPort::Data8);
-    m_port->setStopBits(QSerialPort::OneStop);
-    m_port->open(QIODevice::ReadWrite);
-    std::cout <<  "device open success" << std::endl;
+// realtime find available ports.
+void SerialController::onComClicked() {
+    m_port_name_list.clear();
+    foreach (const QSerialPortInfo &info, QSerialPortInfo::availablePorts()) {
+        const QString label = info.portName();
+        std::cout << label.toStdString() << std::endl;
+        m_port_name_list.append(info.portName());
+        emit portListUpdate(m_port_name_list);
+    }
 }
 
-void Serial_controller::closePort() {
+void SerialController::onComSelected(int index)
+{
+    m_com_name = m_port_name_list[index];
+}
+
+void SerialController::onBaudRateSelected(int index)
+{
+    m_baudrate = BaudRateList[index];
+}
+
+void SerialController::onParitySelected(int index)
+{
+    m_parity = ParityList[index];
+}
+
+void SerialController::onDataBitsSelected(int index)
+{
+    m_databits = DataBitsList[index];
+}
+
+void SerialController::onStopBitsSelected(int index)
+{
+    m_stopbits = StopBitsList[index];
+}
+
+void SerialController::onFlowControlSelected(int index)
+{
+    m_flowcontrol = FlowControlList[index];
+}
+
+void SerialController::onConnectClicked() {
+    m_port->setPortName(m_com_name);
+    m_port->setBaudRate(m_baudrate);
+    m_port->setParity(m_parity);
+    m_port->setDataBits(m_databits);
+    m_port->setStopBits(m_stopbits);
+    m_port->setFlowControl(m_flowcontrol);
+    if (m_port->open(QIODevice::ReadWrite)){
+        qDebug() <<  "device open success";
+    }
+    else {
+        qDebug() <<  "device open failed";
+    }
+}
+void SerialController::onDisconnectClicked() {
+    closePort();
+}
+
+void SerialController::closePort() {
     m_port->close();
 }
 
-Serial_controller::~Serial_controller(){
+SerialController::~SerialController(){
     closePort();
     delete m_port;
     delete m_portInfo;

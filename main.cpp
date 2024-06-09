@@ -10,3 +10,10 @@ int main(int argc, char *argv[])
     w.show();
     return a.exec();
 }
+
+
+/*
+TODO List:
+- main window appearing position
+- serial default parameters
+*/
