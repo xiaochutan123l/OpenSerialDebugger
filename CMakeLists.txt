@@ -32,6 +32,12 @@ set(PROJECT_SOURCES
         qcustomplot.cpp
 
         clickablecombobox.h
+
+        serialmonitor.h
+        serialmonitor.cpp
+
+        receivehandler.h
+        receivehandler.cpp
         #clickablecombobox.cpp
 
 #        qcustomplot.h

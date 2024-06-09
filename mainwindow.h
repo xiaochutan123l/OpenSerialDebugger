@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include "qcustomplot.h"
 #include "serialController.h"
+#include "serialmonitor.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -31,6 +32,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
-    SerialController m_serial_controller;
+    SerialController *m_serial_controller;
+    serialMonitor *m_serial_monitor;
 };
 #endif // MAINWINDOW_H

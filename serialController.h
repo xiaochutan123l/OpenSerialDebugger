@@ -6,17 +6,21 @@
 #include <QSerialPortInfo>
 #include <QListWidgetItem>
 #include <QDebug>
+#include <QTimer>
+
+#define ReadDataTickTime 100 // ms
 
 class SerialController : public QObject{
     Q_OBJECT
 
 public:
-    SerialController();
+    SerialController(QObject *parent);
     ~SerialController();
 
 signals:
     // add found port item name
     void portListUpdate(QList<QString> &port_name_list);
+    void dataReceived(const QByteArray &data);
 
 public slots:
     // set port parameter when user Selecteds.
@@ -32,6 +36,8 @@ public slots:
 
     void onConnectClicked();
     void onDisconnectClicked();
+
+    void onTimerTimeout();
 
 public:
     QStringList m_Bauderate_list_str = {"1200", "2400", "4800", "9600", "19200", "38400", "57600", "115200"};
@@ -54,6 +60,8 @@ private:
     QSerialPort::StopBits m_stopbits;
     QSerialPort::Parity m_parity;
     QSerialPort::FlowControl m_flowcontrol;
+
+    QTimer *m_timer;
 };
 
 #endif // SerialController_H

@@ -16,9 +16,19 @@ QList<QSerialPort::FlowControl> FlowControlList = {
     QSerialPort::NoFlowControl, QSerialPort::HardwareControl, QSerialPort::SoftwareControl
 };
 
-SerialController::SerialController(){
-    m_port = new QSerialPort();
+
+/* ----------------- member functions --------------------*/
+SerialController::SerialController(QObject *parent) : QObject(parent){
+    m_port = new QSerialPort(this);
     m_portInfo = new QSerialPortInfo();
+    m_timer = new QTimer(this);
+    connect(m_timer, &QTimer::timeout, this, &SerialController::onTimerTimeout);
+    m_timer->setInterval(ReadDataTickTime);
+//    connect(serialPort, &QSerialPort::errorOccurred, this, [this](QSerialPort::SerialPortError error) {
+//        if (error != QSerialPort::NoError) {
+//            emit errorOccurred(serialPort->errorString());
+//        }
+//    });
 }
 
 //void SerialController::resetMotors() {
@@ -104,9 +114,11 @@ void SerialController::onConnectClicked() {
     else {
         qDebug() <<  "device open failed";
     }
+    m_timer->start();
 }
 void SerialController::onDisconnectClicked() {
     closePort();
+    m_timer->stop();
 }
 
 void SerialController::closePort() {
@@ -117,4 +129,14 @@ SerialController::~SerialController(){
     closePort();
     delete m_port;
     delete m_portInfo;
+}
+
+void SerialController::onTimerTimeout() {
+    if (m_port && m_port->bytesAvailable() > 0) {
+        const QByteArray data = m_port->readAll();
+        emit dataReceived(data);
+    }
+//    else {
+//        emit dataReceived("test =====");
+//    }
 }

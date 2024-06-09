@@ -5,7 +5,10 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
+
     ui->setupUi(this);
+
+    /* --------------------  Serial plotter  --------------------------*/
     setup_display_plot();
     // configure scroll bars:
     // Since scroll bars only support integer values, we'll set a high default range of -500..500 and
@@ -25,25 +28,33 @@ MainWindow::MainWindow(QWidget *parent)
     ui->display_plot->xAxis->setRange(0, 6, Qt::AlignCenter);
     ui->display_plot->yAxis->setRange(0, 10, Qt::AlignCenter);
 
+    /* --------------------  Serial port  --------------------------*/
+
+    m_serial_controller = new SerialController(this);
     // Set serial port combo boxes.
-    ui->comboBox_Baudrate->addItems(m_serial_controller.m_Bauderate_list_str);
-    ui->comboBox_PartBit->addItems(m_serial_controller.m_Parity_list_str);
-    ui->comboBox_DataBits->addItems(m_serial_controller.m_Databits_list_str);
-    ui->comboBox_StopBits->addItems(m_serial_controller.m_Stopbits_list_str);
-    ui->comboBox_FlowControl->addItems(m_serial_controller.m_Flowctr_list_str);
+    ui->comboBox_Baudrate->addItems(m_serial_controller->m_Bauderate_list_str);
+    ui->comboBox_PartBit->addItems(m_serial_controller->m_Parity_list_str);
+    ui->comboBox_DataBits->addItems(m_serial_controller->m_Databits_list_str);
+    ui->comboBox_StopBits->addItems(m_serial_controller->m_Stopbits_list_str);
+    ui->comboBox_FlowControl->addItems(m_serial_controller->m_Flowctr_list_str);
 
-    connect(ui->comboBox_Baudrate, &QComboBox::activated, &m_serial_controller, &SerialController::onBaudRateSelected);
-    connect(ui->comboBox_PartBit, &QComboBox::activated, &m_serial_controller, &SerialController::onParitySelected);
-    connect(ui->comboBox_DataBits, &QComboBox::activated, &m_serial_controller, &SerialController::onDataBitsSelected);
-    connect(ui->comboBox_StopBits, &QComboBox::activated, &m_serial_controller, &SerialController::onStopBitsSelected);
-    connect(ui->comboBox_FlowControl, &QComboBox::activated, &m_serial_controller, &SerialController::onFlowControlSelected);
-    connect(ui->comboBox_COM, &ClickableComboBox::activated, &m_serial_controller, &SerialController::onComSelected);
-    connect(ui->comboBox_COM, &ClickableComboBox::clicked, &m_serial_controller, &SerialController::onComClicked);
-    connect(ui->pushButton_serialConnect, &QPushButton::clicked, &m_serial_controller, &SerialController::onConnectClicked);
-    connect(ui->pushButton_serialDisconnect, &QPushButton::clicked, &m_serial_controller, &SerialController::onDisconnectClicked);
+    connect(ui->comboBox_Baudrate, &QComboBox::activated, m_serial_controller, &SerialController::onBaudRateSelected);
+    connect(ui->comboBox_PartBit, &QComboBox::activated, m_serial_controller, &SerialController::onParitySelected);
+    connect(ui->comboBox_DataBits, &QComboBox::activated, m_serial_controller, &SerialController::onDataBitsSelected);
+    connect(ui->comboBox_StopBits, &QComboBox::activated, m_serial_controller, &SerialController::onStopBitsSelected);
+    connect(ui->comboBox_FlowControl, &QComboBox::activated, m_serial_controller, &SerialController::onFlowControlSelected);
+    connect(ui->comboBox_COM, &ClickableComboBox::activated, m_serial_controller, &SerialController::onComSelected);
+    connect(ui->comboBox_COM, &ClickableComboBox::clicked, m_serial_controller, &SerialController::onComClicked);
+    connect(ui->pushButton_serialConnect, &QPushButton::clicked, m_serial_controller, &SerialController::onConnectClicked);
+    connect(ui->pushButton_serialDisconnect, &QPushButton::clicked, m_serial_controller, &SerialController::onDisconnectClicked);
 
-    connect(&m_serial_controller, &SerialController::portListUpdate, this, &MainWindow::portListUpdate);
+    connect(m_serial_controller, &SerialController::portListUpdate, this, &MainWindow::portListUpdate);
 
+
+
+    /* ----------------------- Serial monitor --------------------------*/
+    m_serial_monitor = new serialMonitor(this, ui->textBrowser_serial_monitor, ui->pushButton_serialBufferClear);
+    connect(m_serial_controller, &SerialController::dataReceived, m_serial_monitor, &serialMonitor::onSerialDataReceived);
 }
 
 MainWindow::~MainWindow()
