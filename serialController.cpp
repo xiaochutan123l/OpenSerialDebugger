@@ -127,8 +127,10 @@ void SerialController::closePort() {
 
 SerialController::~SerialController(){
     closePort();
-    delete m_port;
-    delete m_portInfo;
+//    delete m_port;
+//    delete m_portInfo;
+//    delete m_timer;
+    qDebug() <<  "deconstructor serial controller";
 }
 
 void SerialController::onTimerTimeout() {

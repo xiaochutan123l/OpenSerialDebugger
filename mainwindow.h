@@ -5,6 +5,7 @@
 #include "qcustomplot.h"
 #include "serialController.h"
 #include "serialmonitor.h"
+#include "serialplotter.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -21,10 +22,10 @@ public:
     void setup_display_plot();
 
 private slots:
-  void display_horzScrollBarChanged(int value);
-  void display_vertScrollBarChanged(int value);
-  void xAxisChanged(QCPRange range);
-  void yAxisChanged(QCPRange range);
+//  void display_horzScrollBarChanged(int value);
+//  void display_vertScrollBarChanged(int value);
+//  void xAxisChanged(QCPRange range);
+//  void yAxisChanged(QCPRange range);
 
   void portListUpdate(QList<QString> &port_name_list);
 
@@ -34,5 +35,6 @@ private:
 
     SerialController *m_serial_controller;
     serialMonitor *m_serial_monitor;
+    serialPlotter *m_serial_plotter;
 };
 #endif // MAINWINDOW_H

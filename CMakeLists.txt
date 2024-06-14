@@ -9,6 +9,15 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+## Add AddressSanitizer flags
+#if (MSVC)
+#    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /fsanitize=address")
+#    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /fsanitize=address")
+#else ()
+#    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
+#    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=address")
+#endif ()
+
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS
                 Widgets
                 PrintSupport
@@ -36,8 +45,11 @@ set(PROJECT_SOURCES
         serialmonitor.h
         serialmonitor.cpp
 
-        receivehandler.h
-        receivehandler.cpp
+        serialdatacontainer.h
+        serialdatacontainer.cpp
+
+        serialplotter.h
+        serialplotter.cpp
         #clickablecombobox.cpp
 
 #        qcustomplot.h
