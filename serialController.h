@@ -8,6 +8,10 @@
 #include <QDebug>
 #include <QTimer>
 
+#ifdef USE_FAKE_SERIAL
+#include "fakeserialport.h"
+#endif
+
 #define ReadDataTickTime 100 // ms
 
 class SerialController : public QObject{
@@ -51,7 +55,13 @@ private:
     void closePort();
 
     QSerialPortInfo *m_portInfo;
+
+#ifdef USE_FAKE_SERIAL
+    FakeSerialPort *m_port;
+#else
     QSerialPort *m_port;
+#endif
+
     QList<QString> m_port_name_list;
 
     QString m_com_name;

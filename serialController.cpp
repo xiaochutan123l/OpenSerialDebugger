@@ -19,7 +19,13 @@ QList<QSerialPort::FlowControl> FlowControlList = {
 
 /* ----------------- member functions --------------------*/
 SerialController::SerialController(QObject *parent) : QObject(parent){
+
+#ifdef USE_FAKE_SERIAL
+    m_port = new FakeSerialPort(this);
+#else
     m_port = new QSerialPort(this);
+#endif
+
     m_portInfo = new QSerialPortInfo();
     m_timer = new QTimer(this);
     connect(m_timer, &QTimer::timeout, this, &SerialController::onTimerTimeout);
@@ -137,6 +143,9 @@ void SerialController::onTimerTimeout() {
     if (m_port && m_port->bytesAvailable() > 0) {
         const QByteArray data = m_port->readAll();
         emit dataReceived(data);
+    }
+    else {
+        qDebug() <<  "controller: timer out but no data";
     }
 //    else {
 //        emit dataReceived("test =====");

@@ -17,4 +17,6 @@ TODO List:
 - main window appearing position
 - serial default parameters
 - serial monitor text browser max buffer size
+- serial monitor write text browser extra new line
+- fake motor protocol and generate data
 */

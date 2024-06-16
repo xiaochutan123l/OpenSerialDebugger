@@ -18,6 +18,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=address")
 #endif ()
 
+# debug
+add_definitions(-DUSE_FAKE_SERIAL)
+
+
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS
                 Widgets
                 PrintSupport
@@ -50,10 +54,12 @@ set(PROJECT_SOURCES
 
         serialplotter.h
         serialplotter.cpp
-        #clickablecombobox.cpp
 
-#        qcustomplot.h
-#        qcustomplot.cpp
+        fakeserialport.h
+        fakeserialport.cpp
+
+        fakemotor.h
+        fakemotor.cpp
 
         serialController.h
         serialController.cpp
