@@ -4,6 +4,9 @@
 #include <QObject>
 #include <QTimer>
 #include <QDebug>
+
+#define MotorTimerInterval 10 // ms
+
 class fakeMotor : public QObject
 {
     Q_OBJECT
@@ -16,8 +19,12 @@ public:
     fakeMotor(QObject *parent = nullptr);
     void receiveData(const QByteArray &data); 
     void start();
+    void stop();
 
     QTimer m_timer;
+private:
+    QByteArray generateNumberString();
+    //QByteArray generateString();
 };
 
 #endif // FAKEMOTOR_H

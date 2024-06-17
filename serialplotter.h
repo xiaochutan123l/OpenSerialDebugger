@@ -5,6 +5,8 @@
 #include "qcustomplot.h"
 #include <QDebug>
 
+#define MAX_GRAPH_NUM 2 // plot max 5 curve
+
 class serialPlotter : public QObject
 {
     Q_OBJECT
@@ -24,9 +26,17 @@ public slots:
     void yAxisChanged(QCPRange range);
 private:
     bool isValidFormat(const QString &line);
+
+    void setupDisplayPlot(int numGraphs);
+    void updateDisplayPlot(const QVector<double> &yValues);
+
     QCustomPlot *m_display_plot;
     QScrollBar *m_display_verticalScrollBar;
     QScrollBar *m_display_horizontalScrollBar;
+
+    double m_x_count = 0;
+    QVector<double> m_xData;
+    QVector<QVector<double>> m_graphData;
 };
 
 #endif // SERIALPLOTTER_H

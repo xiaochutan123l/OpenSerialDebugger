@@ -14,11 +14,11 @@ serialMonitor::~serialMonitor()
 void serialMonitor::onSerialDataReceived(const QByteArray &data) {
     m_dataContainer.feedData(data);
     QStringList lines = m_dataContainer.getLines();
+    m_dataContainer.clearBuffer();
     for (const QString &line : lines) {
-        writeText(data);// 输出到 QTextEdit
+        writeText(line);// 输出到 QTextEdit
         emit newLineReceived(line); // 发出信号通知 SerialPlotter
     }
-
 }
 
 void serialMonitor::onClearBufferClicked() {

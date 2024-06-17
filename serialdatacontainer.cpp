@@ -31,3 +31,7 @@ QStringList serialDataContainer::getLines() const
 {
     return m_lines;
 }
+
+void serialDataContainer::clearBuffer() {
+    m_lines.clear();
+}

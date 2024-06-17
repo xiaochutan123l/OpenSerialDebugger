@@ -7,8 +7,6 @@
 #include "serialmonitor.h"
 #include "serialplotter.h"
 
-#define USE_FAKE_SERIAL
-
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE

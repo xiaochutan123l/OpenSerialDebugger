@@ -144,9 +144,6 @@ void SerialController::onTimerTimeout() {
         const QByteArray data = m_port->readAll();
         emit dataReceived(data);
     }
-    else {
-        qDebug() <<  "controller: timer out but no data";
-    }
 //    else {
 //        emit dataReceived("test =====");
 //    }

@@ -17,6 +17,9 @@ TODO List:
 - main window appearing position
 - serial default parameters
 - serial monitor text browser max buffer size
-- serial monitor write text browser extra new line
-- fake motor protocol and generate data
+- fake motor protocol
+- what if plot number of data changed. 2 curves -> 3curve?
+- serial plotter max buffer size? ring buffer? then how efficient (simple popfront and append?)
+- add "save" and clear button for plotter
+- dynamical x axis zoom
 */

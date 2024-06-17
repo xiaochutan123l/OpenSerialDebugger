@@ -32,6 +32,7 @@ bool FakeSerialPort::close()
         //m_timer.stop();
         emit portClosed();
     }
+    m_motor.stop();
     return true;
 }
 
@@ -69,7 +70,7 @@ QByteArray FakeSerialPort::readAll() {
 }
 
 void FakeSerialPort::onReceivedSerialData(const QByteArray &data) {
-    qDebug() <<  "data received";
+    //qDebug() <<  "data received";
     m_recv_buffer.append(data);
 }
 

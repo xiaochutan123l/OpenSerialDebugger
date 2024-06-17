@@ -13,7 +13,7 @@ public:
     void feedData(const QByteArray &data);
     // return all split lines
     QStringList getLines() const;
-
+    void clearBuffer();
 private:
     QByteArray m_buffer;   // 用于存储未结束的片段
     QStringList m_lines;   // 用于存储完整的行

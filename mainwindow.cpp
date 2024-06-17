@@ -39,16 +39,6 @@ MainWindow::MainWindow(QWidget *parent)
     m_serial_plotter = new serialPlotter(this, ui->display_plot, ui->display_verticalScrollBar, ui->display_horizontalScrollBar);
     connect(m_serial_monitor, &serialMonitor::newLineReceived, m_serial_plotter, &serialPlotter::onNewLineReceived);
 
-    /* --------------------  Serial plotter  --------------------------*/
-    setup_display_plot();
-    // configure scroll bars:
-    // Since scroll bars only support integer values, we'll set a high default range of -500..500 and
-    // divide scroll bar position values by 100 to provide a scroll range -5..5 in floating point
-    // axis coordinates. if you want to dynamically grow the range accessible with the scroll bar,
-    // just increase the minimum/maximum values of the scroll bars as needed.
-    ui->display_horizontalScrollBar->setRange(-500, 500);
-    ui->display_verticalScrollBar->setRange(-500, 500);
-
     // create connection between axes and scroll bars:
 //    connect(ui->display_horizontalScrollBar, SIGNAL(valueChanged(int)), this, SLOT(display_horzScrollBarChanged(int)));
 //    connect(ui->display_verticalScrollBar, SIGNAL(valueChanged(int)), this, SLOT(display_vertScrollBarChanged(int)));
