@@ -7,7 +7,7 @@ QList<QSerialPort::Parity> ParityList = {
     QSerialPort::MarkParity, QSerialPort::SpaceParity
 };
 QList<QSerialPort::DataBits> DataBitsList = {
-    QSerialPort::Data5, QSerialPort::Data6, QSerialPort::Data7, QSerialPort::Data8
+    QSerialPort::Data8, QSerialPort::Data7, QSerialPort::Data6, QSerialPort::Data5
 };
 QList<QSerialPort::StopBits> StopBitsList = {
     QSerialPort::OneStop, QSerialPort::OneAndHalfStop, QSerialPort::TwoStop
@@ -29,6 +29,8 @@ SerialController::SerialController(QObject *parent) : QObject(parent){
     m_portInfo = new QSerialPortInfo();
     m_timer = new QTimer(this);
     connect(m_timer, &QTimer::timeout, this, &SerialController::onTimerTimeout);
+
+    m_baudrate = BaudRateList[BAUDRATE_DEFUALT_INDEX];
     m_timer->setInterval(ReadDataTickTime);
 //    connect(serialPort, &QSerialPort::errorOccurred, this, [this](QSerialPort::SerialPortError error) {
 //        if (error != QSerialPort::NoError) {

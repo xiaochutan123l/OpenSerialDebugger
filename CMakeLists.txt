@@ -18,6 +18,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=address")
 #endif ()
 
+# 添加 -bigobj 选项
+if (MSVC)
+  add_compile_options(/bigobj)
+else ()
+  add_compile_options(-Wa,-mbig-obj)
+endif ()
+
 # debug
 add_definitions(-DUSE_FAKE_SERIAL)
 

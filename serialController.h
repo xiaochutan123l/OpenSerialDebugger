@@ -14,6 +14,8 @@
 
 #define ReadDataTickTime 100 // ms
 
+#define BAUDRATE_DEFUALT_INDEX 7 // 115200
+
 class SerialController : public QObject{
     Q_OBJECT
 
@@ -46,7 +48,7 @@ public slots:
 public:
     QStringList m_Bauderate_list_str = {"1200", "2400", "4800", "9600", "19200", "38400", "57600", "115200"};
     QStringList m_Parity_list_str = {"None", "Even", "Odd", "Mark", "Space"};
-    QStringList m_Databits_list_str = {"5", "6", "7", "8"};
+    QStringList m_Databits_list_str = {"8", "7", "6", "5"};
     QStringList m_Stopbits_list_str = {"1", "1.5", "2"};
     QStringList m_Flowctr_list_str = {"None", "RTS/CTS", "XON/XOFF"};
 

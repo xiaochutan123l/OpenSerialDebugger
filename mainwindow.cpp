@@ -18,6 +18,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->comboBox_StopBits->addItems(m_serial_controller->m_Stopbits_list_str);
     ui->comboBox_FlowControl->addItems(m_serial_controller->m_Flowctr_list_str);
 
+    ui->comboBox_Baudrate->setCurrentText(m_serial_controller->m_Bauderate_list_str[BAUDRATE_DEFUALT_INDEX]);
+
     connect(ui->comboBox_Baudrate, &QComboBox::activated, m_serial_controller, &SerialController::onBaudRateSelected);
     connect(ui->comboBox_PartBit, &QComboBox::activated, m_serial_controller, &SerialController::onParitySelected);
     connect(ui->comboBox_DataBits, &QComboBox::activated, m_serial_controller, &SerialController::onDataBitsSelected);
