@@ -7,6 +7,7 @@
 #include <QListWidgetItem>
 #include <QDebug>
 #include <QTimer>
+#include <QLabel>
 
 #ifdef USE_FAKE_SERIAL
 #include "fakeserialport.h"
@@ -20,7 +21,7 @@ class SerialController : public QObject{
     Q_OBJECT
 
 public:
-    SerialController(QObject *parent);
+    SerialController(QObject *parent, QLabel *connectStatus);
     ~SerialController();
 
 signals:
@@ -55,6 +56,7 @@ public:
 private:
     void openPort();
     void closePort();
+    void updateConnectionStatus(bool connected);
 
     QSerialPortInfo *m_portInfo;
 
@@ -73,6 +75,7 @@ private:
     QSerialPort::Parity m_parity;
     QSerialPort::FlowControl m_flowcontrol;
 
+    QLabel *m_connectStatus;
     QTimer *m_timer;
 };
 

@@ -2,7 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "qcustomplot.h"
+//#include "qcustomplot.h"
 #include "serialController.h"
 #include "serialmonitor.h"
 #include "serialplotter.h"
@@ -22,10 +22,6 @@ public:
     void setup_display_plot();
 
 private slots:
-//  void display_horzScrollBarChanged(int value);
-//  void display_vertScrollBarChanged(int value);
-//  void xAxisChanged(QCPRange range);
-//  void yAxisChanged(QCPRange range);
 
   void portListUpdate(QList<QString> &port_name_list);
 

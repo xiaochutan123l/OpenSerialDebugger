@@ -18,7 +18,8 @@ QList<QSerialPort::FlowControl> FlowControlList = {
 
 
 /* ----------------- member functions --------------------*/
-SerialController::SerialController(QObject *parent) : QObject(parent){
+SerialController::SerialController(QObject *parent, QLabel *connectStatus)
+    : QObject(parent), m_connectStatus(connectStatus) {
 
 #ifdef USE_FAKE_SERIAL
     m_port = new FakeSerialPort(this);
@@ -29,6 +30,8 @@ SerialController::SerialController(QObject *parent) : QObject(parent){
     m_portInfo = new QSerialPortInfo();
     m_timer = new QTimer(this);
     connect(m_timer, &QTimer::timeout, this, &SerialController::onTimerTimeout);
+
+    updateConnectionStatus(false);
 
     m_baudrate = BaudRateList[BAUDRATE_DEFUALT_INDEX];
     m_timer->setInterval(ReadDataTickTime);
@@ -116,16 +119,23 @@ void SerialController::onConnectClicked() {
     m_port->setDataBits(m_databits);
     m_port->setStopBits(m_stopbits);
     m_port->setFlowControl(m_flowcontrol);
+    if (m_com_name == "" || m_com_name == nullptr) {
+        qDebug() <<  "device open failed: com not selected";
+        return;
+    }
+    //qDebug() << "port name: " << m_com_name;
     if (m_port->open(QIODevice::ReadWrite)){
         qDebug() <<  "device open success";
     }
     else {
         qDebug() <<  "device open failed";
     }
+    updateConnectionStatus(true);
     m_timer->start();
 }
 void SerialController::onDisconnectClicked() {
     closePort();
+    updateConnectionStatus(false);
     m_timer->stop();
 }
 
@@ -149,4 +159,13 @@ void SerialController::onTimerTimeout() {
 //    else {
 //        emit dataReceived("test =====");
 //    }
+}
+
+void SerialController::updateConnectionStatus(bool connected)
+{
+    if (connected) {
+        m_connectStatus->setPixmap(QPixmap(":/icons/icons/icon_connect.png"));
+    } else {
+        m_connectStatus->setPixmap(QPixmap(":/icons/icons/icon_disconnect.png"));
+    }
 }
