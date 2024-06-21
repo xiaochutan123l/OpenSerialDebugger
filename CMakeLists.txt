@@ -70,6 +70,12 @@ set(PROJECT_SOURCES
 
         serialController.h
         serialController.cpp
+
+        command.h
+        command.cpp
+
+        protocolparser.h
+        protocolparser.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

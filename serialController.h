@@ -74,7 +74,6 @@ private:
     QSerialPort::StopBits m_stopbits;
     QSerialPort::Parity m_parity;
     QSerialPort::FlowControl m_flowcontrol;
-
     QLabel *m_connectStatus;
     QTimer *m_timer;
 };

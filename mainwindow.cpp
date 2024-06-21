@@ -43,6 +43,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->display_plot->xAxis->setRange(0, 6, Qt::AlignCenter);
     ui->display_plot->yAxis->setRange(0, 10, Qt::AlignCenter);
+
+    /* ----------------------- protocol parser --------------------------*/
+    m_parser = new ProtocolParser(this);
+    m_parser->bindButton(ui->pushButton_load_parameters);
 }
 
 MainWindow::~MainWindow()
