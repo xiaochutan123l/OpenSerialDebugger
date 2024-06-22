@@ -9,7 +9,8 @@ public:
     enum CommandType {
         GET,
         SET,
-        SWITCH
+        SWITCH,
+        NONE
     };
 
     enum DataType {
@@ -19,7 +20,7 @@ public:
         BOOL,
         UNKNOWN
     };
-
+    Command() : m_name(""), m_type(NONE), m_number(0), m_dataType(UNKNOWN) {};
     Command(const QString &name, CommandType type, uint16_t number, const QString &dataType)
         : m_name(name), m_type(type), m_number(number) {
         m_dataType = stringToDataType(dataType);

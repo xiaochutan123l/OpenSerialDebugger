@@ -1,6 +1,13 @@
 #include "protocolparser.h"
 
-ProtocolParser::ProtocolParser(QObject *parent) : QObject(parent) {}
+ProtocolParser::ProtocolParser(QMap<QString, Command> *getCommands,
+                               QMap<QString, Command> *setCommands,
+                               QMap<QString, Command> *switchCommands,
+                               QObject *parent)
+    : m_getCommands(getCommands),
+    m_setCommands(setCommands),
+    m_switchCommands(switchCommands),
+    QObject(parent) {}
 
 void ProtocolParser::bindButton(QPushButton *button) {
     connect(button, &QPushButton::clicked, this, &ProtocolParser::onParseButtonClicked);
@@ -26,12 +33,17 @@ void ProtocolParser::parseFile(const QString &filePath) {
     }
 
     QTextStream in(&file);
+
+    emit newFileLoaded();
+
     while (!in.atEnd()) {
         QString line = in.readLine();
         parseLine(line);
     }
 
     file.close();
+
+    emit newFileParsed();
 }
 
 void ProtocolParser::parseLine(const QString &line) {
@@ -53,11 +65,11 @@ void ProtocolParser::parseLine(const QString &line) {
     QString dataType = parts[3].trimmed();
 
     Command::CommandType type;
-    if (typeStr == "GET") {
+    if (typeStr == "GET" || typeStr == "Get" || typeStr == "get") {
         type = Command::GET;
-    } else if (typeStr == "SET") {
+    } else if (typeStr == "SET" || typeStr == "Set" || typeStr == "set") {
         type = Command::SET;
-    } else if (typeStr == "SWITCH") {
+    } else if (typeStr == "SWITCH" || typeStr == "Switch" || typeStr == "switch") {
         type = Command::SWITCH;
     } else {
         // Invalid command type
@@ -65,16 +77,32 @@ void ProtocolParser::parseLine(const QString &line) {
     }
 
     Command command(name, type, number, dataType);
-
     switch (type) {
     case Command::GET:
-        m_getCommands.append(command);
+        if (!m_getCommands->contains(name)) {
+            m_getCommands->insert(name, command);
+        }
+        else {
+            qDebug() << "duplicated name: " << name;
+        }
         break;
     case Command::SET:
-        m_setCommands.append(command);
+        if (!m_setCommands->contains(name)) {
+            m_setCommands->insert(name, command);
+        }
+        else {
+            qDebug() << "duplicated name: " << name;
+        }
         break;
     case Command::SWITCH:
-        m_switchCommands.append(command);
+        if (!m_switchCommands->contains(name)) {
+            m_switchCommands->insert(name, command);
+        }
+        else {
+            qDebug() << "duplicated name: " << name;
+        }
+        break;
+    case Command::NONE:
         break;
     }
 }

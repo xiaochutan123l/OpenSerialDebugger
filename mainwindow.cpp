@@ -44,9 +44,31 @@ MainWindow::MainWindow(QWidget *parent)
     ui->display_plot->xAxis->setRange(0, 6, Qt::AlignCenter);
     ui->display_plot->yAxis->setRange(0, 10, Qt::AlignCenter);
 
-    /* ----------------------- protocol parser --------------------------*/
-    m_parser = new ProtocolParser(this);
-    m_parser->bindButton(ui->pushButton_load_parameters);
+    /* ----------------------- parameters --------------------------*/
+    m_parameter_manager = new parameterManager(ui->pushButton_load_parameters, this);
+
+    m_parameter_manager->addGetComboWidget(ui->pushButton_get1, ui->lineEdit_get1, ui->comboBox_get1);
+    m_parameter_manager->addGetComboWidget(ui->pushButton_get2, ui->lineEdit_get2, ui->comboBox_get2);
+    m_parameter_manager->addGetComboWidget(ui->pushButton_get3, ui->lineEdit_get3, ui->comboBox_get3);
+    m_parameter_manager->addGetComboWidget(ui->pushButton_get4, ui->lineEdit_get4, ui->comboBox_get4);
+    m_parameter_manager->addGetComboWidget(ui->pushButton_get5, ui->lineEdit_get5, ui->comboBox_get5);
+    m_parameter_manager->addGetComboWidget(ui->pushButton_get6, ui->lineEdit_get6, ui->comboBox_get6);
+
+    m_parameter_manager->addSetComboWidget(ui->pushButton_send1, ui->lineEdit_send1, ui->comboBox_send1);
+    m_parameter_manager->addSetComboWidget(ui->pushButton_send2, ui->lineEdit_send2, ui->comboBox_send2);
+    m_parameter_manager->addSetComboWidget(ui->pushButton_send3, ui->lineEdit_send3, ui->comboBox_send3);
+    m_parameter_manager->addSetComboWidget(ui->pushButton_send4, ui->lineEdit_send4, ui->comboBox_send4);
+    m_parameter_manager->addSetComboWidget(ui->pushButton_send5, ui->lineEdit_send5, ui->comboBox_send5);
+    m_parameter_manager->addSetComboWidget(ui->pushButton_send6, ui->lineEdit_send6, ui->comboBox_send6);
+    m_parameter_manager->addSetComboWidget(ui->pushButton_send7, ui->lineEdit_send7, ui->comboBox_send7);
+    m_parameter_manager->addSetComboWidget(ui->pushButton_send8, ui->lineEdit_send8, ui->comboBox_send8);
+    m_parameter_manager->addSetComboWidget(ui->pushButton_send9, ui->lineEdit_send9, ui->comboBox_send9);
+    m_parameter_manager->addSetComboWidget(ui->pushButton_send10, ui->lineEdit_send10, ui->comboBox_send10);
+
+    m_parameter_manager->addSwitchComboWidget(ui->pushButton_action1, ui->comboBox_action1);
+    m_parameter_manager->addSwitchComboWidget(ui->pushButton_action2, ui->comboBox_action2);
+    m_parameter_manager->addSwitchComboWidget(ui->pushButton_action3, ui->comboBox_action3);
+    m_parameter_manager->addSwitchComboWidget(ui->pushButton_action4, ui->comboBox_action4);
 }
 
 MainWindow::~MainWindow()

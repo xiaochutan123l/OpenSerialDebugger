@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1298</width>
-    <height>970</height>
+    <height>973</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -28,7 +28,7 @@
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_12">
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="0,3">
+     <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="1,3">
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_10">
         <item>
@@ -755,7 +755,7 @@
              </widget>
             </item>
             <item row="5" column="1">
-             <widget class="QLineEdit" name="lineEdit_send7">
+             <widget class="QLineEdit" name="lineEdit_send6">
               <property name="sizePolicy">
                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -913,6 +913,9 @@
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Minimum</enum>
+            </property>
             <property name="sizeHint" stdset="0">
              <size>
               <width>18</width>
@@ -1038,7 +1041,7 @@
                </widget>
               </item>
               <item row="2" column="0">
-               <widget class="QComboBox" name="comboBox_send8_2">
+               <widget class="QComboBox" name="comboBox_send9">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                   <horstretch>0</horstretch>
@@ -1048,7 +1051,7 @@
                </widget>
               </item>
               <item row="0" column="1">
-               <widget class="QLineEdit" name="lineEdit_send7_2">
+               <widget class="QLineEdit" name="lineEdit_send7">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
                   <horstretch>0</horstretch>
