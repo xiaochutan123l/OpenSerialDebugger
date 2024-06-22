@@ -7,19 +7,23 @@
 #include <QList>
 #include <QPushButton>
 #include <QFileDialog>
-
+#include <QMap>
 #include "command.h"
 
 class ProtocolParser : public QObject {
     Q_OBJECT
 
 public:
-    explicit ProtocolParser(QObject *parent = nullptr);
-
-    // const QList<Command>& getCommands(Command::CommandType type) const;
-
+    explicit ProtocolParser(QMap<QString, Command> *getCommands,
+                            QMap<QString, Command> *setCommands,
+                            QMap<QString, Command> *switchCommands,
+                            QObject *parent = nullptr);
 
     void bindButton(QPushButton *button);
+
+signals:
+    void newFileLoaded();
+    void newFileParsed();
 
 private slots:
     void onParseButtonClicked();
@@ -28,9 +32,9 @@ private:
     void parseFile(const QString &filePath);
     void parseLine(const QString &line);
 
-    QList<Command> m_getCommands;
-    QList<Command> m_setCommands;
-    QList<Command> m_switchCommands;
+    QMap<QString, Command> *m_getCommands;
+    QMap<QString, Command> *m_setCommands;
+    QMap<QString, Command> *m_switchCommands;
 };
 
 #endif // PROTOCOLPARSER_H

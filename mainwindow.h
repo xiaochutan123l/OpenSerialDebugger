@@ -6,7 +6,8 @@
 #include "serialController.h"
 #include "serialmonitor.h"
 #include "serialplotter.h"
-#include "protocolparser.h"
+
+#include "parametermanager.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -33,6 +34,6 @@ private:
     SerialController *m_serial_controller;
     serialMonitor *m_serial_monitor;
     serialPlotter *m_serial_plotter;
-    ProtocolParser *m_parser;
+    parameterManager *m_parameter_manager;
 };
 #endif // MAINWINDOW_H

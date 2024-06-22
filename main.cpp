@@ -21,4 +21,6 @@ TODO List:
 - add "save" and clear button for plotter
 - dynamical x axis zoom
 - graph color
+- parameters combo widget refactor to polymorphism
+- command add print function
 */
