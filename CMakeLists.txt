@@ -80,6 +80,9 @@ set(PROJECT_SOURCES
         parametermanager.h
         parametermanager.cpp
 
+        serialsendmonitor.h
+        serialsendmonitor.cpp
+
     )
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(QMotorMaster

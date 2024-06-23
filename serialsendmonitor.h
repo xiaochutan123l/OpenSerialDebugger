@@ -1,0 +1,38 @@
+#ifndef SERIALSENDMONITOR_H
+#define SERIALSENDMONITOR_H
+
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QLineEdit>
+#include <QTextBrowser>
+
+class serialSendMonitor: public QObject {
+    Q_OBJECT
+public:
+    serialSendMonitor(QPushButton *send_button,
+                      QLineEdit *line_input,
+                      QTextBrowser *text_browser,
+                      QObject *parent = nullptr);
+
+signals:
+    void sendMessage(QString &message);
+    void sendCommand(QByteArray &command);
+
+public slots:
+    void onSendCommand(QByteArray &command);
+    void onSendButtonClicked();
+    void onSendSuccess();
+
+public:
+    void connect_widgets();
+
+private:
+    void updateHistory();
+    void clearHistory();
+
+
+    QPushButton *m_send_message;
+    QLineEdit *m_message_input;
+    QTextBrowser *m_send_history;
+};
+
+#endif // SERIALSENDMONITOR_H

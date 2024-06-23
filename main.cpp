@@ -23,4 +23,6 @@ TODO List:
 - graph color
 - parameters combo widget refactor to polymorphism
 - command add print function
+- add data range verification (lineedit validator?)
+- after new file loaded, clear all lineedit and combobox content
 */

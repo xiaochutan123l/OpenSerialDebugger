@@ -69,6 +69,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_parameter_manager->addSwitchComboWidget(ui->pushButton_action2, ui->comboBox_action2);
     m_parameter_manager->addSwitchComboWidget(ui->pushButton_action3, ui->comboBox_action3);
     m_parameter_manager->addSwitchComboWidget(ui->pushButton_action4, ui->comboBox_action4);
+
 }
 
 MainWindow::~MainWindow()
@@ -86,24 +87,3 @@ void MainWindow::portListUpdate(QList<QString> &port_name_list){
     ui->comboBox_COM->clear();
     ui->comboBox_COM->addItems(port_name_list);
 }
-
-// void MainWindow::setup_display_plot()
-// {
-//   // The following display_plot setup is mostly taken from the display_plot demos:
-//   ui->display_plot->addGraph();
-//   ui->display_plot->graph()->setPen(QPen(Qt::blue));
-//   ui->display_plot->graph()->setBrush(QBrush(QColor(0, 0, 255, 20)));
-//   ui->display_plot->addGraph();
-//   ui->display_plot->graph()->setPen(QPen(Qt::red));
-//   QVector<double> x(500), y0(500), y1(500);
-//   for (int i=0; i<500; ++i)
-//   {
-//     x[i] = (i/499.0-0.5)*10;
-//     y0[i] = qExp(-x[i]*x[i]*0.25)*qSin(x[i]*5)*5;
-//     y1[i] = qExp(-x[i]*x[i]*0.25)*5;
-//   }
-//   ui->display_plot->graph(0)->setData(x, y0);
-//   ui->display_plot->graph(1)->setData(x, y1);
-//   ui->display_plot->axisRect()->setupFullAxesBox(true);
-//   ui->display_plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
-// }

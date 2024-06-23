@@ -13,10 +13,7 @@ ParameterComboWidget::ParameterComboWidget(QPushButton *button,
     m_combo_box(combo_box),
     m_commands(commands),
     m_commandNames(commandNames),
-    QObject(parent)
-{
-
-}
+    QObject(parent) {}
 
 // Copy constructor
 ParameterComboWidget::ParameterComboWidget(const ParameterComboWidget &other_widget)
@@ -84,13 +81,6 @@ void ParameterComboWidget::onCmdSelected(const QString & name) {
     m_command = &((*m_commands)[name]);
 }
 
-// void ParameterComboWidget::onDataUpdated() {
-
-// }
-// void ParameterComboWidget::onButtonPushed() {
-
-// }
-
 void ParameterComboWidget::addComboBoxList(QList<QString> &names) {
     m_combo_box->addItems(names);
     m_combo_box->setCurrentIndex(-1);
@@ -113,13 +103,21 @@ getParameterComboWidget::getParameterComboWidget(QPushButton *get_button,
                            combo_box,
                            commands,
                            commandNames,
-                           parent) {};
+                           parent) {}
+
+void getParameterComboWidget::connect_widgets() {
+    static bool connected = false;
+    if (!connected) {
+        //connect(m_line_input, &QLineEdit::editingFinished, this, &getParameterComboWidget::onDataUpdated);
+        connect(m_button, &QPushButton::clicked, this, &getParameterComboWidget::onGetButtonPushed);
+    }
+}
 
 void getParameterComboWidget::onDataUpdated() {
-
+    qDebug() << "onDataUpdated";
 }
 void getParameterComboWidget::onGetButtonPushed() {
-
+    qDebug() << "onGetButtonPushed";
 }
 
 /* ----------------------- setParameterComboWidget --------------------------*/
@@ -135,13 +133,21 @@ setParameterComboWidget::setParameterComboWidget(QPushButton *send_button,
                            combo_box,
                            commands,
                            commandNames,
-                           parent) {};
+                           parent) {}
+
+void setParameterComboWidget::connect_widgets() {
+    static bool connected = false;
+    if (!connected) {
+        connect(m_line_input, &QLineEdit::editingFinished, this, &setParameterComboWidget::onDataStringChanged);
+        connect(m_button, &QPushButton::clicked, this, &setParameterComboWidget::onSendButtonPushed);
+    }
+}
 
 void setParameterComboWidget::onDataStringChanged() {
-
+    qDebug() << "onDataStringChanged";
 }
 void setParameterComboWidget::onSendButtonPushed() {
-
+    qDebug() << "onSendButtonPushed";
 }
 
 /* ----------------------- switchParameterComboWidget --------------------------*/
@@ -156,10 +162,17 @@ switchParameterComboWidget::switchParameterComboWidget(QPushButton *action_butto
                            combo_box,
                            commands,
                            commandNames,
-                           parent) {};
+                           parent) {}
+
+void switchParameterComboWidget::connect_widgets() {
+    static bool connected = false;
+    if (!connected) {
+        connect(m_button, &QPushButton::clicked, this, &switchParameterComboWidget::onActionButtonPushed);
+    }
+}
 
 void switchParameterComboWidget::onActionButtonPushed() {
-
+    qDebug() << "onActionButtonPushed";
 }
 
 /* ----------------------- parameterManager --------------------------*/
@@ -228,11 +241,14 @@ void parameterManager::onNewFileParsed() {
 
     for (auto it = m_getList.begin(); it != m_getList.end(); ++it) {
         it->addComboBoxList(m_getCommandNames);
+        it->connect_widgets();
     }
     for (auto it = m_setList.begin(); it != m_setList.end(); ++it) {
         it->addComboBoxList(m_setCommandNames);
+        it->connect_widgets();
     }
     for (auto it = m_switchList.begin(); it != m_switchList.end(); ++it) {
         it->addComboBoxList(m_switchCommandNames);
+        it->connect_widgets();
     }
 }
