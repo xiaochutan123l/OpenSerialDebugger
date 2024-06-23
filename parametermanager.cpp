@@ -2,13 +2,13 @@
 
 /* ----------------------- getParameterComboWidget --------------------------*/
 
-getParameterComboWidget::getParameterComboWidget(QPushButton *get_button,
+ParameterComboWidget::ParameterComboWidget(QPushButton *button,
                                  QLineEdit *line_input,
                                  QComboBox *combo_box,
                                  QMap<QString, Command> *commands,
                                  QList<QString> *commandNames,
                                  QObject *parent)
-    : m_get_button(get_button),
+    : m_button(button),
     m_line_input(line_input),
     m_combo_box(combo_box),
     m_commands(commands),
@@ -19,8 +19,8 @@ getParameterComboWidget::getParameterComboWidget(QPushButton *get_button,
 }
 
 // Copy constructor
-getParameterComboWidget::getParameterComboWidget(const getParameterComboWidget &other_widget)
-    : m_get_button(other_widget.m_get_button),
+ParameterComboWidget::ParameterComboWidget(const ParameterComboWidget &other_widget)
+    : m_button(other_widget.m_button),
     m_line_input(other_widget.m_line_input),
     m_combo_box(other_widget.m_combo_box),
     m_commands(other_widget.m_commands),
@@ -31,15 +31,15 @@ getParameterComboWidget::getParameterComboWidget(const getParameterComboWidget &
 }
 
 // Move constructor
-getParameterComboWidget::getParameterComboWidget(getParameterComboWidget &&other_widget)
-    : m_get_button(other_widget.m_get_button),
+ParameterComboWidget::ParameterComboWidget(ParameterComboWidget &&other_widget)
+    : m_button(other_widget.m_button),
     m_line_input(other_widget.m_line_input),
     m_combo_box(other_widget.m_combo_box),
     m_commands(other_widget.m_commands),
     m_commandNames(other_widget.m_commandNames),
     QObject(other_widget.parent())
 {
-    other_widget.m_get_button = nullptr;
+    other_widget.m_button = nullptr;
     other_widget.m_line_input = nullptr;
     other_widget.m_combo_box = nullptr;
     other_widget.m_commands = nullptr;
@@ -48,9 +48,9 @@ getParameterComboWidget::getParameterComboWidget(getParameterComboWidget &&other
 }
 
 // Assignment constructor
-getParameterComboWidget& getParameterComboWidget::operator=(const getParameterComboWidget &other_widget) {
+ParameterComboWidget& ParameterComboWidget::operator=(const ParameterComboWidget &other_widget) {
     if (&other_widget != this) {
-        m_get_button = other_widget.m_get_button;
+        m_button = other_widget.m_button;
         m_line_input = other_widget.m_line_input;
         m_combo_box = other_widget.m_combo_box;
         m_commands = other_widget.m_commands;
@@ -61,16 +61,16 @@ getParameterComboWidget& getParameterComboWidget::operator=(const getParameterCo
 }
 
 // Move assignment constructor
-getParameterComboWidget& getParameterComboWidget::operator=(getParameterComboWidget &&other_widget) {
+ParameterComboWidget& ParameterComboWidget::operator=(ParameterComboWidget &&other_widget) {
     if (&other_widget != this) {
-        m_get_button = other_widget.m_get_button;
+        m_button = other_widget.m_button;
         m_line_input = other_widget.m_line_input;
         m_combo_box = other_widget.m_combo_box;
         m_commands = other_widget.m_commands;
         m_commandNames = other_widget.m_commandNames;
         d_ptr->parent = other_widget.d_ptr->parent;
 
-        other_widget.m_get_button = nullptr;
+        other_widget.m_button = nullptr;
         other_widget.m_line_input = nullptr;
         other_widget.m_combo_box = nullptr;
         other_widget.m_commands = nullptr;
@@ -80,9 +80,40 @@ getParameterComboWidget& getParameterComboWidget::operator=(getParameterComboWid
     return *this;
 }
 
-void getParameterComboWidget::onCmdSelected(const QString & name) {
+void ParameterComboWidget::onCmdSelected(const QString & name) {
     m_command = &((*m_commands)[name]);
 }
+
+// void ParameterComboWidget::onDataUpdated() {
+
+// }
+// void ParameterComboWidget::onButtonPushed() {
+
+// }
+
+void ParameterComboWidget::addComboBoxList(QList<QString> &names) {
+    m_combo_box->addItems(names);
+    m_combo_box->setCurrentIndex(-1);
+}
+
+void ParameterComboWidget::clearComboBoxList() {
+    m_combo_box->clear();
+}
+
+/* ----------------------- getParameterComboWidget --------------------------*/
+
+getParameterComboWidget::getParameterComboWidget(QPushButton *get_button,
+                        QLineEdit *line_input,
+                        QComboBox *combo_box,
+                        QMap<QString, Command> *commands,
+                        QList<QString> *commandNames,
+                        QObject *parent)
+    : ParameterComboWidget(get_button,
+                           line_input,
+                           combo_box,
+                           commands,
+                           commandNames,
+                           parent) {};
 
 void getParameterComboWidget::onDataUpdated() {
 
@@ -91,98 +122,21 @@ void getParameterComboWidget::onGetButtonPushed() {
 
 }
 
-void getParameterComboWidget::addComboBoxList(QList<QString> &names) {
-    m_combo_box->addItems(names);
-    m_combo_box->setCurrentIndex(-1);
-}
-
-void getParameterComboWidget::clearComboBoxList() {
-    m_combo_box->clear();
-}
-
 /* ----------------------- setParameterComboWidget --------------------------*/
 
 setParameterComboWidget::setParameterComboWidget(QPushButton *send_button,
-                                                 QLineEdit *line_input,
-                                                 QComboBox *combo_box,
-                                                 QMap<QString, Command> *commands,
-                                                 QList<QString> *commandNames,
-                                                 QObject *parent)
-    : m_send_button(send_button),
-    m_line_input(line_input),
-    m_combo_box(combo_box),
-    m_commands(commands),
-    m_commandNames(commandNames),
-    QObject(parent)
-{
+                        QLineEdit *line_input,
+                        QComboBox *combo_box,
+                        QMap<QString, Command> *commands,
+                        QList<QString> *commandNames,
+                        QObject *parent)
+    : ParameterComboWidget(send_button,
+                           line_input,
+                           combo_box,
+                           commands,
+                           commandNames,
+                           parent) {};
 
-}
-
-// Copy constructor
-setParameterComboWidget::setParameterComboWidget(const setParameterComboWidget &other_widget)
-    : m_send_button(other_widget.m_send_button),
-    m_line_input(other_widget.m_line_input),
-    m_combo_box(other_widget.m_combo_box),
-    m_commands(other_widget.m_commands),
-    m_commandNames(other_widget.m_commandNames),
-    QObject(other_widget.parent())
-{
-
-}
-
-// Move constructor
-setParameterComboWidget::setParameterComboWidget(setParameterComboWidget &&other_widget)
-    : m_send_button(other_widget.m_send_button),
-    m_line_input(other_widget.m_line_input),
-    m_combo_box(other_widget.m_combo_box),
-    m_commands(other_widget.m_commands),
-    m_commandNames(other_widget.m_commandNames),
-    QObject(other_widget.parent())
-{
-    other_widget.m_send_button = nullptr;
-    other_widget.m_line_input = nullptr;
-    other_widget.m_combo_box = nullptr;
-    other_widget.m_commands = nullptr;
-    other_widget.m_commandNames = nullptr;
-    other_widget.d_ptr->parent = nullptr;
-}
-
-// Assignment constructor
-setParameterComboWidget& setParameterComboWidget::operator=(const setParameterComboWidget &other_widget) {
-    if (&other_widget != this) {
-        m_send_button = other_widget.m_send_button;
-        m_line_input = other_widget.m_line_input;
-        m_combo_box = other_widget.m_combo_box;
-        m_commands = other_widget.m_commands;
-        m_commandNames = other_widget.m_commandNames;
-        d_ptr->parent = other_widget.d_ptr->parent;
-    }
-    return *this;
-}
-
-// Move assignment constructor
-setParameterComboWidget& setParameterComboWidget::operator=(setParameterComboWidget &&other_widget) {
-    if (&other_widget != this) {
-        m_send_button = other_widget.m_send_button;
-        m_line_input = other_widget.m_line_input;
-        m_combo_box = other_widget.m_combo_box;
-        m_commands = other_widget.m_commands;
-        m_commandNames = other_widget.m_commandNames;
-        d_ptr->parent = other_widget.d_ptr->parent;
-
-        other_widget.m_send_button = nullptr;
-        other_widget.m_line_input = nullptr;
-        other_widget.m_combo_box = nullptr;
-        other_widget.m_commands = nullptr;
-        other_widget.m_commandNames = nullptr;
-        other_widget.d_ptr->parent = nullptr;
-    }
-    return *this;
-}
-
-void setParameterComboWidget::onCmdSelected(const QString & name) {
-    m_command = &(*m_commands)[name];
-}
 void setParameterComboWidget::onDataStringChanged() {
 
 }
@@ -190,102 +144,22 @@ void setParameterComboWidget::onSendButtonPushed() {
 
 }
 
-void setParameterComboWidget::addComboBoxList(QList<QString> &names) {
-    m_combo_box->addItems(names);
-    m_combo_box->setCurrentIndex(-1);
-}
-
-void setParameterComboWidget::clearComboBoxList() {
-    m_combo_box->clear();
-}
-
 /* ----------------------- switchParameterComboWidget --------------------------*/
 
 switchParameterComboWidget::switchParameterComboWidget(QPushButton *action_button,
-                                                 QComboBox *combo_box,
-                                                 QMap<QString, Command> *commands,
-                                                 QList<QString> *commandNames,
-                                                 QObject *parent)
-    : m_action_button(action_button),
-    m_combo_box(combo_box),
-    m_commands(commands),
-    m_commandNames(commandNames),
-    QObject(parent)
-{
-
-}
-
-// Copy constructor
-switchParameterComboWidget::switchParameterComboWidget(const switchParameterComboWidget &other_widget)
-    : m_action_button(other_widget.m_action_button),
-    m_combo_box(other_widget.m_combo_box),
-    m_commands(other_widget.m_commands),
-    m_commandNames(other_widget.m_commandNames),
-    QObject(other_widget.parent())
-{
-
-}
-
-// Move constructor
-switchParameterComboWidget::switchParameterComboWidget(switchParameterComboWidget &&other_widget)
-    : m_action_button(other_widget.m_action_button),
-    m_combo_box(other_widget.m_combo_box),
-    m_commands(other_widget.m_commands),
-    m_commandNames(other_widget.m_commandNames),
-    QObject(other_widget.parent())
-{
-    other_widget.m_action_button = nullptr;
-    other_widget.m_combo_box = nullptr;
-    other_widget.m_commands = nullptr;
-    other_widget.m_commandNames = nullptr;
-    other_widget.d_ptr->parent = nullptr;
-}
-
-// Assignment constructor
-switchParameterComboWidget& switchParameterComboWidget::operator=(const switchParameterComboWidget &other_widget) {
-    if (&other_widget != this) {
-        m_action_button = other_widget.m_action_button;
-        m_combo_box = other_widget.m_combo_box;
-        m_commands = other_widget.m_commands;
-        m_commandNames = other_widget.m_commandNames;
-        d_ptr->parent = other_widget.d_ptr->parent;
-    }
-    return *this;
-}
-
-// Move assignment constructor
-switchParameterComboWidget& switchParameterComboWidget::operator=(switchParameterComboWidget &&other_widget) {
-    if (&other_widget != this) {
-        m_action_button = other_widget.m_action_button;
-        m_combo_box = other_widget.m_combo_box;
-        m_commands = other_widget.m_commands;
-        m_commandNames = other_widget.m_commandNames;
-        d_ptr->parent = other_widget.d_ptr->parent;
-
-        other_widget.m_action_button = nullptr;
-        other_widget.m_combo_box = nullptr;
-        other_widget.m_commands = nullptr;
-        other_widget.m_commandNames = nullptr;
-        other_widget.d_ptr->parent = nullptr;
-    }
-    return *this;
-}
-
-void switchParameterComboWidget::onCmdSelected(const QString & name) {
-    m_command = &(*m_commands)[name];
-}
+                           QComboBox *combo_box,
+                           QMap<QString, Command> *commands,
+                           QList<QString> *commandNames,
+                           QObject *parent)
+    : ParameterComboWidget(action_button,
+                           nullptr,
+                           combo_box,
+                           commands,
+                           commandNames,
+                           parent) {};
 
 void switchParameterComboWidget::onActionButtonPushed() {
 
-}
-
-void switchParameterComboWidget::addComboBoxList(QList<QString> &names) {
-    m_combo_box->addItems(names);
-    m_combo_box->setCurrentIndex(-1);
-}
-
-void switchParameterComboWidget::clearComboBoxList() {
-    m_combo_box->clear();
 }
 
 /* ----------------------- parameterManager --------------------------*/
@@ -302,7 +176,6 @@ parameterManager::parameterManager(QPushButton *load_button,
 
 }
 
-// TODO: change append to emplace?
 void parameterManager::addGetComboWidget(QPushButton *get_button,
                                            QLineEdit *line_input,
                                            QComboBox *combo_box)

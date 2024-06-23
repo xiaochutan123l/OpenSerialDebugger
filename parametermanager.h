@@ -6,38 +6,39 @@
 #include <QtWidgets/QComboBox>
 #include "command.h"
 #include "protocolparser.h"
-/* ----------------------- getParameterComboWidget --------------------------*/
+/* ----------------------- ParameterComboWidget --------------------------*/
 
-class getParameterComboWidget: public QObject {
+class ParameterComboWidget: public QObject {
     Q_OBJECT
 
 public:
-    explicit getParameterComboWidget(QPushButton *get_button,
+    ParameterComboWidget(QPushButton *button,
                                     QLineEdit *line_input,
                                     QComboBox *combo_box,
                                     QMap<QString, Command> *commands,
                                     QList<QString> *commandNames,
-                                    QObject *parent = nullptr);
+                                     QObject *parent = nullptr);
     // Copy constructor
-    explicit getParameterComboWidget(const getParameterComboWidget &other_widget);
+    ParameterComboWidget(const ParameterComboWidget &other_widget);
 
     // Move constructor
-    explicit getParameterComboWidget(getParameterComboWidget &&other_widget);
+    ParameterComboWidget(ParameterComboWidget &&other_widget);
 
     // Assignment constructor
-    getParameterComboWidget& operator=(const getParameterComboWidget &other_widget);
+    ParameterComboWidget& operator=(const ParameterComboWidget &other_widget);
 
     // Move assignment constructor
-    getParameterComboWidget& operator=(getParameterComboWidget &&other_widget);
+    ParameterComboWidget& operator=(ParameterComboWidget &&other_widget);
 
 public slots:
     void onCmdSelected(const QString & name);
-    void onDataUpdated();
-    void onGetButtonPushed();
+    // void onDataUpdated();
+    // virtual void onButtonPushed();
+
     void addComboBoxList(QList<QString> &names);
     void clearComboBoxList();
 private:
-    QPushButton *m_get_button;
+    QPushButton *m_button;
     QLineEdit *m_line_input;
     QComboBox *m_combo_box;
     Command *m_command;
@@ -45,9 +46,27 @@ private:
     QList<QString> *m_commandNames;
 };
 
+/* ----------------------- getParameterComboWidget --------------------------*/
+
+class getParameterComboWidget: public ParameterComboWidget {
+    Q_OBJECT
+
+public:
+    explicit getParameterComboWidget(QPushButton *get_button,
+                                     QLineEdit *line_input,
+                                     QComboBox *combo_box,
+                                     QMap<QString, Command> *commands,
+                                     QList<QString> *commandNames,
+                                     QObject *parent = nullptr);
+
+public slots:
+    void onDataUpdated();
+    void onGetButtonPushed();
+};
+
 /* ----------------------- setParameterComboWidget --------------------------*/
 
-class setParameterComboWidget: public QObject {
+class setParameterComboWidget: public ParameterComboWidget {
     Q_OBJECT
 
 public:
@@ -57,37 +76,14 @@ public:
                                     QMap<QString, Command> *commands,
                                     QList<QString> *commandNames,
                                     QObject *parent = nullptr);
-
-    // Copy constructor
-    explicit setParameterComboWidget(const setParameterComboWidget &other_widget);
-
-    // Move constructor
-    explicit setParameterComboWidget(setParameterComboWidget &&other_widget);
-
-    // Assignment constructor
-    setParameterComboWidget& operator=(const setParameterComboWidget &other_widget);
-
-    // Move assignment constructor
-    setParameterComboWidget& operator=(setParameterComboWidget &&other_widget);
-
 public slots:
-    void onCmdSelected(const QString & name);
     void onDataStringChanged();
     void onSendButtonPushed();
-    void addComboBoxList(QList<QString> &names);
-    void clearComboBoxList();
-private:
-    QPushButton *m_send_button;
-    QLineEdit *m_line_input;
-    QComboBox *m_combo_box;
-    Command *m_command;
-    QMap<QString, Command> *m_commands;
-    QList<QString> *m_commandNames;
 };
 
 /* ----------------------- switchParameterComboWidget --------------------------*/
 
-class switchParameterComboWidget: public QObject {
+class switchParameterComboWidget: public ParameterComboWidget {
     Q_OBJECT
 
 public:
@@ -96,29 +92,8 @@ public:
                                         QMap<QString, Command> *commands,
                                         QList<QString> *commandNames,
                                         QObject *parent = nullptr);
-
-    // Copy constructor
-    explicit switchParameterComboWidget(const switchParameterComboWidget &other_widget);
-
-    // Move constructor
-    explicit switchParameterComboWidget(switchParameterComboWidget &&other_widget);
-
-    // Assignment constructor
-    switchParameterComboWidget& operator=(const switchParameterComboWidget &other_widget);
-
-    // Move assignment constructor
-    switchParameterComboWidget& operator=(switchParameterComboWidget &&other_widget);
 public slots:
-    void onCmdSelected(const QString & name);
     void onActionButtonPushed();
-    void addComboBoxList(QList<QString> &names);
-    void clearComboBoxList();
-private:
-    QPushButton *m_action_button;
-    QComboBox *m_combo_box;
-    Command *m_command;
-    QMap<QString, Command> *m_commands;
-    QList<QString> *m_commandNames;
 };
 
 /* ----------------------- parameterManager --------------------------*/
