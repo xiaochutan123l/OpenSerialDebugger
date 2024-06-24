@@ -24,6 +24,7 @@ public:
     bool close();
     bool isOpen() const;
 
+    bool isWritable() const;
     void write(const QByteArray &data);
     QStringList availablePorts() const;
 

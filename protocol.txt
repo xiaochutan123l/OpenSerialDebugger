@@ -3,7 +3,7 @@
 /*
  * 0                          2                          4                          6                                                      10                           n                          n+2                                                 n+6       
  * ┌───────────┬───────────┬───────────┬───────────────────────┬────────────┬───────────┬───────────────────────┐         
- * │     MagicNum   │      ChunkNum    │          CMD 1     │                        Data1                    │             ...             │         CMD N     │                       DataN                    │         
+ * │     MagicNum   │      ChunkNum  │          CMD 1     │                        Data1                    │             ...             │         CMD N     │                       DataN                    │         
  * └───────────┴───────────┴───────────┴───────────────────────┴────────────┴───────────┴───────────────────────┘         
  *                                                                                                                                                                                                                                            
  * Chunk                                                                                                                  
@@ -15,7 +15,7 @@
  */
 
 /*
-- MagicNum: "mn" 2 byte.
+- MagicNum: "mn" 2 byte. currently 2 bytes used, but implicitly reserved for later use
                       Magic number for verify message
 - ChunkNum: number of chunks, the total chunks length is CHunkNum x 6 byte.
 - CMD: command, 0 - 255, max 256 commands. 2 byte.

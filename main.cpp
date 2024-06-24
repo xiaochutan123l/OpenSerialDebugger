@@ -25,4 +25,6 @@ TODO List:
 - command add print function
 - add data range verification (lineedit validator?)
 - after new file loaded, clear all lineedit and combobox content
+- send history update after got success sent out
+- check command ptr if is null and also like type, name ... validation
 */

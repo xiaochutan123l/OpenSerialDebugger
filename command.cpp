@@ -34,3 +34,54 @@ void Command::initData(const DataType type) {
         break;
     }
 }
+
+QByteArray Command::generateCommandBytes() {
+    QByteArray byteArray;
+    QDataStream stream(&byteArray, QDataStream::WriteOnly);
+    stream.setByteOrder(QDataStream::ByteOrder::LittleEndian);
+
+    // MagicNum
+    uint16_t magicNum = 0xABCD;
+    stream << magicNum;
+
+    // ChunkNum
+    uint16_t chunkNum = 1;
+    stream << chunkNum;
+    uint16_t num = number();
+    qDebug() << "m_number: " << num;
+    // CMD number
+    //if (m_number) {
+        stream << m_number;
+    //}
+
+    // data
+    switch (m_dataType) {
+    case UINT: {
+        uint32_t value = m_data.toUInt();
+        stream << value;
+        break;
+    }
+    case INT: {
+        int32_t value = m_data.toInt();
+        stream << value;
+        break;
+    }
+    case FLOAT: {
+        float value = m_data.toFloat();
+        stream.writeRawData(reinterpret_cast<const char*>(&value), sizeof(float));
+        break;
+    }
+    case BOOL: {
+        bool value = m_data.toBool();
+        uint32_t boolValue = value ? 1 : 0;
+        stream << boolValue;
+        break;
+    }
+    case UNKNOWN:
+    default:
+        // Handle unknown data type if necessary
+        break;
+    }
+
+    return byteArray;
+}

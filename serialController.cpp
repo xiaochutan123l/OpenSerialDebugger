@@ -42,34 +42,25 @@ SerialController::SerialController(QObject *parent, QLabel *connectStatus)
 //    });
 }
 
-//void SerialController::resetMotors() {
-//    if(m_port->isWritable()){
-//        for (int i = 1; i < 7; i++) {
-//            QString data = QString::number(i) + "," + QString::number(1500) + "," + QString::number(2000) + '\n';
-//            m_port->write(data.toUtf8());
-//            m_port->waitForBytesWritten();
-//            m_motor_mgr->setMotorPosition(i, 1500);
-//        }
-//    }
-//}
+void SerialController::onSendMessage(QString &message) {
+    if(m_port->isWritable()){
+       m_port->write(message.toUtf8());
+       //m_port->waitForBytesWritten();
+    }
+    else {
+        qDebug() << "serial port not writable";
+    }
+}
 
-//void SerialController::sendMsg(int motorId, int toPosition, int time) {
-//    int t = m_motor_mgr->calc_move_time(motorId, toPosition);
-
-//    if(m_port->isWritable()){
-//        QString data = QString::number(motorId) + "," + QString::number(toPosition) + "," + QString::number(t) + '\n';
-//        std::cout << data.toStdString() << std::endl;
-//        m_port->write(data.toUtf8());
-//        m_port->waitForBytesWritten();
-//        std::cout <<  "it should sent" << std::endl;
-//        m_motor_mgr->setMotorPosition(motorId, toPosition);
-//    }
-//    else{
-//        std::cout <<  "device open failed" << std::endl;
-//        // if serial port not writable, new position should not be Selectedd.
-//        //m_motor_mgr->setMotorPosition(motorId, toPosition);
-//    }
-//}
+void SerialController::onSendCommand(QByteArray &command) {
+    if(m_port->isWritable()){
+        m_port->write(command);
+        //m_port->waitForBytesWritten();
+    }
+    else {
+        qDebug() << "serial port not writable";
+    }
+}
 
 // realtime find available ports.
 void SerialController::onComClicked() {

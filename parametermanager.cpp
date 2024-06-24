@@ -79,6 +79,10 @@ ParameterComboWidget& ParameterComboWidget::operator=(ParameterComboWidget &&oth
 
 void ParameterComboWidget::onCmdSelected(const QString & name) {
     m_command = &((*m_commands)[name]);
+    // if (m_command->number() == 0) {
+    //     qDebug() << "nummptr";
+    // }
+    // qDebug() << m_command->number();
 }
 
 void ParameterComboWidget::addComboBoxList(QList<QString> &names) {
@@ -105,11 +109,13 @@ getParameterComboWidget::getParameterComboWidget(QPushButton *get_button,
                            commandNames,
                            parent) {}
 
-void getParameterComboWidget::connect_widgets() {
+void getParameterComboWidget::connect_widgets(parameterManager *pManager) {
     static bool connected = false;
     if (!connected) {
         //connect(m_line_input, &QLineEdit::editingFinished, this, &getParameterComboWidget::onDataUpdated);
+        connect(m_combo_box, &QComboBox::currentTextChanged, this, &getParameterComboWidget::onCmdSelected);
         connect(m_button, &QPushButton::clicked, this, &getParameterComboWidget::onGetButtonPushed);
+        connect(this, &getParameterComboWidget::sendCommand, pManager, &parameterManager::sendCommandBytes);
     }
 }
 
@@ -118,6 +124,8 @@ void getParameterComboWidget::onDataUpdated() {
 }
 void getParameterComboWidget::onGetButtonPushed() {
     qDebug() << "onGetButtonPushed";
+    QByteArray cmd = m_command->generateCommandBytes();
+    emit sendCommand(cmd);
 }
 
 /* ----------------------- setParameterComboWidget --------------------------*/
@@ -135,11 +143,13 @@ setParameterComboWidget::setParameterComboWidget(QPushButton *send_button,
                            commandNames,
                            parent) {}
 
-void setParameterComboWidget::connect_widgets() {
+void setParameterComboWidget::connect_widgets(parameterManager *pManager) {
     static bool connected = false;
     if (!connected) {
+        connect(m_combo_box, &QComboBox::currentTextChanged, this, &setParameterComboWidget::onCmdSelected);
         connect(m_line_input, &QLineEdit::editingFinished, this, &setParameterComboWidget::onDataStringChanged);
         connect(m_button, &QPushButton::clicked, this, &setParameterComboWidget::onSendButtonPushed);
+        connect(this, &setParameterComboWidget::sendCommand, pManager, &parameterManager::sendCommandBytes);
     }
 }
 
@@ -148,6 +158,8 @@ void setParameterComboWidget::onDataStringChanged() {
 }
 void setParameterComboWidget::onSendButtonPushed() {
     qDebug() << "onSendButtonPushed";
+    QByteArray cmd = m_command->generateCommandBytes();
+    emit sendCommand(cmd);
 }
 
 /* ----------------------- switchParameterComboWidget --------------------------*/
@@ -164,15 +176,19 @@ switchParameterComboWidget::switchParameterComboWidget(QPushButton *action_butto
                            commandNames,
                            parent) {}
 
-void switchParameterComboWidget::connect_widgets() {
+void switchParameterComboWidget::connect_widgets(parameterManager *pManager) {
     static bool connected = false;
     if (!connected) {
+        connect(m_combo_box, &QComboBox::currentTextChanged, this, &switchParameterComboWidget::onCmdSelected);
         connect(m_button, &QPushButton::clicked, this, &switchParameterComboWidget::onActionButtonPushed);
+        connect(this, &switchParameterComboWidget::sendCommand, pManager, &parameterManager::sendCommandBytes);
     }
 }
 
 void switchParameterComboWidget::onActionButtonPushed() {
     qDebug() << "onActionButtonPushed";
+    QByteArray cmd = m_command->generateCommandBytes();
+    emit sendCommand(cmd);
 }
 
 /* ----------------------- parameterManager --------------------------*/
@@ -223,6 +239,11 @@ void parameterManager::addSwitchComboWidget(QPushButton *action_button,
                            this);
 }
 
+void parameterManager::onSendCommandBytes(QByteArray &cmd) {
+    qDebug() << "parameter manager: send command";
+    emit sendCommandBytes(cmd);
+}
+
 void parameterManager::onNewFileLoaded() {
     // clean maps before loading new data.
     m_getCommands.clear();
@@ -241,14 +262,14 @@ void parameterManager::onNewFileParsed() {
 
     for (auto it = m_getList.begin(); it != m_getList.end(); ++it) {
         it->addComboBoxList(m_getCommandNames);
-        it->connect_widgets();
+        it->connect_widgets(this);
     }
     for (auto it = m_setList.begin(); it != m_setList.end(); ++it) {
         it->addComboBoxList(m_setCommandNames);
-        it->connect_widgets();
+        it->connect_widgets(this);
     }
     for (auto it = m_switchList.begin(); it != m_switchList.end(); ++it) {
         it->addComboBoxList(m_switchCommandNames);
-        it->connect_widgets();
+        it->connect_widgets(this);
     }
 }

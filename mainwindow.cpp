@@ -44,6 +44,12 @@ MainWindow::MainWindow(QWidget *parent)
     ui->display_plot->xAxis->setRange(0, 6, Qt::AlignCenter);
     ui->display_plot->yAxis->setRange(0, 10, Qt::AlignCenter);
 
+    /* ----------------------- Serial send monitor --------------------------*/
+    m_serial_send_monitor = new serialSendMonitor(ui->pushButton_serialSend, ui->lineEdit_serialSend, ui->textBrowser_send_history, this);
+    m_serial_send_monitor->connect_widgets();
+    connect(m_serial_send_monitor, &serialSendMonitor::sendCommand, m_serial_controller, &SerialController::onSendCommand);
+    connect(m_serial_send_monitor, &serialSendMonitor::sendMessage, m_serial_controller, &SerialController::onSendMessage);
+
     /* ----------------------- parameters --------------------------*/
     m_parameter_manager = new parameterManager(ui->pushButton_load_parameters, this);
 
@@ -69,6 +75,8 @@ MainWindow::MainWindow(QWidget *parent)
     m_parameter_manager->addSwitchComboWidget(ui->pushButton_action2, ui->comboBox_action2);
     m_parameter_manager->addSwitchComboWidget(ui->pushButton_action3, ui->comboBox_action3);
     m_parameter_manager->addSwitchComboWidget(ui->pushButton_action4, ui->comboBox_action4);
+
+    connect(m_parameter_manager, &parameterManager::sendCommandBytes, m_serial_controller, &SerialController::onSendCommand);
 
 }
 

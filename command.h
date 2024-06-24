@@ -20,7 +20,7 @@ public:
         BOOL,
         UNKNOWN
     };
-    Command() : m_name(""), m_type(NONE), m_number(0), m_dataType(UNKNOWN) {};
+    Command() : m_name(""), m_type(NONE), m_number(0), m_dataType(UNKNOWN) { qDebug() << "command default constructor";};
     Command(const QString &name, CommandType type, uint16_t number, const QString &dataType)
         : m_name(name), m_type(type), m_number(number) {
         m_dataType = stringToDataType(dataType);
@@ -35,6 +35,8 @@ public:
     QVariant data() const { return m_data; }
 
     void initData(const DataType type);
+
+    QByteArray generateCommandBytes();
 
 private:
     QString m_name;

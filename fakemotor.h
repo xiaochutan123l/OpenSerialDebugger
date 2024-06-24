@@ -5,7 +5,7 @@
 #include <QTimer>
 #include <QDebug>
 
-#define MotorTimerInterval 10 // ms
+#define MotorTimerInterval 50 // ms
 
 class fakeMotor : public QObject
 {

@@ -36,6 +36,11 @@ bool FakeSerialPort::close()
     return true;
 }
 
+bool FakeSerialPort::isWritable() const
+{
+    return m_isOpen;
+}
+
 bool FakeSerialPort::isOpen() const
 {
     return m_isOpen;
@@ -47,6 +52,7 @@ void FakeSerialPort::write(const QByteArray &data)
 //        // 模拟接收到的数据
 //        m_buffer.append(data);
 //        m_buffer.append("\n"); // 添加换行符以模拟数据行
+        qDebug() << "send to motor received data" << data;
         m_motor.receiveData(data);
     } else {
         emit errorOccurred("Port is not open");

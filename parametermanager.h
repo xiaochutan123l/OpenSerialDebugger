@@ -6,6 +6,9 @@
 #include <QtWidgets/QComboBox>
 #include "command.h"
 #include "protocolparser.h"
+
+class parameterManager;
+
 /* ----------------------- ParameterComboWidget --------------------------*/
 
 class ParameterComboWidget: public QObject {
@@ -30,10 +33,13 @@ public:
     // Move assignment constructor
     ParameterComboWidget& operator=(ParameterComboWidget &&other_widget);
 
+signals:
+    void sendCommand(QByteArray &cmd);
+
 public slots:
     void onCmdSelected(const QString & name);
     // void onDataUpdated();
-    virtual void connect_widgets()=0;
+    virtual void connect_widgets(parameterManager *pManager)=0;
 
     void addComboBoxList(QList<QString> &names);
     void clearComboBoxList();
@@ -64,7 +70,7 @@ public slots:
     void onDataUpdated();
     void onGetButtonPushed();
 public:
-    void connect_widgets();
+    void connect_widgets(parameterManager *pManager);
 };
 
 /* ----------------------- setParameterComboWidget --------------------------*/
@@ -79,11 +85,12 @@ public:
                                     QMap<QString, Command> *commands,
                                     QList<QString> *commandNames,
                                     QObject *parent = nullptr);
+
 public slots:
     void onDataStringChanged();
     void onSendButtonPushed();
 public:
-    void connect_widgets();
+    void connect_widgets(parameterManager *pManager);
 };
 
 /* ----------------------- switchParameterComboWidget --------------------------*/
@@ -100,7 +107,7 @@ public:
 public slots:
     void onActionButtonPushed();
 public:
-    void connect_widgets();
+    void connect_widgets(parameterManager *pManager);
 };
 
 /* ----------------------- parameterManager --------------------------*/
@@ -119,14 +126,14 @@ public:
     void addSwitchComboWidget(QPushButton *action_button,
                            QComboBox *combo_box);
 
-// signals:
-//     void sendCommandBytes(QByteArray &cmd);
+signals:
+    void sendCommandBytes(QByteArray &cmd);
 
 public slots:
     void onNewFileLoaded();
     void onNewFileParsed();
 
-    //void onSendCommandBytes(QByteArray &cmd);
+    void onSendCommandBytes(QByteArray &cmd);
 private:
     QList<setParameterComboWidget> m_setList;
     QList<getParameterComboWidget> m_getList;

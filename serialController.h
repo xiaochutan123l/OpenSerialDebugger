@@ -46,6 +46,9 @@ public slots:
 
     void onTimerTimeout();
 
+    void onSendMessage(QString &message);
+    void onSendCommand(QByteArray &command);
+
 public:
     QStringList m_Bauderate_list_str = {"1200", "2400", "4800", "9600", "19200", "38400", "57600", "115200"};
     QStringList m_Parity_list_str = {"None", "Even", "Odd", "Mark", "Space"};

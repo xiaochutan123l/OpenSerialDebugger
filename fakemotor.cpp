@@ -26,7 +26,7 @@ void fakeMotor::onTimeout()
 }
 
 void fakeMotor::receiveData(const QByteArray &data) {
-
+    qDebug() << "motor received data" << data;
 }
 
 QByteArray fakeMotor::generateNumberString() {

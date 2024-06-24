@@ -6,7 +6,7 @@
 #include "serialController.h"
 #include "serialmonitor.h"
 #include "serialplotter.h"
-
+#include "serialsendmonitor.h"
 #include "parametermanager.h"
 
 QT_BEGIN_NAMESPACE
@@ -35,5 +35,6 @@ private:
     serialMonitor *m_serial_monitor;
     serialPlotter *m_serial_plotter;
     parameterManager *m_parameter_manager;
+    serialSendMonitor *m_serial_send_monitor;
 };
 #endif // MAINWINDOW_H

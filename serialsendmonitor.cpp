@@ -19,8 +19,11 @@ void serialSendMonitor::onSendSuccess() {
 }
 
 void serialSendMonitor::onSendButtonClicked() {
-    QString message = m_send_message->text();
+    QString message = m_message_input->text();
+    m_message_input->clear();
     if (message != "") {
+        qDebug() << "send message: " << message;
+        updateHistory(message);
         emit sendMessage(message);
     }
 }
@@ -29,8 +32,8 @@ void serialSendMonitor::connect_widgets() {
     connect(m_send_message, &QPushButton::clicked, this, &serialSendMonitor::onSendButtonClicked);
 }
 
-void serialSendMonitor::updateHistory() {
-
+void serialSendMonitor::updateHistory(QString &message) {
+    m_send_history->append(message);
 }
 
 void serialSendMonitor::clearHistory() {

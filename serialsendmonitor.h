@@ -4,6 +4,7 @@
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QLineEdit>
 #include <QTextBrowser>
+#include <QDebug>
 
 class serialSendMonitor: public QObject {
     Q_OBJECT
@@ -26,7 +27,7 @@ public:
     void connect_widgets();
 
 private:
-    void updateHistory();
+    void updateHistory(QString &message);
     void clearHistory();
 
 
