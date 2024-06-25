@@ -77,13 +77,26 @@ ParameterComboWidget& ParameterComboWidget::operator=(ParameterComboWidget &&oth
     return *this;
 }
 
-void ParameterComboWidget::onCmdSelected(const QString & name) {
-
-    m_command = &((*m_commands)[name]);
+void ParameterComboWidget::setWidgetsVisible(bool visible) {
+    QSizePolicy sp_retain;
     if (m_line_input != nullptr) {
-        m_command->setData(m_line_input->text());
+        //m_line_input->setVisible(visible);
+        sp_retain = m_line_input->sizePolicy();
+        sp_retain.setRetainSizeWhenHidden(true);
+        m_line_input->setSizePolicy(sp_retain);
+        m_line_input->setVisible(visible);
     }
-    qDebug() << "command selected: " << m_command->name();
+    // m_button->setVisible(visible);
+    // m_combo_box->setVisible(visible);
+    sp_retain = m_button->sizePolicy();
+    sp_retain.setRetainSizeWhenHidden(true);
+    m_button->setSizePolicy(sp_retain);
+    m_button->setVisible(visible);
+
+    sp_retain = m_combo_box->sizePolicy();
+    sp_retain.setRetainSizeWhenHidden(true);
+    m_combo_box->setSizePolicy(sp_retain);
+    m_combo_box->setVisible(visible);
 }
 
 void ParameterComboWidget::setComboBoxList(QList<QString> &names) {
@@ -97,6 +110,15 @@ void ParameterComboWidget::clearWidget() {
         m_line_input->clear();
     }
     m_command = nullptr;
+}
+
+void ParameterComboWidget::onCmdSelected(const QString & name) {
+
+    m_command = &((*m_commands)[name]);
+    if (m_line_input != nullptr) {
+        m_command->setData(m_line_input->text());
+    }
+    qDebug() << "command selected: " << m_command->name();
 }
 
 /* ----------------------- getParameterComboWidget --------------------------*/
@@ -298,6 +320,9 @@ void parameterManager::onNewFileParsed() {
     m_setCommandNames = m_setCommands.keys();
     m_switchCommandNames = m_switchCommands.keys();
 
+    int count = 0;
+    int size = m_getCommandNames.size();
+
     for (auto it = m_getList.begin(); it != m_getList.end(); ++it) {
         if (!first_load) {
             it->clearWidget();
@@ -305,7 +330,19 @@ void parameterManager::onNewFileParsed() {
         }
         it->setComboBoxList(m_getCommandNames);
         it->connect_widgets(this);
+
+        if (count < size) {
+            it->setWidgetsVisible(true);
+        }
+        else {
+            it->setWidgetsVisible(false);
+        }
+        count++;
     }
+
+    count = 0;
+    size = m_setCommandNames.size();
+
     for (auto it = m_setList.begin(); it != m_setList.end(); ++it) {
         if (!first_load) {
             it->clearWidget();
@@ -313,7 +350,19 @@ void parameterManager::onNewFileParsed() {
         }
         it->setComboBoxList(m_setCommandNames);
         it->connect_widgets(this);
+
+        if (count < size) {
+            it->setWidgetsVisible(true);
+        }
+        else {
+            it->setWidgetsVisible(false);
+        }
+        count++;
     }
+
+    count = 0;
+    size = m_switchCommandNames.size();
+
     for (auto it = m_switchList.begin(); it != m_switchList.end(); ++it) {
         if (!first_load) {
             it->clearWidget();
@@ -321,5 +370,13 @@ void parameterManager::onNewFileParsed() {
         }
         it->setComboBoxList(m_switchCommandNames);
         it->connect_widgets(this);
+
+        if (count < size) {
+            it->setWidgetsVisible(true);
+        }
+        else {
+            it->setWidgetsVisible(false);
+        }
+        count++;
     }
 }

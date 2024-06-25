@@ -33,6 +33,10 @@ public:
     // Move assignment constructor
     ParameterComboWidget& operator=(ParameterComboWidget &&other_widget);
 
+    void setComboBoxList(QList<QString> &names);
+    void clearWidget();
+    void setWidgetsVisible(bool visible);
+
 signals:
     void sendCommand(QByteArray &cmd);
 
@@ -40,9 +44,7 @@ public slots:
     void onCmdSelected(const QString & name);
     // void onDataUpdated();
     virtual void connect_widgets(parameterManager *pManager)=0;
-public:
-    void setComboBoxList(QList<QString> &names);
-    void clearWidget();
+
 protected:
 
     QPushButton *m_button;
