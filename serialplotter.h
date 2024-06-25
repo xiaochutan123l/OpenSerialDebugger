@@ -14,6 +14,7 @@ public:
     serialPlotter(QObject *parent,
                   QPushButton *clear,
                   QPushButton *save,
+                  QPushButton *stop,
                   QCustomPlot *display_plot,
                   QScrollBar *display_verticalScrollBar,
                   QScrollBar *display_horizontalScrollBar);
@@ -29,6 +30,7 @@ public slots:
 
     void onSaveButtonClicked();
     void onClearButtonClicked();
+    void onStopButtonClicked();
 private:
     bool isValidFormat(const QString &line);
 
@@ -45,6 +47,8 @@ private:
 
     QPushButton *m_button_clear;
     QPushButton *m_button_save;
+    QPushButton *m_button_stop;
+    bool m_stop = false;
 };
 
 #endif // SERIALPLOTTER_H

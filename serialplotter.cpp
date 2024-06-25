@@ -5,12 +5,14 @@ QVector<double> extractNumbers(const QString &input);
 serialPlotter::serialPlotter(QObject *parent,
                              QPushButton *clear,
                              QPushButton *save,
+                             QPushButton *stop,
                              QCustomPlot *display_plot,
                              QScrollBar *display_verticalScrollBar,
                              QScrollBar *display_horizontalScrollBar)
     : QObject(parent),
     m_button_clear(clear),
     m_button_save(save),
+    m_button_stop(stop),
     m_display_plot(display_plot),
     m_display_verticalScrollBar(display_verticalScrollBar),
     m_display_horizontalScrollBar(display_horizontalScrollBar)
@@ -21,6 +23,7 @@ serialPlotter::serialPlotter(QObject *parent,
     connect(m_display_plot->yAxis, SIGNAL(rangeChanged(QCPRange)), this, SLOT(yAxisChanged(QCPRange)));
     connect(m_button_clear, &QPushButton::clicked, this, &serialPlotter::onClearButtonClicked);
     connect(m_button_save, &QPushButton::clicked, this, &serialPlotter::onSaveButtonClicked);
+    connect(m_button_stop, &QPushButton::clicked, this, &serialPlotter::onStopButtonClicked);
 
     setupDisplayPlot(MAX_GRAPH_NUM);
     // configure scroll bars:
@@ -122,6 +125,9 @@ void serialPlotter::setupDisplayPlot(int numGraphs)
 
 void serialPlotter::updateDisplayPlot(const QVector<double> &yValues)
 {
+    if (m_stop) {
+        return;
+    }
     // 更新 x 轴数据
     m_xData.append(++m_x_count);
 
@@ -185,4 +191,14 @@ void serialPlotter::onClearButtonClicked() {
     setupDisplayPlot(MAX_GRAPH_NUM);
 
     m_display_plot->replot();
+}
+
+void serialPlotter::onStopButtonClicked() {
+    m_stop = !m_stop;
+    if (m_stop) {
+        m_button_stop->setText("Run");
+    }
+    else {
+        m_button_stop->setText("Stop");
+    }
 }

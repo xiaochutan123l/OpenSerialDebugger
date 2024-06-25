@@ -38,7 +38,13 @@ MainWindow::MainWindow(QWidget *parent)
 
     /* ----------------------- Serial plotter --------------------------*/
     // TODO: added two undifined buttons
-    m_serial_plotter = new serialPlotter(this, ui->pushButton_plotter_clear, ui->pushButton_plotter_save, ui->display_plot, ui->display_verticalScrollBar, ui->display_horizontalScrollBar);
+    m_serial_plotter = new serialPlotter(this,
+                                         ui->pushButton_plotter_clear,
+                                         ui->pushButton_plotter_save,
+                                         ui->pushButton_plotter_stop,
+                                         ui->display_plot,
+                                         ui->display_verticalScrollBar,
+                                         ui->display_horizontalScrollBar);
     connect(m_serial_monitor, &serialMonitor::newLineReceived, m_serial_plotter, &serialPlotter::onNewLineReceived);
 
     ui->display_plot->xAxis->setRange(0, 6, Qt::AlignCenter);
