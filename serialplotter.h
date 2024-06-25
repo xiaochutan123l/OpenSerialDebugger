@@ -12,6 +12,8 @@ class serialPlotter : public QObject
     Q_OBJECT
 public:
     serialPlotter(QObject *parent,
+                  QPushButton *clear,
+                  QPushButton *save,
                   QCustomPlot *display_plot,
                   QScrollBar *display_verticalScrollBar,
                   QScrollBar *display_horizontalScrollBar);
@@ -24,6 +26,9 @@ public slots:
     void display_vertScrollBarChanged(int value);
     void xAxisChanged(QCPRange range);
     void yAxisChanged(QCPRange range);
+
+    void onSaveButtonClicked();
+    void onClearButtonClicked();
 private:
     bool isValidFormat(const QString &line);
 
@@ -37,6 +42,9 @@ private:
     double m_x_count = 0;
     QVector<double> m_xData;
     QVector<QVector<double>> m_graphData;
+
+    QPushButton *m_button_clear;
+    QPushButton *m_button_save;
 };
 
 #endif // SERIALPLOTTER_H

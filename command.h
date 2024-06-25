@@ -31,19 +31,15 @@ public:
     uint16_t number() const { return m_number; }
     DataType dataType() const { return m_dataType; }
 
-    void setData(const QVariant &data) { m_data = data; }
-    QVariant data() const { return m_data; }
-
-    void initData(const DataType type);
-
     QByteArray generateCommandBytes();
+    void setData(QString data) {m_data = data;};
 
 private:
     QString m_name;
     CommandType m_type;
     uint16_t m_number;
     DataType m_dataType;
-    QVariant m_data;
+    QString m_data;
 
     DataType stringToDataType(const QString &dataTypeStr) const;
 };

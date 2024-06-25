@@ -40,11 +40,11 @@ public slots:
     void onCmdSelected(const QString & name);
     // void onDataUpdated();
     virtual void connect_widgets(parameterManager *pManager)=0;
-
-    void addComboBoxList(QList<QString> &names);
-    void clearComboBoxList();
-//protected:
 public:
+    void setComboBoxList(QList<QString> &names);
+    void clearWidget();
+protected:
+
     QPushButton *m_button;
     QLineEdit *m_line_input;
     QComboBox *m_combo_box;
@@ -67,10 +67,11 @@ public:
                                      QObject *parent = nullptr);
 
 public slots:
-    void onDataUpdated();
+    void onDataUpdated(QString data);
     void onGetButtonPushed();
 public:
     void connect_widgets(parameterManager *pManager);
+    void disconnect_widgets(parameterManager *pManager);
 };
 
 /* ----------------------- setParameterComboWidget --------------------------*/
@@ -91,6 +92,7 @@ public slots:
     void onSendButtonPushed();
 public:
     void connect_widgets(parameterManager *pManager);
+    void disconnect_widgets(parameterManager *pManager);
 };
 
 /* ----------------------- switchParameterComboWidget --------------------------*/
@@ -108,6 +110,7 @@ public slots:
     void onActionButtonPushed();
 public:
     void connect_widgets(parameterManager *pManager);
+    void disconnect_widgets(parameterManager *pManager);
 };
 
 /* ----------------------- parameterManager --------------------------*/

@@ -29,11 +29,11 @@
 // command2, SWITCH, 0x34, bool
 // command3, SET, 0xff, float
  
-Set kp, SET, 0x01, int32
-Set ki, SET, 0x02, int32
-Set kd, SET, 0x03, int32
+Set kp, SET, 0x01, int
+Set ki, SET, 0x02, float
+Set kd, SET, 0x03, uint
 
-Get Position, GET, 0x04, int32
+Get Position, GET, 0x04, int
 Get Velocity, GET, 0x05, float
 
 Stop Motor, SWITCH, 0x06, bool

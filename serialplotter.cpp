@@ -3,18 +3,24 @@
 QVector<double> extractNumbers(const QString &input);
 
 serialPlotter::serialPlotter(QObject *parent,
+                             QPushButton *clear,
+                             QPushButton *save,
                              QCustomPlot *display_plot,
                              QScrollBar *display_verticalScrollBar,
                              QScrollBar *display_horizontalScrollBar)
     : QObject(parent),
-      m_display_plot(display_plot),
-      m_display_verticalScrollBar(display_verticalScrollBar),
-      m_display_horizontalScrollBar(display_horizontalScrollBar)
+    m_button_clear(clear),
+    m_button_save(save),
+    m_display_plot(display_plot),
+    m_display_verticalScrollBar(display_verticalScrollBar),
+    m_display_horizontalScrollBar(display_horizontalScrollBar)
 {
     connect(m_display_horizontalScrollBar, SIGNAL(valueChanged(int)), this, SLOT(display_horzScrollBarChanged(int)));
     connect(m_display_verticalScrollBar, SIGNAL(valueChanged(int)), this, SLOT(display_vertScrollBarChanged(int)));
     connect(m_display_plot->xAxis, SIGNAL(rangeChanged(QCPRange)), this, SLOT(xAxisChanged(QCPRange)));
     connect(m_display_plot->yAxis, SIGNAL(rangeChanged(QCPRange)), this, SLOT(yAxisChanged(QCPRange)));
+    connect(m_button_clear, &QPushButton::clicked, this, &serialPlotter::onClearButtonClicked);
+    connect(m_button_save, &QPushButton::clicked, this, &serialPlotter::onSaveButtonClicked);
 
     setupDisplayPlot(MAX_GRAPH_NUM);
     // configure scroll bars:
@@ -165,3 +171,18 @@ QVector<double> extractNumbers(const QString &input)
     return numbers;
 }
 
+void serialPlotter::onSaveButtonClicked() {
+    // TODO
+}
+
+void serialPlotter::onClearButtonClicked() {
+    m_display_plot->clearGraphs();
+
+    m_graphData.clear();
+    m_xData.clear();
+    m_x_count = 0;
+
+    setupDisplayPlot(MAX_GRAPH_NUM);
+
+    m_display_plot->replot();
+}
