@@ -37,6 +37,8 @@ private:
     void setupDisplayPlot(int numGraphs);
     void updateDisplayPlot(const QVector<double> &yValues);
 
+    void savePlotDataToCSV(const QString &fileName);
+
     QCustomPlot *m_display_plot;
     QScrollBar *m_display_verticalScrollBar;
     QScrollBar *m_display_horizontalScrollBar;

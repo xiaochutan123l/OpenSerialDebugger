@@ -1,4 +1,7 @@
 #include "serialplotter.h"
+#include <QFile>
+#include <QTextStream>
+#include <QFileDialog>
 
 QVector<double> extractNumbers(const QString &input);
 
@@ -178,7 +181,13 @@ QVector<double> extractNumbers(const QString &input)
 }
 
 void serialPlotter::onSaveButtonClicked() {
-    // TODO
+    // if (m_stop) {
+    //     return;
+    // }
+    QString fileName = QFileDialog::getSaveFileName(nullptr, "Save Plot Data", "", "CSV files (*.csv)");
+    if (!fileName.isEmpty()) {
+        savePlotDataToCSV(fileName);
+    }
 }
 
 void serialPlotter::onClearButtonClicked() {
@@ -200,5 +209,37 @@ void serialPlotter::onStopButtonClicked() {
     }
     else {
         m_button_stop->setText("Stop");
+    }
+}
+
+void serialPlotter::savePlotDataToCSV(const QString &fileName) {
+    QFile file(fileName);
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out(&file);
+
+        // 写入标题行
+        out << "X";
+        for (int i = 0; i < m_graphData.size(); ++i) {
+            out << ",Y" << i + 1;
+        }
+        out << "\n";
+
+        // 写入数据行
+        for (int j = 0; j < m_xData.size(); ++j) {
+            out << m_xData[j];
+            for (int i = 0; i < m_graphData.size(); ++i) {
+                if (j < m_graphData[i].size()) {
+                    out << "," << m_graphData[i][j];
+                } else {
+                    out << ",";
+                }
+            }
+            out << "\n";
+        }
+
+        file.close();
+        qDebug() << "Save succeed: " << fileName;
+    } else {
+        qDebug() << "Failed to open file for writing: " << fileName;
     }
 }
