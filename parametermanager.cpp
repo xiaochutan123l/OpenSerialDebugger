@@ -116,6 +116,8 @@ getParameterComboWidget::getParameterComboWidget(QPushButton *get_button,
 
 void getParameterComboWidget::connect_widgets(parameterManager *pManager) {
     //connect(m_line_input, &QLineEdit::editingFinished, this, &getParameterComboWidget::onDataUpdated);
+    m_line_input->setReadOnly(true);
+    m_line_input->clear();
     connect(m_combo_box, &QComboBox::currentTextChanged, this, &getParameterComboWidget::onCmdSelected);
     connect(m_button, &QPushButton::clicked, this, &getParameterComboWidget::onGetButtonPushed);
     connect(this, &getParameterComboWidget::sendCommand, pManager, &parameterManager::sendCommandBytes);
@@ -134,6 +136,10 @@ void getParameterComboWidget::onDataUpdated(QString data) {
 }
 void getParameterComboWidget::onGetButtonPushed() {
     qDebug() << "onGetButtonPushed";
+    if (m_command == nullptr) {
+        qDebug() << "command not selected, send nothing";
+        return;
+    }
     QByteArray cmd = m_command->generateCommandBytes();
     emit sendCommand(cmd);
 }
@@ -174,6 +180,10 @@ void setParameterComboWidget::onDataStringChanged() {
 }
 void setParameterComboWidget::onSendButtonPushed() {
     qDebug() << "onSendButtonPushed";
+    if (m_command == nullptr) {
+        qDebug() << "command not selected, send nothing";
+        return;
+    }
     QByteArray cmd = m_command->generateCommandBytes();
     emit sendCommand(cmd);
 }
@@ -206,6 +216,10 @@ void switchParameterComboWidget::disconnect_widgets(parameterManager *pManager) 
 
 void switchParameterComboWidget::onActionButtonPushed() {
     qDebug() << "onActionButtonPushed";
+    if (m_command == nullptr) {
+        qDebug() << "command not selected, send nothing";
+        return;
+    }
     m_command->setData("1");
     QByteArray cmd = m_command->generateCommandBytes();
     emit sendCommand(cmd);

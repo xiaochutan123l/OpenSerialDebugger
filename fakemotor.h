@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QTimer>
 #include <QDebug>
+#include "packethandler.h"
 
 #define MotorTimerInterval 50 // ms
 
@@ -25,6 +26,7 @@ public:
 private:
     QByteArray generateNumberString();
     //QByteArray generateString();
+    packetHandler m_packethandler;
 };
 
 #endif // FAKEMOTOR_H

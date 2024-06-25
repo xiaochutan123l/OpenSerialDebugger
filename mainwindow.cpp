@@ -76,7 +76,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_parameter_manager->addSwitchComboWidget(ui->pushButton_action3, ui->comboBox_action3);
     m_parameter_manager->addSwitchComboWidget(ui->pushButton_action4, ui->comboBox_action4);
 
-    connect(m_parameter_manager, &parameterManager::sendCommandBytes, m_serial_controller, &SerialController::onSendCommand);
+    //connect(m_parameter_manager, &parameterManager::sendCommandBytes, m_serial_controller, &SerialController::onSendCommand);
     connect(m_parameter_manager, &parameterManager::sendCommandBytes, m_serial_send_monitor, &serialSendMonitor::onSendCommand);
 
 }

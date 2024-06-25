@@ -83,6 +83,9 @@ set(PROJECT_SOURCES
         serialsendmonitor.h
         serialsendmonitor.cpp
 
+        packethandler.h
+        packethandler.cpp
+
     )
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(QMotorMaster

@@ -20,15 +20,15 @@ QByteArray Command::generateCommandBytes() {
     stream.setByteOrder(QDataStream::ByteOrder::LittleEndian);
 
     // MagicNum
-    uint16_t magicNum = 0xAB;
+    uint8_t magicNum = 0xAB;
     stream << magicNum;
 
     // ChunkNum
-    uint16_t chunkNum = 1;
+    uint8_t chunkNum = 1;
     stream << chunkNum;
 
     // CMD number
-     stream << m_number;
+    stream << m_number;
 
     // data
      switch (m_dataType) {

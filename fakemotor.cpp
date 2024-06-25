@@ -26,7 +26,8 @@ void fakeMotor::onTimeout()
 }
 
 void fakeMotor::receiveData(const QByteArray &data) {
-    qDebug() << "motor received data" << data;
+    qDebug() << "motor received data" << data.toHex(' ');
+    m_packethandler.hanler(reinterpret_cast<uint8_t*>(const_cast<char*>(data.data())));
 }
 
 QByteArray fakeMotor::generateNumberString() {
