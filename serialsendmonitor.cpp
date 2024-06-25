@@ -11,6 +11,7 @@ serialSendMonitor::serialSendMonitor(QPushButton *send_button,
 
 
 void serialSendMonitor::onSendCommand(QByteArray &command) {
+    m_send_history->append(command.toHex(' '));
     emit sendCommand(command);
 }
 

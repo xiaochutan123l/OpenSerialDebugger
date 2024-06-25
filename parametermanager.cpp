@@ -80,6 +80,9 @@ ParameterComboWidget& ParameterComboWidget::operator=(ParameterComboWidget &&oth
 void ParameterComboWidget::onCmdSelected(const QString & name) {
 
     m_command = &((*m_commands)[name]);
+    if (m_line_input != nullptr) {
+        m_command->setData(m_line_input->text());
+    }
     qDebug() << "command selected: " << m_command->name();
 }
 
