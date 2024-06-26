@@ -1,3 +1,6 @@
+#ifndef CLICKABLECOMBOBOX_H
+#define CLICKABLECOMBOBOX_H
+
 #include <QComboBox>
 #include <QMouseEvent>
 
@@ -20,3 +23,5 @@ protected:
         QComboBox::mousePressEvent(event);
     }
 };
+
+#endif // CLICKABLECOMBOBOX_H

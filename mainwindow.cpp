@@ -10,27 +10,19 @@ MainWindow::MainWindow(QWidget *parent)
 
     /* --------------------  Serial port  --------------------------*/
 
-    m_serial_controller = new SerialController(this, ui->label_connectStatus);
-    // Set serial port combo boxes.
-    ui->comboBox_Baudrate->addItems(m_serial_controller->m_Bauderate_list_str);
-    ui->comboBox_PartBit->addItems(m_serial_controller->m_Parity_list_str);
-    ui->comboBox_DataBits->addItems(m_serial_controller->m_Databits_list_str);
-    ui->comboBox_StopBits->addItems(m_serial_controller->m_Stopbits_list_str);
-    ui->comboBox_FlowControl->addItems(m_serial_controller->m_Flowctr_list_str);
+    m_serial_controller = new SerialController( this,
+                                                ui->label_connectStatus,
+                                               ui->comboBox_COM,
+                                                ui->comboBox_Baudrate,
+                                                ui->comboBox_PartBit,
+                                                ui->comboBox_DataBits,
+                                                ui->comboBox_StopBits,
+                                               ui->comboBox_FlowControl);
 
-    ui->comboBox_Baudrate->setCurrentText(m_serial_controller->m_Bauderate_list_str[BAUDRATE_DEFUALT_INDEX]);
-
-    connect(ui->comboBox_Baudrate, &QComboBox::activated, m_serial_controller, &SerialController::onBaudRateSelected);
-    connect(ui->comboBox_PartBit, &QComboBox::activated, m_serial_controller, &SerialController::onParitySelected);
-    connect(ui->comboBox_DataBits, &QComboBox::activated, m_serial_controller, &SerialController::onDataBitsSelected);
-    connect(ui->comboBox_StopBits, &QComboBox::activated, m_serial_controller, &SerialController::onStopBitsSelected);
-    connect(ui->comboBox_FlowControl, &QComboBox::activated, m_serial_controller, &SerialController::onFlowControlSelected);
-    connect(ui->comboBox_COM, &ClickableComboBox::activated, m_serial_controller, &SerialController::onComSelected);
-    connect(ui->comboBox_COM, &ClickableComboBox::clicked, m_serial_controller, &SerialController::onComClicked);
     connect(ui->pushButton_serialConnect, &QPushButton::clicked, m_serial_controller, &SerialController::onConnectClicked);
     connect(ui->pushButton_serialDisconnect, &QPushButton::clicked, m_serial_controller, &SerialController::onDisconnectClicked);
 
-    connect(m_serial_controller, &SerialController::portListUpdate, this, &MainWindow::portListUpdate);
+   //onnect(m_serial_controller, &SerialController::portListUpdate, this, &MainWindow::portListUpdate);
 
     /* ----------------------- Serial monitor --------------------------*/
     m_serial_monitor = new serialMonitor(this, ui->textBrowser_serial_monitor, ui->pushButton_serialBufferClear);
@@ -96,9 +88,4 @@ MainWindow::~MainWindow()
     //delete ui;
     qDebug() <<  "delete ui done";
 
-}
-
-void MainWindow::portListUpdate(QList<QString> &port_name_list){
-    ui->comboBox_COM->clear();
-    ui->comboBox_COM->addItems(port_name_list);
 }

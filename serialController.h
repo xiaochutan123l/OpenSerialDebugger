@@ -8,6 +8,8 @@
 #include <QDebug>
 #include <QTimer>
 #include <QLabel>
+#include <QComboBox>
+#include <clickablecombobox.h>
 
 #ifdef USE_FAKE_SERIAL
 #include "fakeserialport.h"
@@ -21,7 +23,14 @@ class SerialController : public QObject{
     Q_OBJECT
 
 public:
-    SerialController(QObject *parent, QLabel *connectStatus);
+    SerialController(QObject *parent,
+                     QLabel *connectStatus,
+                     ClickableComboBox *com,
+                     QComboBox *baudrate,
+                     QComboBox *parity,
+                     QComboBox *databits,
+                     QComboBox *stopbits,
+                     QComboBox *flowcontrol);
     ~SerialController();
 
 signals:
@@ -29,7 +38,7 @@ signals:
     void portListUpdate(QList<QString> &port_name_list);
     void dataReceived(const QByteArray &data);
 
-public slots:
+private slots:
     // set port parameter when user Selecteds.
     // user expands list view.
     void onComClicked();
@@ -41,13 +50,12 @@ public slots:
     void onStopBitsSelected(int index);
     void onFlowControlSelected(int index);
 
-    void onConnectClicked();
-    void onDisconnectClicked();
-
     void onTimerTimeout();
-
+public slots:
     void onSendMessage(QString &message);
     void onSendCommand(QByteArray &command);
+    void onConnectClicked();
+    void onDisconnectClicked();
 
 public:
     QStringList m_Bauderate_list_str = {"1200", "2400", "4800", "9600", "19200", "38400", "57600", "115200"};
@@ -77,8 +85,18 @@ private:
     QSerialPort::StopBits m_stopbits;
     QSerialPort::Parity m_parity;
     QSerialPort::FlowControl m_flowcontrol;
+
     QLabel *m_connectStatus;
+    ClickableComboBox *m_combobox_com;
+    QComboBox *m_combobox_baudrate;
+    QComboBox *m_combobox_parity;
+    QComboBox *m_combobox_databits;
+    QComboBox *m_combobox_stopbits;
+    QComboBox *m_combobox_flowcontrol;
+
     QTimer *m_timer;
+
+
 };
 
 #endif // SerialController_H

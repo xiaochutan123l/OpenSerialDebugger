@@ -21,13 +21,6 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-    void setup_display_plot();
-
-private slots:
-
-  void portListUpdate(QList<QString> &port_name_list);
-
-
 private:
     Ui::MainWindow *ui;
 

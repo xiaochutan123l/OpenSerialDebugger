@@ -18,34 +18,72 @@ QList<QSerialPort::FlowControl> FlowControlList = {
 
 
 /* ----------------- member functions --------------------*/
-SerialController::SerialController(QObject *parent, QLabel *connectStatus)
-    : QObject(parent), m_connectStatus(connectStatus) {
+SerialController::SerialController(QObject *parent,
+                                   QLabel *connectStatus,
+                                   ClickableComboBox *com,
+                                   QComboBox *baudrate,
+                                   QComboBox *parity,
+                                   QComboBox *databits,
+                                   QComboBox *stopbits,
+                                   QComboBox *flowcontrol)
+    : QObject(parent),
+    m_connectStatus(connectStatus),
+    m_combobox_com(com),
+    m_combobox_baudrate(baudrate),
+    m_combobox_parity(parity),
+    m_combobox_databits(databits),
+    m_combobox_stopbits(stopbits),
+    m_combobox_flowcontrol(flowcontrol)
+{
 
+    // create serial port.
 #ifdef USE_FAKE_SERIAL
     m_port = new FakeSerialPort(this);
 #else
     m_port = new QSerialPort(this);
 #endif
 
+    // serial info
     m_portInfo = new QSerialPortInfo();
-    m_timer = new QTimer(this);
-    connect(m_timer, &QTimer::timeout, this, &SerialController::onTimerTimeout);
 
+    // init connection status
     updateConnectionStatus(false);
 
+    // set parameter default value
+    m_combobox_baudrate->addItems(m_Bauderate_list_str);
+    m_combobox_parity->addItems(m_Parity_list_str);
+    m_combobox_databits->addItems(m_Databits_list_str);
+    m_combobox_stopbits->addItems(m_Stopbits_list_str);
+    m_combobox_flowcontrol->addItems(m_Flowctr_list_str);
+
+    m_combobox_com->addItem("COM1");
+    m_com_name = "COM1";
+    m_combobox_baudrate->setCurrentText(m_Bauderate_list_str[BAUDRATE_DEFUALT_INDEX]);
     m_baudrate = BaudRateList[BAUDRATE_DEFUALT_INDEX];
     m_parity = ParityList[0];
     m_databits = DataBitsList[0];
     m_stopbits = StopBitsList[0];
     m_flowcontrol = FlowControlList[0];
 
+    connect(m_combobox_baudrate, &QComboBox::activated, this, &SerialController::onBaudRateSelected);
+    connect(m_combobox_parity, &QComboBox::activated, this, &SerialController::onParitySelected);
+    connect(m_combobox_databits, &QComboBox::activated, this, &SerialController::onDataBitsSelected);
+    connect(m_combobox_stopbits, &QComboBox::activated, this, &SerialController::onStopBitsSelected);
+    connect(m_combobox_flowcontrol, &QComboBox::activated, this, &SerialController::onFlowControlSelected);
+    connect(m_combobox_com, &ClickableComboBox::activated, this, &SerialController::onComSelected);
+    connect(m_combobox_com, &ClickableComboBox::clicked, this, &SerialController::onComClicked);
+
+    // init timer
+    m_timer = new QTimer(this);
+    connect(m_timer, &QTimer::timeout, this, &SerialController::onTimerTimeout);
     m_timer->setInterval(ReadDataTickTime);
+
+    // error handling
     connect(m_port, &QSerialPort::errorOccurred, this, [this](QSerialPort::SerialPortError error) {
-       if (error != QSerialPort::NoError) {
-            qDebug() << "port error: " << m_port->errorString();
-            //emit errorOccurred(m_port->errorString());
-            onDisconnectClicked();
-       }
+        if (error != QSerialPort::NoError) {
+            //qDebug() << "port error: " << m_port->errorString();
+            closePort();
+        }
     });
 }
 
@@ -77,40 +115,54 @@ void SerialController::onComClicked() {
         std::cout << label.toStdString() << std::endl;
         m_port_name_list.append(info.portName());
     }
-    emit portListUpdate(m_port_name_list);
+    m_combobox_com->clear();
+    m_combobox_com->addItems(m_port_name_list);
+    qDebug() << "com list com name:" << m_com_name;
+    m_combobox_com->setCurrentText(m_com_name);
 }
+
 
 void SerialController::onComSelected(int index)
 {
     m_com_name = m_port_name_list[index];
+    m_port->setPortName(m_com_name);
 }
 
 void SerialController::onBaudRateSelected(int index)
 {
     m_baudrate = BaudRateList[index];
+    m_port->setBaudRate(m_baudrate);
 }
 
 void SerialController::onParitySelected(int index)
 {
     m_parity = ParityList[index];
+    m_port->setParity(m_parity);
 }
 
 void SerialController::onDataBitsSelected(int index)
 {
     m_databits = DataBitsList[index];
+    m_port->setDataBits(m_databits);
 }
 
 void SerialController::onStopBitsSelected(int index)
 {
     m_stopbits = StopBitsList[index];
+    m_port->setStopBits(m_stopbits);
 }
 
 void SerialController::onFlowControlSelected(int index)
 {
     m_flowcontrol = FlowControlList[index];
+    m_port->setFlowControl(m_flowcontrol);
 }
 
 void SerialController::onConnectClicked() {
+    if (m_port->isOpen()) {
+        // is still open
+        return;
+    }
     m_port->setPortName(m_com_name);
     m_port->setBaudRate(m_baudrate);
     m_port->setParity(m_parity);
@@ -140,12 +192,14 @@ void SerialController::onConnectClicked() {
 }
 void SerialController::onDisconnectClicked() {
     closePort();
-    updateConnectionStatus(false);
-    m_timer->stop();
 }
 
 void SerialController::closePort() {
-    m_port->close();
+    if (m_port->isOpen()) {
+        m_port->close();
+        updateConnectionStatus(false);
+        m_timer->stop();
+    }
 }
 
 SerialController::~SerialController(){
@@ -161,16 +215,25 @@ void SerialController::onTimerTimeout() {
         const QByteArray data = m_port->readAll();
         emit dataReceived(data);
     }
-//    else {
-//        emit dataReceived("test =====");
-//    }
 }
 
 void SerialController::updateConnectionStatus(bool connected)
 {
     if (connected) {
         m_connectStatus->setPixmap(QPixmap(":/icons/icons/icon_connect.png"));
+        m_combobox_com->setEnabled(false);
+        m_combobox_baudrate->setEnabled(false);
+        m_combobox_parity->setEnabled(false);
+        m_combobox_databits->setEnabled(false);
+        m_combobox_stopbits->setEnabled(false);
+        m_combobox_flowcontrol->setEnabled(false);
     } else {
         m_connectStatus->setPixmap(QPixmap(":/icons/icons/icon_disconnect.png"));
+        m_combobox_com->setEnabled(true);
+        m_combobox_baudrate->setEnabled(true);
+        m_combobox_parity->setEnabled(true);
+        m_combobox_databits->setEnabled(true);
+        m_combobox_stopbits->setEnabled(true);
+        m_combobox_flowcontrol->setEnabled(true);
     }
 }
