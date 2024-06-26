@@ -40,12 +40,13 @@ SerialController::SerialController(QObject *parent, QLabel *connectStatus)
     m_flowcontrol = FlowControlList[0];
 
     m_timer->setInterval(ReadDataTickTime);
-   connect(m_port, &QSerialPort::errorOccurred, this, [this](QSerialPort::SerialPortError error) {
+    connect(m_port, &QSerialPort::errorOccurred, this, [this](QSerialPort::SerialPortError error) {
        if (error != QSerialPort::NoError) {
-           //emit errorOccurred(serialPort->errorString());
-           qDebug() << "port error: " << m_port->errorString();
+            qDebug() << "port error: " << m_port->errorString();
+            //emit errorOccurred(m_port->errorString());
+            onDisconnectClicked();
        }
-   });
+    });
 }
 
 void SerialController::onSendMessage(QString &message) {
