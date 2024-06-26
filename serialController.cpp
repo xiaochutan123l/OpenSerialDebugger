@@ -34,12 +34,18 @@ SerialController::SerialController(QObject *parent, QLabel *connectStatus)
     updateConnectionStatus(false);
 
     m_baudrate = BaudRateList[BAUDRATE_DEFUALT_INDEX];
+    m_parity = ParityList[0];
+    m_databits = DataBitsList[0];
+    m_stopbits = StopBitsList[0];
+    m_flowcontrol = FlowControlList[0];
+
     m_timer->setInterval(ReadDataTickTime);
-//    connect(serialPort, &QSerialPort::errorOccurred, this, [this](QSerialPort::SerialPortError error) {
-//        if (error != QSerialPort::NoError) {
-//            emit errorOccurred(serialPort->errorString());
-//        }
-//    });
+   connect(m_port, &QSerialPort::errorOccurred, this, [this](QSerialPort::SerialPortError error) {
+       if (error != QSerialPort::NoError) {
+           //emit errorOccurred(serialPort->errorString());
+           qDebug() << "port error: " << m_port->errorString();
+       }
+   });
 }
 
 void SerialController::onSendMessage(QString &message) {
@@ -69,8 +75,8 @@ void SerialController::onComClicked() {
         const QString label = info.portName();
         std::cout << label.toStdString() << std::endl;
         m_port_name_list.append(info.portName());
-        emit portListUpdate(m_port_name_list);
     }
+    emit portListUpdate(m_port_name_list);
 }
 
 void SerialController::onComSelected(int index)
@@ -110,19 +116,26 @@ void SerialController::onConnectClicked() {
     m_port->setDataBits(m_databits);
     m_port->setStopBits(m_stopbits);
     m_port->setFlowControl(m_flowcontrol);
+    qDebug() << "port name: " << m_com_name;
+    qDebug() << "baudrate: " << m_baudrate;
+    qDebug() << "parity: " << m_parity;
+    qDebug() << "databits: " << m_databits;
+    qDebug() << "stopbits: " << m_stopbits;
+    qDebug() << "flowcontrol: " << m_flowcontrol;
+
     if (m_com_name == "" || m_com_name == nullptr) {
         qDebug() <<  "device open failed: com not selected";
         return;
     }
     //qDebug() << "port name: " << m_com_name;
-    if (m_port->open(QIODevice::ReadWrite)){
+    if (m_port->open(QSerialPort::ReadWrite)){
         qDebug() <<  "device open success";
+        updateConnectionStatus(true);
+        m_timer->start();
     }
     else {
-        qDebug() <<  "device open failed";
+        qDebug() <<  "device open failed: " << m_com_name;
     }
-    updateConnectionStatus(true);
-    m_timer->start();
 }
 void SerialController::onDisconnectClicked() {
     closePort();

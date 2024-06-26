@@ -32,6 +32,7 @@ void fakeMotor::receiveData(const QByteArray &data) {
 
 QByteArray fakeMotor::generateNumberString() {
     QString numberString = "test data: " + QString::number(generateSinPoint()) + "," + QString::number(generateCosPoint()) + "\n";
+    //QString numberString = "test data: " + QString::number(generateSinPoint()) + "\n";
     return numberString.toUtf8();
 }
 

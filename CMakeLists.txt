@@ -26,7 +26,7 @@ else ()
 endif ()
 
 # debug
-add_definitions(-DUSE_FAKE_SERIAL)
+#add_definitions(-DUSE_FAKE_SERIAL)
 
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS
