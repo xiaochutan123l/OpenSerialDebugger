@@ -55,7 +55,7 @@ void FakeSerialPort::write(const QByteArray &data)
         qDebug() << "send to motor received data" << data;
         m_motor.receiveData(data);
     } else {
-        emit errorOccurred("Port is not open");
+        emit errorOccurred(QSerialPort::SerialPortError::NotOpenError);
     }
 }
 

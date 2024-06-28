@@ -5,23 +5,10 @@
 #include <string.h>
 #include <QDebug>
 
-enum DataType {
-    UINT,
-    INT,
-    FLOAT,
-    BOOL,
-    UNKNOWN
-};
+#define MAGIC_NUM 0xAB // 1byte
+#define PACKET_LEN 8 // bytes
+#define CHUNK_LEN 6 // bytes
 
-enum CMDType {
-    SetKp=1,
-    SetKi,
-    SetKd,
-    GetPosition,
-    GetVelocity,
-    Stop,
-    Enable
-};
 //#pragma pack(push, 1)
 struct Packet {
     uint8_t magicNum;
@@ -33,12 +20,32 @@ struct Packet {
 class packetHandler
 {
 public:
+    enum DataType {
+        UINT,
+        INT,
+        FLOAT,
+        BOOL,
+        UNKNOWN
+    };
+
+    enum CMDType {
+        CMD_UNKNOWN=0,
+        SetKp=1,
+        SetKi,
+        SetKd,
+        GetPosition,
+        GetVelocity,
+        Stop,
+        Enable
+    };
+
     packetHandler();
-    void hanler(uint8_t* packet) {
+
+    CMDType hanler(uint8_t* packet) {
         memcpy(&m_packet, packet, sizeof(Packet));
-        if (m_packet.magicNum != 0xAB) {
+        if (m_packet.magicNum != MAGIC_NUM) {
             qDebug() << "wrong magic number: " << m_packet.magicNum;
-            return;
+            return CMD_UNKNOWN;
         }
         qDebug() << "packet size: " << sizeof(Packet);
         qDebug() << "chunk number: " << m_packet.chunkNum;
@@ -63,12 +70,14 @@ public:
             case GetPosition: {
                 int32_t data = static_cast<int32_t>(m_packet.data);
                 qDebug() << "GetPosition: " << data;
+                return GetPosition;
                 break;
             }
             case GetVelocity: {
                 float data;
                 memcpy(&data, &m_packet.data, sizeof(float)); // Ensure proper conversion
                 qDebug() << "GetVelocity: " << data;
+                return GetVelocity;
                 break;
             }
             case Stop: {
@@ -85,6 +94,7 @@ public:
                 qDebug() << "Unknown command";
                 break;
             }
+            return CMD_UNKNOWN;
     }
 
     Packet m_packet;

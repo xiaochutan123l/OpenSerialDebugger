@@ -76,6 +76,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     //connect(m_parameter_manager, &parameterManager::sendCommandBytes, m_serial_controller, &SerialController::onSendCommand);
     connect(m_parameter_manager, &parameterManager::sendCommandBytes, m_serial_send_monitor, &serialSendMonitor::onSendCommand);
+    connect(m_serial_monitor, &serialMonitor::updateGetParameter, m_parameter_manager, &parameterManager::onUpdateGetParameter);
 
 }
 

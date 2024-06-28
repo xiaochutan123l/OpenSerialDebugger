@@ -41,9 +41,10 @@ public:
 
 signals:
     void readyRead();
-    void errorOccurred(const QString &error);
+    //void errorOccurred(const QString &error);
     void portOpened();
     void portClosed();
+    void errorOccurred(QSerialPort::SerialPortError error);
 
 private slots:
     //void onTimeout();

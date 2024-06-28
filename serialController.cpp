@@ -78,6 +78,15 @@ SerialController::SerialController(QObject *parent,
     connect(m_timer, &QTimer::timeout, this, &SerialController::onTimerTimeout);
     m_timer->setInterval(ReadDataTickTime);
 
+
+#ifdef USE_FAKE_SERIAL
+    connect(m_port, &FakeSerialPort::errorOccurred, this, [this](QSerialPort::SerialPortError error) {
+        if (error != QSerialPort::NoError) {
+            //qDebug() << "port error: " << m_port->errorString();
+            closePort();
+        }
+    });
+#else
     // error handling
     connect(m_port, &QSerialPort::errorOccurred, this, [this](QSerialPort::SerialPortError error) {
         if (error != QSerialPort::NoError) {
@@ -85,6 +94,8 @@ SerialController::SerialController(QObject *parent,
             closePort();
         }
     });
+#endif
+
 }
 
 void SerialController::onSendMessage(QString &message) {

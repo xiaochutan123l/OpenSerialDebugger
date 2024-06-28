@@ -2,6 +2,8 @@
 
 double generateSinPoint();
 double generateCosPoint();
+float generateVelocityValue();
+int generatePositionValue();
 
 fakeMotor::fakeMotor(QObject *parent)
     : QObject(parent), m_timer(this)
@@ -27,7 +29,32 @@ void fakeMotor::onTimeout()
 
 void fakeMotor::receiveData(const QByteArray &data) {
     qDebug() << "motor received data" << data.toHex(' ');
-    m_packethandler.hanler(reinterpret_cast<uint8_t*>(const_cast<char*>(data.data())));
+    packetHandler::CMDType type = m_packethandler.hanler(reinterpret_cast<uint8_t*>(const_cast<char*>(data.data())));
+    switch(type) {
+        case packetHandler::CMDType::GetPosition:
+        case packetHandler::CMDType::GetVelocity:
+        {
+            Packet packet;
+            uint8_t *raw_data = reinterpret_cast<uint8_t*>(const_cast<char*>(data.data()));
+            memcpy(&packet, raw_data, sizeof(Packet));
+            if (type == packetHandler::CMDType::GetPosition) {
+                int32_t num = generatePositionValue();
+                memcpy(&packet.data, &num, sizeof(num));
+            }
+            else {
+                // GetVelocity
+                float num = generateVelocityValue();
+                memcpy(&packet.data, &num, sizeof(float));
+
+            }
+            QByteArray byteArray(sizeof(Packet), 0);
+            memcpy(byteArray.data(), &packet, sizeof(Packet));
+            emit sendData(byteArray);
+            break;
+        }
+        default:
+            break;
+    }
 }
 
 QByteArray fakeMotor::generateNumberString() {
@@ -70,4 +97,15 @@ double generateCosPoint()
 
     // 返回结果
     return value;
+}
+
+float generateVelocityValue() {
+    static double value = 0.12;
+    value = value * 2;
+    return value;
+}
+
+int generatePositionValue() {
+    static int value = 128;
+    return ++value;
 }

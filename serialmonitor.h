@@ -11,6 +11,7 @@ class serialMonitor : public QObject {
 signals:
     void plotData();
     void newLineReceived(const QString &line);
+    void updateGetParameter(const QByteArray &line);
 public slots:
     void onSerialDataReceived(const QByteArray &data);
     void onClearBufferClicked();

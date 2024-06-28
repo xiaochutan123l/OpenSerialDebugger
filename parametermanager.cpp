@@ -99,6 +99,20 @@ void ParameterComboWidget::setWidgetsVisible(bool visible) {
     m_combo_box->setVisible(visible);
 }
 
+uint16_t ParameterComboWidget::commandNumber() {
+    if (m_command != nullptr) {
+        return m_command->number();
+    }
+    return 0;
+}
+
+Command::DataType ParameterComboWidget::commandDataType() {
+    if (m_command != nullptr) {
+        return m_command->dataType();
+    }
+    return Command::DataType::UNKNOWN;
+}
+
 void ParameterComboWidget::setComboBoxList(QList<QString> &names) {
     m_combo_box->addItems(names);
     m_combo_box->setCurrentIndex(-1);
@@ -143,6 +157,7 @@ void getParameterComboWidget::connect_widgets(parameterManager *pManager) {
     connect(m_combo_box, &QComboBox::currentTextChanged, this, &getParameterComboWidget::onCmdSelected);
     connect(m_button, &QPushButton::clicked, this, &getParameterComboWidget::onGetButtonPushed);
     connect(this, &getParameterComboWidget::sendCommand, pManager, &parameterManager::sendCommandBytes);
+    connect(pManager, &parameterManager::updateGetParameter, this, &getParameterComboWidget::onDataUpdated);
 }
 
 void getParameterComboWidget::disconnect_widgets(parameterManager *pManager) {
@@ -150,11 +165,36 @@ void getParameterComboWidget::disconnect_widgets(parameterManager *pManager) {
     disconnect(m_combo_box, &QComboBox::currentTextChanged, this, &getParameterComboWidget::onCmdSelected);
     disconnect(m_button, &QPushButton::clicked, this, &getParameterComboWidget::onGetButtonPushed);
     disconnect(this, &getParameterComboWidget::sendCommand, pManager, &parameterManager::sendCommandBytes);
+    disconnect(pManager, &parameterManager::updateGetParameter, this, &getParameterComboWidget::onDataUpdated);
 }
 
-void getParameterComboWidget::onDataUpdated(QString data) {
-    qDebug() << "onDataUpdated";
-    m_line_input->setText(data);
+void getParameterComboWidget::onDataUpdated(const QByteArray &data, Command::DataType type) {
+    // TODO get number from struct packet itself.
+    uint32_t num;
+    QString strValue;
+    memcpy(&num, data.data(), sizeof(uint32_t));
+    switch(type) {
+        case Command::DataType::INT: {
+            int32_t intNum = static_cast<int32_t>(num);
+            strValue = QString::number(intNum);
+            break;
+        }
+        case Command::DataType::UINT:
+        case Command::DataType::BOOL: {
+            uint32_t uintNum = static_cast<uint32_t>(num);
+            strValue = QString::number(uintNum);
+            break;
+        }
+        case Command::DataType::FLOAT: {
+            float floatNum;
+            memcpy(&floatNum, &num, sizeof(float)); // ensure correct bitwise conversion
+            strValue = QString::number(floatNum, 'f', 2); // 'f' for floating-point, 2 decimal places
+            break;
+        }
+        case Command::DataType::UNKNOWN:
+            break;
+    }
+    m_line_input->setText(strValue);
 }
 void getParameterComboWidget::onGetButtonPushed() {
     qDebug() << "onGetButtonPushed";
@@ -298,6 +338,19 @@ void parameterManager::addSwitchComboWidget(QPushButton *action_button,
 void parameterManager::onSendCommandBytes(QByteArray &cmd) {
     qDebug() << "parameter manager: send command";
     emit sendCommandBytes(cmd);
+}
+
+void parameterManager::onUpdateGetParameter(const QByteArray &packet) {
+    // TODO get command type from struct packet itself.
+    // currently only support single chunk
+    uint16_t cmd;
+    memcpy(&cmd, packet.data() + 2, sizeof(uint16_t));
+    for (getParameterComboWidget& widget : m_getList) {
+        if (widget.commandNumber() == cmd) {
+            QByteArray data_byte = QByteArray::fromRawData(packet.data() + 4, sizeof(uint32_t));
+            widget.onDataUpdated(data_byte, static_cast<Command::DataType>(widget.commandDataType()));
+        }
+    }
 }
 
 void parameterManager::onNewFileLoaded() {

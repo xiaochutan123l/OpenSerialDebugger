@@ -37,6 +37,9 @@ public:
     void clearWidget();
     void setWidgetsVisible(bool visible);
 
+    uint16_t commandNumber();
+    Command::DataType commandDataType();
+
 signals:
     void sendCommand(QByteArray &cmd);
 
@@ -69,7 +72,7 @@ public:
                                      QObject *parent = nullptr);
 
 public slots:
-    void onDataUpdated(QString data);
+    void onDataUpdated(const QByteArray &data, Command::DataType type);
     void onGetButtonPushed();
 public:
     void connect_widgets(parameterManager *pManager);
@@ -133,10 +136,12 @@ public:
 
 signals:
     void sendCommandBytes(QByteArray &cmd);
-
+    void updateGetParameter(const QByteArray &packet, Command::DataType type);
 public slots:
     void onNewFileLoaded();
     void onNewFileParsed();
+
+    void onUpdateGetParameter(const QByteArray &packet);
 
     void onSendCommandBytes(QByteArray &cmd);
 private:

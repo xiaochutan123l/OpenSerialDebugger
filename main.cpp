@@ -24,4 +24,7 @@ TODO List:
 - send history update after got success sent out
 - check command ptr if is null and also like type, name ... validation
 - save graph to file in another thread, avoid to interrupt normal serial communication.
+- optimize serial monitor serial message handling, distingulish type for monitor, plotter and parameter update
+- optimize parameterComboWidget structure, virtual functions
+- optimize struct Packet
 */
