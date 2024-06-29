@@ -1,6 +1,16 @@
 // 基于uart和can的通用电机控制通信协议。一共8byte
 
-/*
+/* Single chunk packet  
+ *
+ * 0                          1                          2                          4                                                      8           
+ * ┌───────────┬───────────┬───────────┬───────────────────────┬
+ * │     MagicNum   │      ChunkNum  │          CMD       │                        Data                       │ 
+ * └───────────┴───────────┴───────────┴───────────────────────┴
+ *                                                                                                           
+ */
+
+/* Multiple chunk packet
+ *
  * 0                          1                          2                          4                                                      8                            n                          n+2                                                 n+8       
  * ┌───────────┬───────────┬───────────┬───────────────────────┬────────────┬───────────┬───────────────────────┐         
  * │     MagicNum   │      ChunkNum  │          CMD 1    │                        Data1                     │             ...            │         CMD N     │                       DataN                     │         
@@ -15,15 +25,16 @@
  */
 
 /*
-- MagicNum: "mn" 1 byte. currently 1 bytes used, but implicitly reserved for later use
+- MagicNum: "mn" 1 byte. （currently 1 bytes used, but implicitly reserved for later use.）
                       Magic number for verify message
-- ChunkNum: number of chunks, the total chunks length is CHunkNum x 6 byte.
+- ChunkNum: number of chunks, the total chunks length is CHunkNum x 6 byte. （currently only single chunk is available）
 - CMD: command, 0 - 255, max 256 commands. 2 byte.
 - Data: data followed by command. 4 bytes, for integer or float.
 */
 
 // command format.
 // command name, command type, command number, data format
+// Supported type: int, bool, uint, float.
 // example:
 // command1, GET, 0x01, int
 // command2, SWITCH, 0x34, bool
