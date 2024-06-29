@@ -15,16 +15,12 @@ int main(int argc, char *argv[])
 /*
 TODO List:
 - serial monitor text browser max buffer size
-- what if plot number of data changed. 2 curves -> 3curve?
 - serial plotter max buffer size? ring buffer? then how efficient (simple popfront and append?)
 - dynamical x axis zoom
-- graph color
 - command add print function
 - add data range verification (lineedit validator?)
 - send history update after got success sent out
 - check command ptr if is null and also like type, name ... validation
 - save graph to file in another thread, avoid to interrupt normal serial communication.
-- optimize serial monitor serial message handling, distingulish type for monitor, plotter and parameter update
 - optimize parameterComboWidget structure, virtual functions
-- optimize struct Packet
 */

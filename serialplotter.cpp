@@ -28,7 +28,8 @@ serialPlotter::serialPlotter(QObject *parent,
     connect(m_button_save, &QPushButton::clicked, this, &serialPlotter::onSaveButtonClicked);
     connect(m_button_stop, &QPushButton::clicked, this, &serialPlotter::onStopButtonClicked);
 
-    setupDisplayPlot(MAX_GRAPH_NUM);
+    //setupDisplayPlot(MAX_GRAPH_NUM);
+
     // configure scroll bars:
     // Since scroll bars only support integer values, we'll set a high default range of -500..500 and
     // divide scroll bar position values by 100 to provide a scroll range -5..5 in floating point
@@ -115,6 +116,11 @@ void serialPlotter::setupDisplayPlot(int numGraphs)
     // 动态创建图表和数据容器
     for (int i = 0; i < numGraphs; ++i) {
         m_display_plot->addGraph();
+        QPen pen(m_pen_colors[i]);
+        pen.setWidth(GRAPH_PEN_WIDTH); // 设置线的粗细
+        m_display_plot->graph()->setPen(pen);
+        //m_display_plot->graph()->setPen(m_pen_colors[i]);
+        m_display_plot->legend->setVisible(true);
         m_graphData.append(QVector<double>());
     }
 
@@ -130,6 +136,12 @@ void serialPlotter::updateDisplayPlot(const QVector<double> &yValues)
 {
     if (m_stop) {
         return;
+    }
+    // 限制参数数量必须一致，不然重新绘制
+    if (m_curve_num != yValues.size()) {
+        onClearButtonClicked();
+        m_curve_num = yValues.size();
+        setupDisplayPlot(m_curve_num);
     }
     // 更新 x 轴数据
     m_xData.append(++m_x_count);
@@ -197,7 +209,8 @@ void serialPlotter::onClearButtonClicked() {
     m_xData.clear();
     m_x_count = 0;
 
-    setupDisplayPlot(MAX_GRAPH_NUM);
+    //setupDisplayPlot(MAX_GRAPH_NUM);
+    m_curve_num = 0;
 
     m_display_plot->replot();
 }

@@ -58,8 +58,21 @@ void fakeMotor::receiveData(const QByteArray &data) {
 }
 
 QByteArray fakeMotor::generateNumberString() {
-    QString numberString = "test data: " + QString::number(generateSinPoint()) + "," + QString::number(generateCosPoint()) + "\n";
-    //QString numberString = "test data: " + QString::number(generateSinPoint()) + "\n";
+    // QString numberString = "test data: " + QString::number(generateSinPoint()) + "," + QString::number(generateCosPoint()) + "\n";
+    // //QString numberString = "test data: " + QString::number(generateSinPoint()) + "\n";
+    // return numberString.toUtf8();
+    static int count = 0;
+    QString numberString;
+    if (count > 500) {
+        numberString = "test data: " + QString::number(generateSinPoint()) + "\n";
+    }
+    else {
+        numberString = "test data: " + QString::number(generateSinPoint()) + "," + QString::number(generateCosPoint()) + "\n";
+    }
+    count++;
+    if (count >= 1500) {
+        count = 0;
+    }
     return numberString.toUtf8();
 }
 

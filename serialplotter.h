@@ -5,12 +5,13 @@
 #include "qcustomplot.h"
 #include <QDebug>
 
-#define MAX_GRAPH_NUM 2 // plot max 5 curve
+#define MAX_GRAPH_NUM 5 // plot max 5 curve
+#define GRAPH_PEN_WIDTH 2
 
 class serialPlotter : public QObject
 {
     Q_OBJECT
-public:
+public:    
     serialPlotter(QObject *parent,
                   QPushButton *clear,
                   QPushButton *save,
@@ -31,13 +32,16 @@ public slots:
     void onSaveButtonClicked();
     void onClearButtonClicked();
     void onStopButtonClicked();
-private:
+private:    
     bool isValidFormat(const QString &line);
 
     void setupDisplayPlot(int numGraphs);
     void updateDisplayPlot(const QVector<double> &yValues);
 
     void savePlotDataToCSV(const QString &fileName);
+
+    QList<QColor> m_pen_colors = {Qt::blue, Qt::red, Qt::green, Qt::black, Qt::gray};
+    int m_curve_num = 0;
 
     QCustomPlot *m_display_plot;
     QScrollBar *m_display_verticalScrollBar;
