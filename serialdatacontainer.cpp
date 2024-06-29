@@ -1,5 +1,5 @@
 #include "serialdatacontainer.h"
-#include "packethandler.h"
+#include "packet.h"
 
 serialDataContainer::serialDataContainer()
 {
@@ -45,15 +45,24 @@ void serialDataContainer::clearBuffer() {
 
 void serialDataContainer::extractPackets(QByteArray& data) {
     // TODO: struct packet变成c++ struct， 支持初始化，提取chunk_num，计算各种len的函数,
-    // 并支持packet byte字符串，将十六进制的数据包，变成用户可读格式的字符串
-    int index = 0;
-    while (data[index] == static_cast<char>(MAGIC_NUM)) {
-        uint8_t chunk_num = data[index+1];
-        int packet_len = chunk_num * CHUNK_LEN + 2;
-        m_packets.append(QByteArray(data.mid(index, packet_len)));
-        // m_lines 里面传packet生成的string
-        //m_lines.append(QString::fromUtf8(data.mid(index, packet_len)));
-        index += packet_len;
+    // 并支持packet byte字符串，将十六进制的数据包，变成用户可读格式的字符串.. 这个可能会和plotter那边的字符串冲突，先不考虑这个功能了
+    uint8_t *packet = reinterpret_cast<uint8_t*>(data.data());
+    if (IS_VALID_PACKET(packet)) {
+        m_packets.append(QByteArray(data.mid(0, PACKET_LEN)));
+        //m_lines.append(QString::fromUtf8(data.mid(0, PACKET_LEN)));
+        QString packet_str = "--Packet-- " + data.mid(0, PACKET_LEN).toHex(' ');
+        m_lines.append(packet_str);
+        data.remove(0, PACKET_LEN);
     }
-    data.remove(0, index);
+
+    //int index = 0;
+    // while (IS_VALID_PACKET(&packet[index])) {
+    //     //uint8_t chunk_num = data[index+1];
+    //     int packet_len = GET_CHUNK_NUM(&packet[index]) * CHUNK_LEN + 2;
+    //     m_packets.append(QByteArray(data.mid(index, packet_len)));
+    //     // m_lines 里面传packet生成的string
+    //     //m_lines.append(QString::fromUtf8(data.mid(index, packet_len)));
+    //     index += packet_len;
+    // }
+    //data.remove(0, index);
 }

@@ -6,6 +6,7 @@
 #include <QtWidgets/QComboBox>
 #include "command.h"
 #include "protocolparser.h"
+#include "packet.h"
 
 class parameterManager;
 

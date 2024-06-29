@@ -26,11 +26,10 @@ void serialMonitor::onSerialDataReceived(const QByteArray &data) {
     for (const QString &line : lines) {
         writeText(line);// 输出到 QTextEdit
         // TODO: packet struct完善后修改这里
-        // if (line[0] != static_cast<char>(MAGIC_NUM)) {
-        //     //qDebug() << line;
-        //     emit newLineReceived(line); // 发出信号通知 SerialPlotter
-        // }
-        emit newLineReceived(line);
+        if (!line.startsWith("--Packet--")) {
+            //qDebug() << line;
+            emit newLineReceived(line); // 发出信号通知 SerialPlotter
+        }
     }
 }
 

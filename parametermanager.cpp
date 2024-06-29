@@ -170,24 +170,22 @@ void getParameterComboWidget::disconnect_widgets(parameterManager *pManager) {
 
 void getParameterComboWidget::onDataUpdated(const QByteArray &data, Command::DataType type) {
     // TODO get number from struct packet itself.
-    uint32_t num;
     QString strValue;
-    memcpy(&num, data.data(), sizeof(uint32_t));
     switch(type) {
         case Command::DataType::INT: {
-            int32_t intNum = static_cast<int32_t>(num);
+            int32_t intNum = DATA_TO_INT(reinterpret_cast<uint8_t*>(const_cast<char*>(data.data())));
             strValue = QString::number(intNum);
             break;
         }
         case Command::DataType::UINT:
         case Command::DataType::BOOL: {
-            uint32_t uintNum = static_cast<uint32_t>(num);
+            uint32_t uintNum = DATA_TO_UINT(reinterpret_cast<uint8_t*>(const_cast<char*>(data.data())));
             strValue = QString::number(uintNum);
             break;
         }
         case Command::DataType::FLOAT: {
             float floatNum;
-            memcpy(&floatNum, &num, sizeof(float)); // ensure correct bitwise conversion
+            floatNum = DATA_TO_FLOAT(reinterpret_cast<uint8_t*>(const_cast<char*>(data.data())));
             strValue = QString::number(floatNum, 'f', 2); // 'f' for floating-point, 2 decimal places
             break;
         }
@@ -341,10 +339,9 @@ void parameterManager::onSendCommandBytes(QByteArray &cmd) {
 }
 
 void parameterManager::onUpdateGetParameter(const QByteArray &packet) {
-    // TODO get command type from struct packet itself.
+    // TODO
     // currently only support single chunk
-    uint16_t cmd;
-    memcpy(&cmd, packet.data() + 2, sizeof(uint16_t));
+    uint16_t cmd = GET_CMD_NUM(reinterpret_cast<uint8_t*>(const_cast<char*>(packet.data())));
     for (getParameterComboWidget& widget : m_getList) {
         if (widget.commandNumber() == cmd) {
             QByteArray data_byte = QByteArray::fromRawData(packet.data() + 4, sizeof(uint32_t));
