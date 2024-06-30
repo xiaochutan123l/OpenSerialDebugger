@@ -5,7 +5,7 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
-
+    //ui->setAttribute(Qt::WA_DeleteOnClose);
     ui->setupUi(this);
 
     /* --------------------  Serial port  --------------------------*/
@@ -86,7 +86,7 @@ MainWindow::~MainWindow()
 //    delete m_serial_monitor;
 //    delete m_serial_plotter;
     qDebug() <<  "start delete ui";
-    //delete ui;
+    delete ui;
     qDebug() <<  "delete ui done";
 
 }

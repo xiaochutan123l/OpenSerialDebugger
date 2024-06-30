@@ -1,5 +1,5 @@
 #include "serialmonitor.h"
-#include "packethandler.h"
+//#include "packethandler.h"
 
 serialMonitor::serialMonitor(QObject *parent, QTextBrowser *textBrowser, QPushButton *button)
     : QObject(parent), m_textBrowser(textBrowser), m_clear_button(button)

@@ -1,4 +1,5 @@
 #include "parametermanager.h"
+#include "packet.h"
 
 /* ----------------------- getParameterComboWidget --------------------------*/
 
@@ -22,10 +23,7 @@ ParameterComboWidget::ParameterComboWidget(const ParameterComboWidget &other_wid
     m_combo_box(other_widget.m_combo_box),
     m_commands(other_widget.m_commands),
     m_commandNames(other_widget.m_commandNames),
-    QObject(other_widget.parent())
-{
-
-}
+    QObject(other_widget.parent()) {}
 
 // Move constructor
 ParameterComboWidget::ParameterComboWidget(ParameterComboWidget &&other_widget)
@@ -296,7 +294,9 @@ parameterManager::parameterManager(QPushButton *load_button,
     m_parser->bindButton(m_load_button);
     connect(m_parser, &ProtocolParser::newFileLoaded, this, &parameterManager::onNewFileLoaded);
     connect(m_parser, &ProtocolParser::newFileParsed, this, &parameterManager::onNewFileParsed);
-
+    m_switchList.reserve(SWITCH_COMBO_WIDGET_NUM);
+    m_setList.reserve(SET_COMBO_WIDGET_NUM);
+    m_getList.reserve(GET_COMBO_WIDGET_NUM);
 }
 
 void parameterManager::addGetComboWidget(QPushButton *get_button,

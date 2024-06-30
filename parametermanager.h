@@ -6,7 +6,40 @@
 #include <QtWidgets/QComboBox>
 #include "command.h"
 #include "protocolparser.h"
-#include "packet.h"
+
+/* 一个qt WidgetTree的坑:
+比如在addSwitchComboWidget()里面
+void parameterManager::addSwitchComboWidget(QPushButton *action_button,
+                                            QComboBox *combo_box)
+{
+    m_switchList.emplace_back(action_button,
+                           combo_box,
+                           &m_switchCommands,
+                           &m_switchCommandNames,
+                           this);
+}
+这个switchList里面的元素会接收parameterManager指针作为元素的父类指针，
+然后在多次emplace_back元素之后，list或者vector会动态扩容，导致会调用构造函数，
+拷贝构造函数和移动构造函数，产生的临时变量都将this也就是parameterManager作为父类widget指针，
+导致parameerManager的children里面会有很多额外的child，
+其实我只emplace了4个元素，但是却给parameterManager带来了十几个children，由于临时变量会在作用域结束时析构，
+这样导致最后析构的时候这些额外的child已经被释放了，所以qt在析构他们的时候就segmentfault了，
+导致程序崩溃。
+
+解决办法：
+1. 在一开始指定vector大小，这样就可以避免动态扩容导致的额外children。
+    (这个方案操作最简单，目前用的这个，之后如果需要变长的vector元素那么就得修改)
+2. 使用智能指针
+    使用 QSharedPointer 或 std::unique_ptr 可以解决因动态扩容导致的问题，也就是说vector元素是widget指针而不是class
+    因为它们管理对象的生命周期并避免复制对象本身
+        myVector.append(QSharedPointer<MyClass>::create(this));
+        or
+        myUniqueVector.append(std::make_unique<MyClass>(this));
+3. 在所有元素添加完之后，手动设置parent.
+*/
+#define SWITCH_COMBO_WIDGET_NUM 4
+#define GET_COMBO_WIDGET_NUM 6
+#define SET_COMBO_WIDGET_NUM 10
 
 class parameterManager;
 
@@ -46,7 +79,6 @@ signals:
 
 public slots:
     void onCmdSelected(const QString & name);
-    // void onDataUpdated();
     virtual void connect_widgets(parameterManager *pManager)=0;
 
 protected:
@@ -134,6 +166,9 @@ public:
                            QComboBox *combo_box);
     void addSwitchComboWidget(QPushButton *action_button,
                            QComboBox *combo_box);
+    ~parameterManager() {
+        qDebug() << "deconstruct parameter manager";
+    };
 
 signals:
     void sendCommandBytes(QByteArray &cmd);
@@ -146,9 +181,9 @@ public slots:
 
     void onSendCommandBytes(QByteArray &cmd);
 private:
-    QList<setParameterComboWidget> m_setList;
-    QList<getParameterComboWidget> m_getList;
-    QList<switchParameterComboWidget> m_switchList;
+    QVector<setParameterComboWidget> m_setList;
+    QVector<getParameterComboWidget> m_getList;
+    QVector<switchParameterComboWidget> m_switchList;
 
     QMap<QString, Command> m_getCommands;
     QMap<QString, Command> m_setCommands;
