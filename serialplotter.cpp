@@ -40,7 +40,6 @@ serialPlotter::serialPlotter(QObject *parent,
     m_display_verticalScrollBar->setRange(-500, 500);
 
     m_button_stop->setText("Run");
-    m_display_plot->setOpenGl(true);
 }
 
 serialPlotter::~serialPlotter() {
@@ -61,6 +60,9 @@ void serialPlotter::onNewLinesReceived(const QStringList &lines) {
             updated = true;
         }
     }
+    qDebug() << "Plot time: " << timer.elapsed() << "milliseconds";
+    // QElapsedTimer timer;
+    // timer.start();
     if (updated) {
         m_display_plot->xAxis->setRange(*std::min_element(m_xData.begin(), m_xData.end()),
                                         *std::max_element(m_xData.begin(), m_xData.end()));
@@ -68,7 +70,7 @@ void serialPlotter::onNewLinesReceived(const QStringList &lines) {
     }
 
 
-    qDebug() << "Plot time: " << timer.elapsed() << "milliseconds";
+    // qDebug() << "Plot time: " << timer.elapsed() << "milliseconds";
 }
 
 bool serialPlotter::isValidFormat(const QString &line)
@@ -157,6 +159,13 @@ void serialPlotter::setupDisplayPlot(int numGraphs)
     m_xData.clear();
     m_x_count = 0;
 }
+
+/*
+Auto Mode:
+xAxis 最新的1000组数据 range: (n-1000, n)
+yAxis range: (min, max) of y(n-1000, n)
+
+*/
 
 void serialPlotter::updateDisplayPlotData(const QVector<double> &yValues)
 {

@@ -63,14 +63,14 @@ QByteArray fakeMotor::generateNumberString() {
     // return numberString.toUtf8();
     static int count = 0;
     QString numberString;
-    if (count > 500) {
+    if (count > 2000) {
         numberString = "test data: " + QString::number(generateSinPoint()) + "\n";
     }
     else {
         numberString = "test data: " + QString::number(generateSinPoint()) + "," + QString::number(generateCosPoint()) + "\n";
     }
     count++;
-    if (count >= 1500) {
+    if (count >= 5000) {
         count = 0;
     }
     return numberString.toUtf8();

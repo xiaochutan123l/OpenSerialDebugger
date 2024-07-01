@@ -22,22 +22,25 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 if (MSVC)
   add_compile_options(/bigobj)
 else ()
-  add_compile_options(-Wa,-mbig-obj)
+  add_compile_options(-Wa,-mbig-obj -O3)
 endif ()
 
 # debug
 add_definitions(-DUSE_FAKE_SERIAL)
 
+#add_definitions(-DQCUSTOMPLOT_USE_OPENGL)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS
                 Widgets
                 PrintSupport
                 SerialPort
+                #OpenGL
 )
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS
                 Widgets
                 PrintSupport
                 SerialPort
+                #OpenGL
 )
 
 include_directories(./)
@@ -118,7 +121,14 @@ target_link_libraries(QMotorMaster
                         PRIVATE Qt${QT_VERSION_MAJOR}::Widgets
                         PRIVATE Qt${QT_VERSION_MAJOR}::PrintSupport
                         PRIVATE Qt${QT_VERSION_MAJOR}::SerialPort
+                        #PRIVATE Qt${QT_VERSION_MAJOR}::OpenGL
 )
+
+# if (WIN32)
+#     target_link_libraries(QMotorMaster PRIVATE opengl32)
+# else()
+#     target_link_libraries(QMotorMaster PRIVATE ${OPENGL_LIBRARIES})
+# endif()
 
 set_target_properties(QMotorMaster PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
