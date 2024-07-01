@@ -14,7 +14,9 @@ serialMonitor::~serialMonitor()
 
 void serialMonitor::onSerialDataReceived(const QByteArray &data) {
     m_dataContainer.feedData(data);
-    QStringList lines = m_dataContainer.getLines();
+    //writeText(data);
+
+    const QStringList lines = m_dataContainer.getLines();
     QList<QByteArray> packets = m_dataContainer.getPackets();
     m_dataContainer.clearBuffer();
 
@@ -24,13 +26,10 @@ void serialMonitor::onSerialDataReceived(const QByteArray &data) {
     }
 
     for (const QString &line : lines) {
-        writeText(line);// 输出到 QTextEdit
-        // TODO: packet struct完善后修改这里
-        if (!line.startsWith("--Packet--")) {
-            //qDebug() << line;
-            emit newLineReceived(line); // 发出信号通知 SerialPlotter
-        }
+        writeText(line);
     }
+    emit newLinesReceived(lines);
+
 }
 
 void serialMonitor::onClearBufferClicked() {

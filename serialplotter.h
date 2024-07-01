@@ -22,7 +22,7 @@ public:
     ~serialPlotter();
 
 public slots:
-    void onNewLineReceived(const QString &line);
+    void onNewLinesReceived(const QStringList &lines);
 
     void display_horzScrollBarChanged(int value);
     void display_vertScrollBarChanged(int value);
@@ -36,7 +36,7 @@ private:
     bool isValidFormat(const QString &line);
 
     void setupDisplayPlot(int numGraphs);
-    void updateDisplayPlot(const QVector<double> &yValues);
+    void updateDisplayPlotData(const QVector<double> &yValues);
 
     void savePlotDataToCSV(const QString &fileName);
 
@@ -54,7 +54,7 @@ private:
     QPushButton *m_button_clear;
     QPushButton *m_button_save;
     QPushButton *m_button_stop;
-    bool m_stop = false;
+    bool m_stop = true;
 };
 
 #endif // SERIALPLOTTER_H

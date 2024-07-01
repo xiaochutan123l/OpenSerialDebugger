@@ -224,7 +224,9 @@ SerialController::~SerialController(){
 void SerialController::onTimerTimeout() {
     if (m_port && m_port->bytesAvailable() > 0) {
         const QByteArray data = m_port->readAll();
-        emit dataReceived(data);
+        if(data.size() > 0) {
+            emit dataReceived(data);
+        }
     }
 }
 

@@ -27,6 +27,8 @@ extern "C"{
 #define DATA_TO_INT(data) (*(int32_t*)(data))
 #define DATA_TO_FLOAT(data) (*(float*)(data))
 
+#define PACKET_ID_STR "--Packet-- "
+
 // TODO: should be adapted if multiple chunk enabled.
 
 struct Packet {

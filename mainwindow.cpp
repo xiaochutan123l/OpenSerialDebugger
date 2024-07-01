@@ -37,7 +37,7 @@ MainWindow::MainWindow(QWidget *parent)
                                          ui->display_plot,
                                          ui->display_verticalScrollBar,
                                          ui->display_horizontalScrollBar);
-    connect(m_serial_monitor, &serialMonitor::newLineReceived, m_serial_plotter, &serialPlotter::onNewLineReceived);
+    connect(m_serial_monitor, &serialMonitor::newLinesReceived, m_serial_plotter, &serialPlotter::onNewLinesReceived);
 
     ui->display_plot->xAxis->setRange(0, 6, Qt::AlignCenter);
     ui->display_plot->yAxis->setRange(0, 10, Qt::AlignCenter);

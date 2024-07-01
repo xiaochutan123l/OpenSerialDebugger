@@ -23,4 +23,10 @@ TODO List:
 - check command ptr if is null and also like type, name ... validation
 - save graph to file in another thread, avoid to interrupt normal serial communication.
 - optimize parameterComboWidget structure, virtual functions
+- add save pdf, png... function
+*/
+
+/*
+set serial plotter stop as default
+adapt serial data with both \r\n
 */

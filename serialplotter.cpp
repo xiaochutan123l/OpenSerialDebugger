@@ -2,6 +2,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QFileDialog>
+#include "packet.h"
 
 QVector<double> extractNumbers(const QString &input);
 
@@ -37,14 +38,37 @@ serialPlotter::serialPlotter(QObject *parent,
     // just increase the minimum/maximum values of the scroll bars as needed.
     m_display_horizontalScrollBar->setRange(-500, 500);
     m_display_verticalScrollBar->setRange(-500, 500);
+
+    m_button_stop->setText("Run");
+    m_display_plot->setOpenGl(true);
 }
 
 serialPlotter::~serialPlotter() {
     qDebug() <<  "deconstruct serial plotter";
 }
 
-void serialPlotter::onNewLineReceived(const QString &line) {
-    updateDisplayPlot(extractNumbers(line));
+void serialPlotter::onNewLinesReceived(const QStringList &lines) {
+    if (m_stop) {
+        return;
+    }
+    QElapsedTimer timer;
+    timer.start();
+
+    bool updated = false;
+    for (auto &line : lines) {
+        if (!line.startsWith(PACKET_ID_STR)) {
+            updateDisplayPlotData(extractNumbers(line));
+            updated = true;
+        }
+    }
+    if (updated) {
+        m_display_plot->xAxis->setRange(*std::min_element(m_xData.begin(), m_xData.end()),
+                                        *std::max_element(m_xData.begin(), m_xData.end()));
+        m_display_plot->replot();
+    }
+
+
+    qDebug() << "Plot time: " << timer.elapsed() << "milliseconds";
 }
 
 bool serialPlotter::isValidFormat(const QString &line)
@@ -83,7 +107,7 @@ void serialPlotter::display_horzScrollBarChanged(int value)
   if (qAbs(m_display_plot->xAxis->range().center()-value/100.0) > 0.01) // if user is dragging plot, we don't want to replot twice
   {
     m_display_plot->xAxis->setRange(value/100.0, m_display_plot->xAxis->range().size(), Qt::AlignCenter);
-    m_display_plot->replot();
+    //m_display_plot->replot();
   }
 }
 
@@ -92,18 +116,20 @@ void serialPlotter::display_vertScrollBarChanged(int value)
   if (qAbs(m_display_plot->yAxis->range().center()+value/100.0) > 0.01) // if user is dragging plot, we don't want to replot twice
   {
     m_display_plot->yAxis->setRange(-value/100.0, m_display_plot->yAxis->range().size(), Qt::AlignCenter);
-    m_display_plot->replot();
+    //m_display_plot->replot();
   }
 }
 
 void serialPlotter::xAxisChanged(QCPRange range)
 {
+  //qDebug() << "x axis change: " << range;
   m_display_horizontalScrollBar->setValue(qRound(range.center()*100.0)); // adjust position of scroll bar slider
   m_display_horizontalScrollBar->setPageStep(qRound(range.size()*100.0)); // adjust size of scroll bar slider
 }
 
 void serialPlotter::yAxisChanged(QCPRange range)
 {
+  //qDebug() << "x axis change: " << range;
   m_display_verticalScrollBar->setValue(qRound(-range.center()*100.0)); // adjust position of scroll bar slider
   m_display_verticalScrollBar->setPageStep(qRound(range.size()*100.0)); // adjust size of scroll bar slider
 }
@@ -132,11 +158,8 @@ void serialPlotter::setupDisplayPlot(int numGraphs)
     m_x_count = 0;
 }
 
-void serialPlotter::updateDisplayPlot(const QVector<double> &yValues)
+void serialPlotter::updateDisplayPlotData(const QVector<double> &yValues)
 {
-    if (m_stop) {
-        return;
-    }
     // 限制参数数量必须一致，不然重新绘制
     if (m_curve_num != yValues.size()) {
         onClearButtonClicked();
@@ -155,41 +178,6 @@ void serialPlotter::updateDisplayPlot(const QVector<double> &yValues)
             m_display_plot->graph(i)->addData(m_xData, m_graphData[i]);
         }
     }
-
-    // 调整 x 和 y 轴范围
-    // TODO: optimized min max calc
-    m_display_plot->xAxis->setRange(*std::min_element(m_xData.begin(), m_xData.end()),
-                                      *std::max_element(m_xData.begin(), m_xData.end()));
-
-    m_display_plot->replot();
-}
-
-QVector<double> extractNumbers(const QString &input)
-{
-    QVector<double> numbers;
-
-    // 找到冒号后的部分
-    int colonIndex = input.indexOf(':');
-    if (colonIndex == -1) {
-        return numbers; // 未找到冒号，返回空列表
-    }
-
-    // 获取冒号后的子字符串，并去除空格
-    QString dataPart = input.mid(colonIndex + 1).trimmed();
-
-    // 分割字符串，提取数字
-    QStringList numberStrings = dataPart.split(',', Qt::SplitBehaviorFlags::SkipEmptyParts);
-
-    // 转换为数字并添加到列表
-    for (const QString &numberStr : numberStrings) {
-        bool ok;
-        double number = numberStr.toDouble(&ok);
-        if (ok) {
-            numbers.append(number);
-        }
-    }
-
-    return numbers;
 }
 
 void serialPlotter::onSaveButtonClicked() {
@@ -255,4 +243,35 @@ void serialPlotter::savePlotDataToCSV(const QString &fileName) {
     } else {
         qDebug() << "Failed to open file for writing: " << fileName;
     }
+}
+
+
+/* ------------------ utils ---------------------*/
+
+QVector<double> extractNumbers(const QString &input)
+{
+    QVector<double> numbers;
+
+    // 找到冒号后的部分
+    int colonIndex = input.indexOf(':');
+    if (colonIndex == -1) {
+        return numbers; // 未找到冒号，返回空列表
+    }
+
+    // 获取冒号后的子字符串，并去除空格
+    QString dataPart = input.mid(colonIndex + 1).trimmed();
+
+    // 分割字符串，提取数字
+    QStringList numberStrings = dataPart.split(',', Qt::SplitBehaviorFlags::SkipEmptyParts);
+
+    // 转换为数字并添加到列表
+    for (const QString &numberStr : numberStrings) {
+        bool ok;
+        double number = numberStr.toDouble(&ok);
+        if (ok) {
+            numbers.append(number);
+        }
+    }
+
+    return numbers;
 }

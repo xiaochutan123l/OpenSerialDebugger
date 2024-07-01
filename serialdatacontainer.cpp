@@ -23,9 +23,14 @@ void serialDataContainer::feedData(const QByteArray &data)
         QByteArray line = m_buffer.left(index);
         // 从缓冲区中移除该行（包括换行符）
         m_buffer.remove(0, index + 1);
+        if (line.endsWith('\r')) {
+            line.removeLast();
+        }
         extractPackets(line);
-        // 将提取的行转换为 QString 并添加到 lines 列表中
-        m_lines.append(QString::fromUtf8(line));
+        if (!line.startsWith("--Packet--")) {
+            // 将提取的行转换为 QString 并添加到 lines 列表中
+            m_lines.append(QString::fromUtf8(line));
+        }
     }
 }
 
@@ -50,7 +55,7 @@ void serialDataContainer::extractPackets(QByteArray& data) {
     if (IS_VALID_PACKET(packet)) {
         m_packets.append(QByteArray(data.mid(0, PACKET_LEN)));
         //m_lines.append(QString::fromUtf8(data.mid(0, PACKET_LEN)));
-        QString packet_str = "--Packet-- " + data.mid(0, PACKET_LEN).toHex(' ');
+        QString packet_str = PACKET_ID_STR + data.mid(0, PACKET_LEN).toHex(' ');
         m_lines.append(packet_str);
         data.remove(0, PACKET_LEN);
     }
