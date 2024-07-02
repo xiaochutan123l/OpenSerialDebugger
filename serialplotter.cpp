@@ -50,8 +50,8 @@ void serialPlotter::onNewLinesReceived(const QStringList &lines) {
     if (m_stop) {
         return;
     }
-    QElapsedTimer timer;
-    timer.start();
+    // QElapsedTimer timer;
+    // timer.start();
 
     bool updated = false;
     for (auto &line : lines) {
@@ -60,7 +60,7 @@ void serialPlotter::onNewLinesReceived(const QStringList &lines) {
             updated = true;
         }
     }
-    qDebug() << "Plot time: " << timer.elapsed() << "milliseconds";
+    // qDebug() << "Plot time: " << timer.elapsed() << "milliseconds";
     // QElapsedTimer timer;
     // timer.start();
     if (updated) {
@@ -70,7 +70,7 @@ void serialPlotter::onNewLinesReceived(const QStringList &lines) {
     }
 
 
-    // qDebug() << "Plot time: " << timer.elapsed() << "milliseconds";
+     //qDebug() << "Plot time: " << timer.elapsed() << "milliseconds";
 }
 
 bool serialPlotter::isValidFormat(const QString &line)

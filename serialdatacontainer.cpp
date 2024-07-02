@@ -21,16 +21,22 @@ void serialDataContainer::feedData(const QByteArray &data)
     while ((index = m_buffer.indexOf('\n')) != -1) {
         // 提取一行数据
         QByteArray line = m_buffer.left(index);
-        // 从缓冲区中移除该行（包括换行符）
-        m_buffer.remove(0, index + 1);
+
         if (line.endsWith('\r')) {
             line.removeLast();
         }
-        extractPackets(line);
-        if (!line.startsWith("--Packet--")) {
-            // 将提取的行转换为 QString 并添加到 lines 列表中
-            m_lines.append(QString::fromUtf8(line));
+
+        int offset = extractPackets(line);
+        if (offset > 0) {
+            // raw text with \n \r
+            m_text.append(QString::fromUtf8(m_buffer.mid(offset, index+1 - offset)));
         }
+        else {
+            m_text.append(QString::fromUtf8(m_buffer.left(index+1)));
+        }
+        m_plot_lines.append(QString::fromUtf8(line));
+        // 从缓冲区中移除该行（包括换行符）
+        m_buffer.remove(0, index + 1);
     }
 }
 
@@ -38,28 +44,37 @@ QList<QByteArray> serialDataContainer::getPackets() const {
     return m_packets;
 }
 
-QStringList serialDataContainer::getLines() const
+QString serialDataContainer::getText() const
 {
-    return m_lines;
+    return m_text;
+}
+
+QStringList serialDataContainer::getPlotLines() const
+{
+    return m_plot_lines;
 }
 
 void serialDataContainer::clearBuffer() {
-    m_lines.clear();
+    m_text.clear();
+    m_plot_lines.clear();
     m_packets.clear();
 }
 
-void serialDataContainer::extractPackets(QByteArray& data) {
+int serialDataContainer::extractPackets(QByteArray& data) {
     // TODO: struct packet变成c++ struct， 支持初始化，提取chunk_num，计算各种len的函数,
     // 并支持packet byte字符串，将十六进制的数据包，变成用户可读格式的字符串.. 这个可能会和plotter那边的字符串冲突，先不考虑这个功能了
     uint8_t *packet = reinterpret_cast<uint8_t*>(data.data());
-    if (IS_VALID_PACKET(packet)) {
+    int offset = 0;
+    while (IS_VALID_PACKET(packet)) {
         m_packets.append(QByteArray(data.mid(0, PACKET_LEN)));
         //m_lines.append(QString::fromUtf8(data.mid(0, PACKET_LEN)));
-        QString packet_str = PACKET_ID_STR + data.mid(0, PACKET_LEN).toHex(' ');
-        m_lines.append(packet_str);
+        QString packet_str = PACKET_ID_STR + data.mid(0, PACKET_LEN).toHex(' ') + '\n';
+        m_text.append(packet_str);
         data.remove(0, PACKET_LEN);
+        packet+= PACKET_LEN;
+        offset+= PACKET_LEN;
     }
-
+    return offset;
     //int index = 0;
     // while (IS_VALID_PACKET(&packet[index])) {
     //     //uint8_t chunk_num = data[index+1];

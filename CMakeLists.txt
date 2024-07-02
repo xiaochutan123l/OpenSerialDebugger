@@ -92,6 +92,9 @@ set(PROJECT_SOURCES
         packet.h
         packet.cpp
 
+        # plotdatahandlerthread.h
+        # plotdatahandlerthread.cpp
+
     )
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(QMotorMaster

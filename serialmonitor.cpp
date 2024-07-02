@@ -1,4 +1,5 @@
 #include "serialmonitor.h"
+#include <QElapsedTimer>
 //#include "packethandler.h"
 
 serialMonitor::serialMonitor(QObject *parent, QTextBrowser *textBrowser, QPushButton *button)
@@ -14,9 +15,9 @@ serialMonitor::~serialMonitor()
 
 void serialMonitor::onSerialDataReceived(const QByteArray &data) {
     m_dataContainer.feedData(data);
-    //writeText(data);
 
-    const QStringList lines = m_dataContainer.getLines();
+    const QString text = m_dataContainer.getText();
+    const QStringList lines = m_dataContainer.getPlotLines();
     QList<QByteArray> packets = m_dataContainer.getPackets();
     m_dataContainer.clearBuffer();
 
@@ -25,9 +26,8 @@ void serialMonitor::onSerialDataReceived(const QByteArray &data) {
         emit updateGetParameter(packet);
     }
 
-    for (const QString &line : lines) {
-        writeText(line);
-    }
+    writeText(text);
+
     emit newLinesReceived(lines);
 
 }
@@ -37,8 +37,8 @@ void serialMonitor::onClearBufferClicked() {
 }
 
 void serialMonitor::writeText(const QString &data) {
-    m_textBrowser->append(data);
-    //m_textBrowser->insertPlainText(data);
+    //m_textBrowser->append(data);
+    m_textBrowser->insertPlainText(data);
 }
 
 void serialMonitor::clearText() {

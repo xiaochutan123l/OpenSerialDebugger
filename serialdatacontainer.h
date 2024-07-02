@@ -13,15 +13,18 @@ public:
     // serial monitor feed new serial data
     void feedData(const QByteArray &data);
     // return all split lines
-    QStringList getLines() const;
+    QString getText() const;
+    QStringList getPlotLines() const;
     QList<QByteArray> getPackets() const;
 
     void clearBuffer();
 private:
-    void extractPackets(QByteArray& data);
+    // return the offset of real text(not packet)
+    int extractPackets(QByteArray& data);
 
     QByteArray m_buffer;   // 用于存储未结束的片段
-    QStringList m_lines;   // 用于存储完整的行
+    QStringList m_plot_lines;   // 用于需要plot的字符串数据
+    QString m_text;   // 用于存储完整的行
     QList<QByteArray> m_packets;   // 用于存储符合规定格式的数据包（不以换行符结尾）
 };
 
