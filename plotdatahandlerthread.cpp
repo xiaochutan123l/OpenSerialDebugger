@@ -1,6 +1,8 @@
 #include "plotdatahandlerthread.h"
 
 void plotDataHandlerThread::onNewDataReceived(const QStringList &lines, QCPRange xRange, bool auto_mode) {
+    qDebug() << "on new data received";
+    qDebug() << "Worker thread ID:" << QThread::currentThreadId();
     if (auto_mode) {
         handleDataAuto(lines);
     }
@@ -46,7 +48,7 @@ void plotDataHandlerThread::handleDataAuto(const QStringList &lines) {
         range.upper = size;
         m_graphData.getPlotValues(m_plot_data, range.lower, range.upper);
     }
-    //qDebug() << "send ready for plot";
+    qDebug() << "send ready for plot";
     emit readyForPlot(m_plot_data, range, true);
 
 }

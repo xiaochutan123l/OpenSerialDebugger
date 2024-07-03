@@ -20,7 +20,8 @@ serialPlotter::serialPlotter(QObject *parent,
     m_button_auto(_auto),
     m_display_plot(display_plot),
     m_display_verticalScrollBar(display_verticalScrollBar),
-    m_display_horizontalScrollBar(display_horizontalScrollBar)
+    m_display_horizontalScrollBar(display_horizontalScrollBar),
+    m_thread(new QThread(this))
 {
     //connect(m_display_horizontalScrollBar, SIGNAL(valueChanged(int)), this, SLOT(display_horzScrollBarChanged(int)));
     //connect(m_display_verticalScrollBar, SIGNAL(valueChanged(int)), this, SLOT(display_vertScrollBarChanged(int)));
@@ -31,11 +32,20 @@ serialPlotter::serialPlotter(QObject *parent,
     connect(m_button_stop, &QPushButton::clicked, this, &serialPlotter::onStopButtonClicked);
     connect(m_button_auto, &QPushButton::clicked, this, &serialPlotter::onAutoButtonClicked);
 
+
+    qRegisterMetaType<PlotDataPtrList>("PlotDataPtrList");
+
+    m_plot_thread.moveToThread(m_thread);
+
     connect(this, &serialPlotter::newLinesReceived, &m_plot_thread, &plotDataHandlerThread::onNewDataReceived);
     connect(&m_plot_thread, &plotDataHandlerThread::curveNumChanged, this, &serialPlotter::onCurveNumChanged);
     connect(&m_plot_thread, &plotDataHandlerThread::readyForPlot, this, &serialPlotter::onReadyForPlot);
     connect(this, &serialPlotter::clearPlotData, &m_plot_thread, &plotDataHandlerThread::onClearPlotData);
 
+    connect(m_thread, &QThread::finished, &m_plot_thread, &QObject::deleteLater);
+    connect(m_thread, &QThread::finished, m_thread, &QObject::deleteLater);
+
+    m_thread->start();
     //setupDisplayPlot(MAX_GRAPH_NUM);
 
     // configure scroll bars:
@@ -51,6 +61,14 @@ serialPlotter::serialPlotter(QObject *parent,
 
 serialPlotter::~serialPlotter() {
     qDebug() <<  "deconstruct serial plotter";
+
+    disconnect(m_thread, &QThread::finished, &m_plot_thread, &QObject::deleteLater);
+    disconnect(m_thread, &QThread::finished, m_thread, &QObject::deleteLater);
+
+    if (m_thread->isRunning()) {
+        m_thread->quit();
+        m_thread->wait();
+    }
 }
 
 void serialPlotter::onNewLinesReceived(const QStringList &lines) {
@@ -66,12 +84,12 @@ void serialPlotter::onCurveNumChanged(int new_num) {
     setupDisplayPlot(new_num);
 }
 
-void serialPlotter::onReadyForPlot(PlotDataPtrList &data, QCPRange xRange, bool auto_mode) {
-    //qDebug() << "plot: set data";
+void serialPlotter::onReadyForPlot(PlotDataPtrList data, QCPRange xRange, bool auto_mode) {
+    qDebug() << "plot: set data";
     for (int i = 0; i < data.size(); i++) {
         m_display_plot->graph(i)->setData(data[i]);
     }
-    //qDebug() << "plot: set axis";
+    qDebug() << "plot: set axis";
     if (auto_mode) {
         m_display_plot->xAxis->setRange(xRange);
         m_display_plot->yAxis->setRange(m_y_axis_range_temp);
@@ -89,6 +107,7 @@ void serialPlotter::onReadyForPlot(PlotDataPtrList &data, QCPRange xRange, bool 
 void serialPlotter::xAxisChanged(QCPRange range)
 {
   setXAxis(range);
+  //m_auto = false;
 }
 
 void serialPlotter::yAxisChanged(QCPRange range)
@@ -117,6 +136,14 @@ void serialPlotter::setupDisplayPlot(int numGraphs)
     m_display_plot->axisRect()->setupFullAxesBox(true);
     m_display_plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
     m_display_plot->setNoAntialiasingOnDrag(true);
+    qDebug() << "set up display plot";
+    // if (m_thread->isRunning()) {
+    //     m_thread->quit();
+    //     m_thread->wait();
+    // }
+    // start plot thread
+    /*m_thread->start();
+    m_plot_thread.moveToThread(m_thread);*/  // 确保 worker 对象仍然在正确的线程中
 }
 
 /*
@@ -134,6 +161,7 @@ void serialPlotter::onSaveButtonClicked() {
 }
 
 void serialPlotter::onClearButtonClicked() {
+    // quit plot thread
     m_display_plot->clearGraphs();
     emit clearPlotData();
     m_display_plot->replot();

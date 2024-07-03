@@ -11,6 +11,7 @@
 
 using PlotDataPtr = QSharedPointer<QCPDataContainer<QCPGraphData>>;
 using PlotDataPtrList = QVector<PlotDataPtr>;
+Q_DECLARE_METATYPE(PlotDataPtrList)
 
 class RingBuffer {
 public:
@@ -112,7 +113,7 @@ public:
     plotDataHandlerThread(){};
     ~plotDataHandlerThread(){};
 signals:
-    void readyForPlot(PlotDataPtrList &data, QCPRange xRange, bool auto_mode);
+    void readyForPlot(PlotDataPtrList data, QCPRange xRange, bool auto_mode);
     void curveNumChanged(int new_num);
 public slots:
     void onNewDataReceived(const QStringList &lines, QCPRange xRange, bool auto_mode = true);

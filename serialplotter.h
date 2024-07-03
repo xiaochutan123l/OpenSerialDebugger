@@ -4,6 +4,7 @@
 #include <QObject>
 #include "qcustomplot.h"
 #include <QDebug>
+#include <QThread>
 #include "plotdatahandlerthread.h"
 
 #define MAX_GRAPH_NUM 5 // plot max 5 curve
@@ -38,7 +39,7 @@ public slots:
     void onAutoButtonClicked();
 
     void onCurveNumChanged(int new_num);
-    void onReadyForPlot(PlotDataPtrList &data, QCPRange xRange, bool auto_mode);
+    void onReadyForPlot(PlotDataPtrList data, QCPRange xRange, bool auto_mode);
 private:
     void setupDisplayPlot(int numGraphs);
     void savePlotDataToCSV(const QString &fileName);
@@ -70,6 +71,9 @@ private:
     // int m_verti_value = 0;
 
     plotDataHandlerThread m_plot_thread;
+    QThread *m_thread;
+
+
 };
 
 #endif // SERIALPLOTTER_H
