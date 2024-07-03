@@ -1,6 +1,6 @@
 #include "plotdatahandlerthread.h"
 
-void plotDataHandlerThread::onNewDataReceived(const QStringList &lines, QCPRange xRange, bool auto_mode) {
+void plotDataHandlerThread::onNewDataReceived(const QStringList lines, QCPRange xRange, bool auto_mode) {
     qDebug() << "on new data received";
     qDebug() << "Worker thread ID:" << QThread::currentThreadId();
     if (auto_mode) {

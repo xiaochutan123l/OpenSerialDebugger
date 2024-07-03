@@ -116,7 +116,7 @@ signals:
     void readyForPlot(PlotDataPtrList data, QCPRange xRange, bool auto_mode);
     void curveNumChanged(int new_num);
 public slots:
-    void onNewDataReceived(const QStringList &lines, QCPRange xRange, bool auto_mode = true);
+    void onNewDataReceived(const QStringList lines, QCPRange xRange, bool auto_mode = true);
     void onAxisChanged(QCPRange range);
     void onClearPlotData();
 private:

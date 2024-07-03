@@ -21,17 +21,17 @@ void serialMonitor::onSerialDataReceived(const QByteArray &data) {
     QList<QByteArray> packets = m_dataContainer.getPackets();
     m_dataContainer.clearBuffer();
 
+    //QElapsedTimer timer;
+    //timer.start();
+    emit newLinesReceived(lines);
+    //qDebug() << "plot time: " << timer.elapsed() << "ms";
+
     for (const QByteArray &packet : packets) {
         //writeText(QString::fromUtf8(packet));
         emit updateGetParameter(packet);
     }
 
     writeText(text);
-    QElapsedTimer timer;
-    timer.start();
-    emit newLinesReceived(lines);
-    qDebug() << "plot time: " << timer.elapsed() << "ms";
-
 }
 
 void serialMonitor::onClearBufferClicked() {

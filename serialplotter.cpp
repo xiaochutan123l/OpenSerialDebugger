@@ -75,9 +75,15 @@ void serialPlotter::onNewLinesReceived(const QStringList &lines) {
     if (m_stop) {
         return;
     }
-    m_x_axis_range_temp = getXAxis();
-    m_y_axis_range_temp = getYAxis();
-    emit newLinesReceived(lines, m_x_axis_range_temp, m_auto);
+    // store lines when plot data not finished yet.
+    m_qeued_lines.append(lines);
+    if (m_plot_data_finished) {
+        m_x_axis_range_temp = getXAxis();
+        m_y_axis_range_temp = getYAxis();
+        m_plot_data_finished = false;
+        emit newLinesReceived(m_qeued_lines, m_x_axis_range_temp, m_auto);
+        m_qeued_lines.clear();
+    }
 }
 
 void serialPlotter::onCurveNumChanged(int new_num) {
@@ -102,6 +108,7 @@ void serialPlotter::onReadyForPlot(PlotDataPtrList data, QCPRange xRange, bool a
     timer.start();
     m_display_plot->replot();
     qDebug() << "raw plot timer: " << timer.elapsed() << "ms";
+    m_plot_data_finished = true;
 }
 
 void serialPlotter::xAxisChanged(QCPRange range)

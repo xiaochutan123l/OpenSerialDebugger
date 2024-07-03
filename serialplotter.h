@@ -25,7 +25,7 @@ public:
     ~serialPlotter();
 
 signals:
-    void newLinesReceived(const QStringList &lines, QCPRange xRange, bool auto_mode = true);
+    void newLinesReceived(const QStringList lines, QCPRange xRange, bool auto_mode = true);
     void clearPlotData();
 public slots:
     void onNewLinesReceived(const QStringList &lines);
@@ -72,6 +72,8 @@ private:
 
     plotDataHandlerThread m_plot_thread;
     QThread *m_thread;
+    bool m_plot_data_finished = true;
+    QStringList m_qeued_lines;
 
 
 };
