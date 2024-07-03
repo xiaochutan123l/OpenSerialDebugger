@@ -92,8 +92,8 @@ set(PROJECT_SOURCES
         packet.h
         packet.cpp
 
-        # plotdatahandlerthread.h
-        # plotdatahandlerthread.cpp
+        plotdatahandlerthread.h
+        plotdatahandlerthread.cpp
 
     )
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

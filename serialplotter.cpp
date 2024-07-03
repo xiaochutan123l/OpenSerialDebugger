@@ -2,7 +2,6 @@
 #include <QFile>
 #include <QTextStream>
 #include <QFileDialog>
-#include "packet.h"
 
 QVector<double> extractNumbers(const QString &input);
 
@@ -29,6 +28,11 @@ serialPlotter::serialPlotter(QObject *parent,
     connect(m_button_save, &QPushButton::clicked, this, &serialPlotter::onSaveButtonClicked);
     connect(m_button_stop, &QPushButton::clicked, this, &serialPlotter::onStopButtonClicked);
 
+    connect(this, &serialPlotter::newLinesReceived, &m_plot_thread, &plotDataHandlerThread::onNewDataReceived);
+    connect(&m_plot_thread, &plotDataHandlerThread::curveNumChanged, this, &serialPlotter::onCurveNumChanged);
+    connect(&m_plot_thread, &plotDataHandlerThread::readyForPlot, this, &serialPlotter::onReadyForPlot);
+    connect(this, &serialPlotter::clearPlotData, &m_plot_thread, &plotDataHandlerThread::onClearPlotData);
+
     //setupDisplayPlot(MAX_GRAPH_NUM);
 
     // configure scroll bars:
@@ -50,58 +54,24 @@ void serialPlotter::onNewLinesReceived(const QStringList &lines) {
     if (m_stop) {
         return;
     }
-    // QElapsedTimer timer;
-    // timer.start();
-
-    bool updated = false;
-    for (auto &line : lines) {
-        if (!line.startsWith(PACKET_ID_STR)) {
-            updateDisplayPlotData(extractNumbers(line));
-            updated = true;
-        }
-    }
-    // qDebug() << "Plot time: " << timer.elapsed() << "milliseconds";
-    // QElapsedTimer timer;
-    // timer.start();
-    if (updated) {
-        m_display_plot->xAxis->setRange(*std::min_element(m_xData.begin(), m_xData.end()),
-                                        *std::max_element(m_xData.begin(), m_xData.end()));
-        m_display_plot->replot();
-    }
-
-
-     //qDebug() << "Plot time: " << timer.elapsed() << "milliseconds";
+    emit newLinesReceived(lines);
 }
 
-bool serialPlotter::isValidFormat(const QString &line)
-{
-    // 查找冒号的位置
-    int colonIndex = line.indexOf(':');
-    if (colonIndex == -1) {
-        return false; // 没有冒号
-    }
+void serialPlotter::onCurveNumChanged(int new_num) {
+    setupDisplayPlot(new_num);
+}
 
-    // 提取冒号后的部分
-    QString dataPart = line.mid(colonIndex + 1).trimmed();
-    if (dataPart.isEmpty()) {
-        return false; // 冒号后没有数据
+void serialPlotter::onReadyForPlot(PlotDataPtrList &data) {
+    qDebug() << "plot: set data";
+    for (int i = 0; i < data.size(); i++) {
+        m_display_plot->graph(i)->setData(data[i]);
     }
-
-    // 检查是否由逗号分隔的数字组成
-    QStringList numbers = dataPart.split(',');
-    if (numbers.isEmpty()) {
-        return false;
-    }
-
-    for (const QString &number : numbers) {
-        bool ok;
-        number.toDouble(&ok);
-        if (!ok) {
-            return false;
-        }
-    }
-
-    return true;
+    qDebug() << "plot: set axis";
+    int left = data[0]->at(0)->key;
+    int right = data[0]->at(data[0]->size()-1)->key;
+    m_display_plot->xAxis->setRange(left, right);
+    qDebug() << "plot";
+    m_display_plot->replot();
 }
 
 void serialPlotter::display_horzScrollBarChanged(int value)
@@ -139,7 +109,6 @@ void serialPlotter::yAxisChanged(QCPRange range)
 void serialPlotter::setupDisplayPlot(int numGraphs)
 {
     m_display_plot->clearGraphs(); // 清除现有的图表
-    m_graphData.clear(); // 清除现有的数据容器
 
     // 动态创建图表和数据容器
     for (int i = 0; i < numGraphs; ++i) {
@@ -149,15 +118,10 @@ void serialPlotter::setupDisplayPlot(int numGraphs)
         m_display_plot->graph()->setPen(pen);
         //m_display_plot->graph()->setPen(m_pen_colors[i]);
         m_display_plot->legend->setVisible(true);
-        m_graphData.append(QVector<double>());
     }
 
     m_display_plot->axisRect()->setupFullAxesBox(true);
     m_display_plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
-
-    // Initialize x-axis data container
-    m_xData.clear();
-    m_x_count = 0;
 }
 
 /*
@@ -167,32 +131,7 @@ yAxis range: (min, max) of y(n-1000, n)
 
 */
 
-void serialPlotter::updateDisplayPlotData(const QVector<double> &yValues)
-{
-    // 限制参数数量必须一致，不然重新绘制
-    if (m_curve_num != yValues.size()) {
-        onClearButtonClicked();
-        m_curve_num = yValues.size();
-        setupDisplayPlot(m_curve_num);
-    }
-    // 更新 x 轴数据
-    m_xData.append(++m_x_count);
-
-    // 确保 yValues 数量与图表数量匹配
-    // TODO: 如果突然多了一组数据怎么办?
-    for (int i = 0; i < yValues.size(); ++i) {
-        if (i < m_graphData.size()) {
-            m_graphData[i].append(yValues[i]);
-            //m_display_plot->graph(i)->setData(m_xData, m_graphData[i]);
-            m_display_plot->graph(i)->addData(m_xData, m_graphData[i]);
-        }
-    }
-}
-
 void serialPlotter::onSaveButtonClicked() {
-    // if (m_stop) {
-    //     return;
-    // }
     QString fileName = QFileDialog::getSaveFileName(nullptr, "Save Plot Data", "", "CSV files (*.csv)");
     if (!fileName.isEmpty()) {
         savePlotDataToCSV(fileName);
@@ -201,14 +140,7 @@ void serialPlotter::onSaveButtonClicked() {
 
 void serialPlotter::onClearButtonClicked() {
     m_display_plot->clearGraphs();
-
-    m_graphData.clear();
-    m_xData.clear();
-    m_x_count = 0;
-
-    //setupDisplayPlot(MAX_GRAPH_NUM);
-    m_curve_num = 0;
-
+    emit clearPlotData();
     m_display_plot->replot();
 }
 
@@ -223,64 +155,33 @@ void serialPlotter::onStopButtonClicked() {
 }
 
 void serialPlotter::savePlotDataToCSV(const QString &fileName) {
-    QFile file(fileName);
-    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        QTextStream out(&file);
+    // QFile file(fileName);
+    // if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+    //     QTextStream out(&file);
 
-        // 写入标题行
-        out << "X";
-        for (int i = 0; i < m_graphData.size(); ++i) {
-            out << ",Y" << i + 1;
-        }
-        out << "\n";
+    //     // 写入标题行
+    //     out << "X";
+    //     for (int i = 0; i < m_graphData.size(); ++i) {
+    //         out << ",Y" << i + 1;
+    //     }
+    //     out << "\n";
 
-        // 写入数据行
-        for (int j = 0; j < m_xData.size(); ++j) {
-            out << m_xData[j];
-            for (int i = 0; i < m_graphData.size(); ++i) {
-                if (j < m_graphData[i].size()) {
-                    out << "," << m_graphData[i][j];
-                } else {
-                    out << ",";
-                }
-            }
-            out << "\n";
-        }
+    //     // 写入数据行
+    //     for (int j = 0; j < m_xData.size(); ++j) {
+    //         out << m_xData[j];
+    //         for (int i = 0; i < m_graphData.size(); ++i) {
+    //             if (j < m_graphData[i].size()) {
+    //                 out << "," << m_graphData[i][j];
+    //             } else {
+    //                 out << ",";
+    //             }
+    //         }
+    //         out << "\n";
+    //     }
 
-        file.close();
-        qDebug() << "Save succeed: " << fileName;
-    } else {
-        qDebug() << "Failed to open file for writing: " << fileName;
-    }
-}
-
-
-/* ------------------ utils ---------------------*/
-
-QVector<double> extractNumbers(const QString &input)
-{
-    QVector<double> numbers;
-
-    // 找到冒号后的部分
-    int colonIndex = input.indexOf(':');
-    if (colonIndex == -1) {
-        return numbers; // 未找到冒号，返回空列表
-    }
-
-    // 获取冒号后的子字符串，并去除空格
-    QString dataPart = input.mid(colonIndex + 1).trimmed();
-
-    // 分割字符串，提取数字
-    QStringList numberStrings = dataPart.split(',', Qt::SplitBehaviorFlags::SkipEmptyParts);
-
-    // 转换为数字并添加到列表
-    for (const QString &numberStr : numberStrings) {
-        bool ok;
-        double number = numberStr.toDouble(&ok);
-        if (ok) {
-            numbers.append(number);
-        }
-    }
-
-    return numbers;
+    //     file.close();
+    //     qDebug() << "Save succeed: " << fileName;
+    // } else {
+    //     qDebug() << "Failed to open file for writing: " << fileName;
+    // }
 }

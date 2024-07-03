@@ -15,7 +15,7 @@
 #include "fakeserialport.h"
 #endif
 
-#define ReadDataTickTime 30 // ms
+#define ReadDataTickTime 100 // ms
 
 #define BAUDRATE_DEFUALT_INDEX 7 // 115200
 

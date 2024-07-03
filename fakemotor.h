@@ -6,7 +6,7 @@
 #include <QDebug>
 #include "packethandler.h"
 
-#define MotorTimerInterval 10 // ms
+#define MotorTimerInterval 30 // ms
 
 class fakeMotor : public QObject
 {
