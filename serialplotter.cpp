@@ -20,8 +20,8 @@ serialPlotter::serialPlotter(QObject *parent,
     m_display_verticalScrollBar(display_verticalScrollBar),
     m_display_horizontalScrollBar(display_horizontalScrollBar)
 {
-    connect(m_display_horizontalScrollBar, SIGNAL(valueChanged(int)), this, SLOT(display_horzScrollBarChanged(int)));
-    connect(m_display_verticalScrollBar, SIGNAL(valueChanged(int)), this, SLOT(display_vertScrollBarChanged(int)));
+    //connect(m_display_horizontalScrollBar, SIGNAL(valueChanged(int)), this, SLOT(display_horzScrollBarChanged(int)));
+    //connect(m_display_verticalScrollBar, SIGNAL(valueChanged(int)), this, SLOT(display_vertScrollBarChanged(int)));
     connect(m_display_plot->xAxis, SIGNAL(rangeChanged(QCPRange)), this, SLOT(xAxisChanged(QCPRange)));
     connect(m_display_plot->yAxis, SIGNAL(rangeChanged(QCPRange)), this, SLOT(yAxisChanged(QCPRange)));
     connect(m_button_clear, &QPushButton::clicked, this, &serialPlotter::onClearButtonClicked);
@@ -40,8 +40,13 @@ serialPlotter::serialPlotter(QObject *parent,
     // divide scroll bar position values by 100 to provide a scroll range -5..5 in floating point
     // axis coordinates. if you want to dynamically grow the range accessible with the scroll bar,
     // just increase the minimum/maximum values of the scroll bars as needed.
-    m_display_horizontalScrollBar->setRange(-500, 500);
-    m_display_verticalScrollBar->setRange(-500, 500);
+    //m_display_horizontalScrollBar->setRange(-1000, 1000);
+    //m_display_verticalScrollBar->setRange(-1000, 1000);
+    //m_display_horizontalScrollBar->setDisabled(true);
+    //m_display_verticalScrollBar->setDisabled(true);
+
+    m_display_horizontalScrollBar->setHidden(true);
+    m_display_verticalScrollBar->setHidden(true);
 
     m_button_stop->setText("Run");
 }
@@ -54,7 +59,10 @@ void serialPlotter::onNewLinesReceived(const QStringList &lines) {
     if (m_stop) {
         return;
     }
-    emit newLinesReceived(lines);
+
+    m_x_axis_range_temp = getXAxis();
+    m_y_axis_range_temp = getYAxis();
+    emit newLinesReceived(lines, getXAxis(), getYAxis());
 }
 
 void serialPlotter::onCurveNumChanged(int new_num) {
@@ -67,44 +75,27 @@ void serialPlotter::onReadyForPlot(PlotDataPtrList &data) {
         m_display_plot->graph(i)->setData(data[i]);
     }
     qDebug() << "plot: set axis";
-    int left = data[0]->at(0)->key;
-    int right = data[0]->at(data[0]->size()-1)->key;
-    m_display_plot->xAxis->setRange(left, right);
+    // int left = data[0]->at(0)->key;
+    // int right = data[0]->at(data[0]->size()-1)->key;
+    // m_display_plot->xAxis->setRange(left, right);
+    m_display_plot->xAxis->setRange(m_x_axis_range_temp);
+    m_display_plot->yAxis->setRange(m_y_axis_range_temp);
+
     qDebug() << "plot";
     m_display_plot->replot();
 }
 
-void serialPlotter::display_horzScrollBarChanged(int value)
-{
-  if (qAbs(m_display_plot->xAxis->range().center()-value/100.0) > 0.01) // if user is dragging plot, we don't want to replot twice
-  {
-    m_display_plot->xAxis->setRange(value/100.0, m_display_plot->xAxis->range().size(), Qt::AlignCenter);
-    //m_display_plot->replot();
-  }
-}
-
-void serialPlotter::display_vertScrollBarChanged(int value)
-{
-  if (qAbs(m_display_plot->yAxis->range().center()+value/100.0) > 0.01) // if user is dragging plot, we don't want to replot twice
-  {
-    m_display_plot->yAxis->setRange(-value/100.0, m_display_plot->yAxis->range().size(), Qt::AlignCenter);
-    //m_display_plot->replot();
-  }
-}
-
 void serialPlotter::xAxisChanged(QCPRange range)
 {
-  //qDebug() << "x axis change: " << range;
-  m_display_horizontalScrollBar->setValue(qRound(range.center()*100.0)); // adjust position of scroll bar slider
-  m_display_horizontalScrollBar->setPageStep(qRound(range.size()*100.0)); // adjust size of scroll bar slider
+  setXAxis(range);
 }
 
 void serialPlotter::yAxisChanged(QCPRange range)
 {
-  //qDebug() << "x axis change: " << range;
-  m_display_verticalScrollBar->setValue(qRound(-range.center()*100.0)); // adjust position of scroll bar slider
-  m_display_verticalScrollBar->setPageStep(qRound(range.size()*100.0)); // adjust size of scroll bar slider
+  qDebug() << "y axis change: " << range;
+  setYAxis(range);
 }
+
 
 void serialPlotter::setupDisplayPlot(int numGraphs)
 {

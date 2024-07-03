@@ -23,13 +23,11 @@ public:
     ~serialPlotter();
 
 signals:
-    void newLinesReceived(const QStringList &lines);
+    void newLinesReceived(const QStringList &lines, QCPRange xRange, QCPRange yRange);
     void clearPlotData();
 public slots:
     void onNewLinesReceived(const QStringList &lines);
 
-    void display_horzScrollBarChanged(int value);
-    void display_vertScrollBarChanged(int value);
     void xAxisChanged(QCPRange range);
     void yAxisChanged(QCPRange range);
 
@@ -40,9 +38,16 @@ public slots:
     void onCurveNumChanged(int new_num);
     void onReadyForPlot(PlotDataPtrList &data);
 private:
-
     void setupDisplayPlot(int numGraphs);
     void savePlotDataToCSV(const QString &fileName);
+
+    void setXAxis(QCPRange range) {m_x_axis_range = range;};
+    void setYAxis(QCPRange range) {m_y_axis_range = range;};
+    QCPRange getXAxis() {return m_x_axis_range;};
+    QCPRange getYAxis() {return m_y_axis_range;};
+
+    // void setHorizontalScrollBar(QCPRange range);
+    // void setVerticalScrollBar(QCPRange range);
 
     QList<QColor> m_pen_colors = {Qt::blue, Qt::red, Qt::green, Qt::black, Qt::gray};
 
@@ -54,6 +59,14 @@ private:
     QPushButton *m_button_save;
     QPushButton *m_button_stop;
     bool m_stop = true;
+
+    QCPRange m_x_axis_range;
+    QCPRange m_y_axis_range;
+
+    QCPRange m_x_axis_range_temp;
+    QCPRange m_y_axis_range_temp;
+    // int m_hori_value = 0;
+    // int m_verti_value = 0;
 
     plotDataHandlerThread m_plot_thread;
 };

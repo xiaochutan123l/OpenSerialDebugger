@@ -40,7 +40,7 @@ public:
 
     void getPlotValues(PlotDataPtrList &plot_data, size_t start, size_t end) {
         if (start >= buffer[0].size() || end > buffer[0].size() || start > end) {
-            qDebug() << "start: " << start << ", end: " << end << "buffer size: " << buffer[0].size();
+            // qDebug() << "start: " << start << ", end: " << end << "buffer size: " << buffer[0].size();
             throw std::out_of_range("Invalid range");
         }
         plotData.clear();
@@ -50,17 +50,17 @@ public:
         //         plot_data.emplace_back(buffer[j])
         //     }
         // }
-        qDebug() << "start: " << start << ", end: " << end << "buffer size: " << buffer[0].size();
-        qDebug() << "start processing data";
+        // qDebug() << "start: " << start << ", end: " << end << "buffer size: " << buffer[0].size();
+        // qDebug() << "start processing data";
         for (int i = 0; i < buffer.size(); i++) {
             plotData.append(QVector<QCPGraphData>());
             for (int j = start; j < end; j++) {
                 plotData[i].emplace_back(j, buffer[i][j]);
             }
-            qDebug() << "plotData ok";
+            // qDebug() << "plotData ok";
             plot_data[i]->set(plotData[i], true);
         }
-        qDebug() << "getPlotValues ok";
+        // qDebug() << "getPlotValues ok";
     }
 
     size_t size() {
@@ -95,12 +95,13 @@ signals:
     void readyForPlot(PlotDataPtrList &data);
     void curveNumChanged(int new_num);
 public slots:
-    void onNewDataReceived(const QStringList &lines);
+    void onNewDataReceived(const QStringList &lines, QCPRange xRange, QCPRange yRange);
     void onAxisChanged(QCPRange range);
     void onClearPlotData();
     void onAutoModeChanged(bool mode);
 private:
-    void handleData(const QStringList &lines);
+    void handleDataAuto(const QStringList &lines);
+    void handleData(const QStringList &lines, QCPRange xRange, QCPRange yRange);
     QVector<double> extractNumbers(const QString &input);
     void updateDisplayPlotData(const QVector<double> &yValues);
     void extractPlotData();

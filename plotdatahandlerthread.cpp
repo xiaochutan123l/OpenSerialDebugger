@@ -1,7 +1,8 @@
 #include "plotdatahandlerthread.h"
 
-void plotDataHandlerThread::onNewDataReceived(const QStringList &lines) {
-    handleData(lines);
+void plotDataHandlerThread::onNewDataReceived(const QStringList &lines, QCPRange xRange, QCPRange yRange) {
+    //handleDataAuto(lines);
+    handleData(lines, xRange, yRange);
 }
 
 void plotDataHandlerThread::onAxisChanged(QCPRange range) {
@@ -14,14 +15,14 @@ void plotDataHandlerThread::onClearPlotData() {
     m_graphData.clear();
     m_plot_data_content.clear();
     m_curve_num = 0;
-    qDebug() << "cleared plot data";
+    //qDebug() << "cleared plot data";
 }
 
 void plotDataHandlerThread::onAutoModeChanged(bool mode) {
     m_auto_mode = mode;
 }
 
-void plotDataHandlerThread::handleData(const QStringList &lines) {
+void plotDataHandlerThread::handleDataAuto(const QStringList &lines) {
     if (lines.size() == 0) {
         return;
     }
@@ -40,7 +41,37 @@ void plotDataHandlerThread::handleData(const QStringList &lines) {
     else {
         m_graphData.getPlotValues(m_plot_data, size - PLOT_BUFFER_SIZE, size);
     }
-    qDebug() << "send ready for plot";
+    //qDebug() << "send ready for plot";
+    emit readyForPlot(m_plot_data);
+
+}
+
+void plotDataHandlerThread::handleData(const QStringList &lines, QCPRange xRange, QCPRange yRange) {
+    if (lines.size() == 0) {
+        return;
+    }
+    for (auto &line : lines) {
+        updateDisplayPlotData(extractNumbers(line));
+    }
+
+    size_t size = m_graphData.size();
+
+    if (xRange.lower > size || xRange.upper <= 0) {
+        // out of range, return nothing
+        m_graphData.clear();
+    }
+    else {
+        if (xRange.lower < 0) {
+            xRange.lower = 0;
+        }
+        if (xRange.upper >= size) {
+            xRange.upper = size;
+        }
+
+        m_graphData.getPlotValues(m_plot_data, xRange.lower, xRange.upper);
+    }
+
+    //qDebug() << "send ready for plot";
     emit readyForPlot(m_plot_data);
 
 }

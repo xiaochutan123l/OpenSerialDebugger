@@ -23,4 +23,5 @@ TODO List:
 - check command ptr if is null and also like type, name ... validation
 - optimize parameterComboWidget structure, virtual functions
 - add save pdf, png... function
+- add clean up process if user hot close window
 */
