@@ -9,6 +9,11 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# logo
+if(WIN32)
+  set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_SOURCE_DIR}/logo.rc")
+endif()
+
 ## Add AddressSanitizer flags
 #if (MSVC)
 #    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /fsanitize=address")
@@ -26,7 +31,7 @@ else ()
 endif ()
 
 # debug
-add_definitions(-DUSE_FAKE_SERIAL)
+#add_definitions(-DUSE_FAKE_SERIAL)
 
 #add_definitions(-DQCUSTOMPLOT_USE_OPENGL)
 
@@ -101,7 +106,10 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
         icons.qrc
+        # logo
+        ${APP_ICON_RESOURCE_WINDOWS}
     )
+
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET QMotorMaster APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
 #                 ${CMAKE_CURRENT_SOURCE_DIR}/android)

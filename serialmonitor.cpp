@@ -6,6 +6,7 @@ serialMonitor::serialMonitor(QObject *parent, QTextBrowser *textBrowser, QPushBu
     : QObject(parent), m_textBrowser(textBrowser), m_clear_button(button)
 {
     connect(m_clear_button, &QPushButton::clicked, this, &serialMonitor::onClearBufferClicked);
+    m_textBrowser->setReadOnly(true); // 确保文本浏览器为只读模式
 }
 
 serialMonitor::~serialMonitor()
