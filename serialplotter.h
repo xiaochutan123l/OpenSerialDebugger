@@ -27,6 +27,7 @@ public:
 signals:
     void newLinesReceived(const QStringList lines, QCPRange xRange, bool auto_mode = true);
     void clearPlotData();
+    void savePlotDataToCSV(const QString &fileName);
 public slots:
     void onNewLinesReceived(const QStringList &lines);
 
@@ -42,7 +43,6 @@ public slots:
     void onReadyForPlot(PlotDataPtrList data, QCPRange xRange, bool auto_mode);
 private:
     void setupDisplayPlot(int numGraphs);
-    void savePlotDataToCSV(const QString &fileName);
 
     void setXAxis(QCPRange range) {m_x_axis_range = range;};
     void setYAxis(QCPRange range) {m_y_axis_range = range;};

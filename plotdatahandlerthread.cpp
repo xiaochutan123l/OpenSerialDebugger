@@ -109,10 +109,6 @@ void plotDataHandlerThread::updateDisplayPlotData(const QVector<double> &yValues
 
 }
 
-void plotDataHandlerThread::extractPlotData() {
-
-}
-
 void plotDataHandlerThread::resetData() {
     m_plot_data.clear();
     m_graphData.reset(m_curve_num);
@@ -152,4 +148,38 @@ QVector<double> plotDataHandlerThread::extractNumbers(const QString &input)
     }
 
     return numbers;
+}
+
+void plotDataHandlerThread::onSavePlotDataToCSV(const QString &fileName) {
+    QFile file(fileName);
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out(&file);
+
+        std::deque<double> &x_data = m_graphData.getXData();
+        QVector<std::deque<double>> &graph_data =  m_graphData.getGraphData();
+        // 写入标题行
+        out << "X";
+        for (int i = 0; i < graph_data.size(); ++i) {
+            out << ",Y" << i + 1;
+        }
+        out << "\n";
+
+        // 写入数据行
+        for (int j = 0; j < x_data.size(); ++j) {
+            out << x_data[j];
+            for (int i = 0; i < graph_data.size(); ++i) {
+                if (j < graph_data[i].size()) {
+                    out << "," << graph_data[i][j];
+                } else {
+                    out << ",";
+                }
+            }
+            out << "\n";
+        }
+
+        file.close();
+        qDebug() << "Save succeed: " << fileName;
+    } else {
+        qDebug() << "Failed to open file for writing: " << fileName;
+    }
 }

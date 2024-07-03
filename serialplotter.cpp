@@ -41,6 +41,7 @@ serialPlotter::serialPlotter(QObject *parent,
     connect(&m_plot_thread, &plotDataHandlerThread::curveNumChanged, this, &serialPlotter::onCurveNumChanged);
     connect(&m_plot_thread, &plotDataHandlerThread::readyForPlot, this, &serialPlotter::onReadyForPlot);
     connect(this, &serialPlotter::clearPlotData, &m_plot_thread, &plotDataHandlerThread::onClearPlotData);
+    connect(this, &serialPlotter::savePlotDataToCSV, &m_plot_thread, &plotDataHandlerThread::onSavePlotDataToCSV);
 
     connect(m_thread, &QThread::finished, &m_plot_thread, &QObject::deleteLater);
     connect(m_thread, &QThread::finished, m_thread, &QObject::deleteLater);
@@ -163,7 +164,7 @@ yAxis range: (min, max) of y(n-1000, n)
 void serialPlotter::onSaveButtonClicked() {
     QString fileName = QFileDialog::getSaveFileName(nullptr, "Save Plot Data", "", "CSV files (*.csv)");
     if (!fileName.isEmpty()) {
-        savePlotDataToCSV(fileName);
+        emit savePlotDataToCSV(fileName);
     }
 }
 
@@ -178,44 +179,14 @@ void serialPlotter::onStopButtonClicked() {
     m_stop = !m_stop;
     if (m_stop) {
         m_button_stop->setText("Run");
+        m_button_save->setEnabled(true);
     }
     else {
         m_button_stop->setText("Stop");
+        m_button_save->setEnabled(false);
     }
 }
 
 void serialPlotter::onAutoButtonClicked() {
     m_auto = !m_auto;
-}
-
-void serialPlotter::savePlotDataToCSV(const QString &fileName) {
-    // QFile file(fileName);
-    // if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-    //     QTextStream out(&file);
-
-    //     // 写入标题行
-    //     out << "X";
-    //     for (int i = 0; i < m_graphData.size(); ++i) {
-    //         out << ",Y" << i + 1;
-    //     }
-    //     out << "\n";
-
-    //     // 写入数据行
-    //     for (int j = 0; j < m_xData.size(); ++j) {
-    //         out << m_xData[j];
-    //         for (int i = 0; i < m_graphData.size(); ++i) {
-    //             if (j < m_graphData[i].size()) {
-    //                 out << "," << m_graphData[i][j];
-    //             } else {
-    //                 out << ",";
-    //             }
-    //         }
-    //         out << "\n";
-    //     }
-
-    //     file.close();
-    //     qDebug() << "Save succeed: " << fileName;
-    // } else {
-    //     qDebug() << "Failed to open file for writing: " << fileName;
-    // }
 }

@@ -97,6 +97,9 @@ public:
         xCount = 0;
     }
 
+    std::deque<double>& getXData() {return xData;}
+    QVector<std::deque<double>>& getGraphData() {return buffer;}
+
 private:
     QVector<std::deque<double>> buffer;
     size_t maxSize;
@@ -119,6 +122,7 @@ public slots:
     void onNewDataReceived(const QStringList lines, QCPRange xRange, bool auto_mode = true);
     void onAxisChanged(QCPRange range);
     void onClearPlotData();
+    void onSavePlotDataToCSV(const QString &fileName);
 private:
     void handleDataAuto(const QStringList &lines);
     void handleData(const QStringList &lines, QCPRange xRange);
