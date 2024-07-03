@@ -60,7 +60,27 @@ public:
             // qDebug() << "plotData ok";
             plot_data[i]->set(plotData[i], true);
         }
-        // qDebug() << "getPlotValues ok";
+        //qDebug() << "getPlotValues ok";
+    }
+
+    void getCompressedPlotValues(PlotDataPtrList &plot_data, size_t start, size_t end) {
+        if (start >= buffer[0].size() || end > buffer[0].size() || start > end) {
+            // qDebug() << "start: " << start << ", end: " << end << "buffer size: " << buffer[0].size();
+            throw std::out_of_range("Invalid range");
+        }
+        plotData.clear();
+        int step = (end - start) / PLOT_BUFFER_SIZE;
+        //step = 1;
+        //qDebug() << "step: " << step;
+        for (int i = 0; i < buffer.size(); i++) {
+            plotData.append(QVector<QCPGraphData>());
+            for (int j = start; j < end; j += step) {
+                plotData[i].emplace_back(j, buffer[i][j]);
+            }
+            //qDebug() << "plotData ok, data number: " << plot_data[i]->size();
+            plot_data[i]->set(plotData[i], true);
+        }
+        //qDebug() << "getCompressed PlotValues ok";
     }
 
     size_t size() {
@@ -92,16 +112,15 @@ public:
     plotDataHandlerThread(){};
     ~plotDataHandlerThread(){};
 signals:
-    void readyForPlot(PlotDataPtrList &data);
+    void readyForPlot(PlotDataPtrList &data, QCPRange xRange, bool auto_mode);
     void curveNumChanged(int new_num);
 public slots:
-    void onNewDataReceived(const QStringList &lines, QCPRange xRange, QCPRange yRange);
+    void onNewDataReceived(const QStringList &lines, QCPRange xRange, bool auto_mode = true);
     void onAxisChanged(QCPRange range);
     void onClearPlotData();
-    void onAutoModeChanged(bool mode);
 private:
     void handleDataAuto(const QStringList &lines);
-    void handleData(const QStringList &lines, QCPRange xRange, QCPRange yRange);
+    void handleData(const QStringList &lines, QCPRange xRange);
     QVector<double> extractNumbers(const QString &input);
     void updateDisplayPlotData(const QVector<double> &yValues);
     void extractPlotData();
@@ -116,8 +135,6 @@ private:
 
     QCPRange m_axis_range;
     int m_curve_num = 0;
-
-    bool m_auto_mode = false;
 };
 
 #endif // PLOTDATAHANDLERTHREAD_H

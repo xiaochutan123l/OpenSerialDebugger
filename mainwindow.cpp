@@ -34,6 +34,7 @@ MainWindow::MainWindow(QWidget *parent)
                                          ui->pushButton_plotter_clear,
                                          ui->pushButton_plotter_save,
                                          ui->pushButton_plotter_stop,
+                                         ui->pushButton_plotter_auto,
                                          ui->display_plot,
                                          ui->display_verticalScrollBar,
                                          ui->display_horizontalScrollBar);

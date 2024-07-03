@@ -17,13 +17,14 @@ public:
                   QPushButton *clear,
                   QPushButton *save,
                   QPushButton *stop,
+                  QPushButton *_auto,
                   QCustomPlot *display_plot,
                   QScrollBar *display_verticalScrollBar,
                   QScrollBar *display_horizontalScrollBar);
     ~serialPlotter();
 
 signals:
-    void newLinesReceived(const QStringList &lines, QCPRange xRange, QCPRange yRange);
+    void newLinesReceived(const QStringList &lines, QCPRange xRange, bool auto_mode = true);
     void clearPlotData();
 public slots:
     void onNewLinesReceived(const QStringList &lines);
@@ -34,9 +35,10 @@ public slots:
     void onSaveButtonClicked();
     void onClearButtonClicked();
     void onStopButtonClicked();
+    void onAutoButtonClicked();
 
     void onCurveNumChanged(int new_num);
-    void onReadyForPlot(PlotDataPtrList &data);
+    void onReadyForPlot(PlotDataPtrList &data, QCPRange xRange, bool auto_mode);
 private:
     void setupDisplayPlot(int numGraphs);
     void savePlotDataToCSV(const QString &fileName);
@@ -45,9 +47,6 @@ private:
     void setYAxis(QCPRange range) {m_y_axis_range = range;};
     QCPRange getXAxis() {return m_x_axis_range;};
     QCPRange getYAxis() {return m_y_axis_range;};
-
-    // void setHorizontalScrollBar(QCPRange range);
-    // void setVerticalScrollBar(QCPRange range);
 
     QList<QColor> m_pen_colors = {Qt::blue, Qt::red, Qt::green, Qt::black, Qt::gray};
 
@@ -58,7 +57,9 @@ private:
     QPushButton *m_button_clear;
     QPushButton *m_button_save;
     QPushButton *m_button_stop;
+    QPushButton *m_button_auto;
     bool m_stop = true;
+    bool m_auto = true;
 
     QCPRange m_x_axis_range;
     QCPRange m_y_axis_range;

@@ -1,8 +1,12 @@
 #include "plotdatahandlerthread.h"
 
-void plotDataHandlerThread::onNewDataReceived(const QStringList &lines, QCPRange xRange, QCPRange yRange) {
-    //handleDataAuto(lines);
-    handleData(lines, xRange, yRange);
+void plotDataHandlerThread::onNewDataReceived(const QStringList &lines, QCPRange xRange, bool auto_mode) {
+    if (auto_mode) {
+        handleDataAuto(lines);
+    }
+    else {
+        handleData(lines, xRange);
+    }
 }
 
 void plotDataHandlerThread::onAxisChanged(QCPRange range) {
@@ -18,10 +22,6 @@ void plotDataHandlerThread::onClearPlotData() {
     //qDebug() << "cleared plot data";
 }
 
-void plotDataHandlerThread::onAutoModeChanged(bool mode) {
-    m_auto_mode = mode;
-}
-
 void plotDataHandlerThread::handleDataAuto(const QStringList &lines) {
     if (lines.size() == 0) {
         return;
@@ -35,18 +35,23 @@ void plotDataHandlerThread::handleDataAuto(const QStringList &lines) {
         // do nothing if no data
         return;
     }
+    QCPRange range;
     if (size <= PLOT_BUFFER_SIZE ) {
+        range.lower = 0;
+        range.upper = size;
         m_graphData.getPlotValues(m_plot_data, 0, size);
     }
     else {
-        m_graphData.getPlotValues(m_plot_data, size - PLOT_BUFFER_SIZE, size);
+        range.lower = size - PLOT_BUFFER_SIZE;
+        range.upper = size;
+        m_graphData.getPlotValues(m_plot_data, range.lower, range.upper);
     }
     //qDebug() << "send ready for plot";
-    emit readyForPlot(m_plot_data);
+    emit readyForPlot(m_plot_data, range, true);
 
 }
 
-void plotDataHandlerThread::handleData(const QStringList &lines, QCPRange xRange, QCPRange yRange) {
+void plotDataHandlerThread::handleData(const QStringList &lines, QCPRange xRange) {
     if (lines.size() == 0) {
         return;
     }
@@ -55,10 +60,13 @@ void plotDataHandlerThread::handleData(const QStringList &lines, QCPRange xRange
     }
 
     size_t size = m_graphData.size();
-
+    //qDebug() << "lower: " << xRange.lower << ", upper: " << xRange.upper;
     if (xRange.lower > size || xRange.upper <= 0) {
         // out of range, return nothing
         m_graphData.clear();
+        emit readyForPlot(m_plot_data, QCPRange(), false);
+        qDebug() << "wrong range: return" << xRange;
+        return;
     }
     else {
         if (xRange.lower < 0) {
@@ -67,12 +75,19 @@ void plotDataHandlerThread::handleData(const QStringList &lines, QCPRange xRange
         if (xRange.upper >= size) {
             xRange.upper = size;
         }
-
+    }
+    //qDebug() << "new range: " << xRange;
+    // 当用户手动设置x轴范围超过两倍最大plotbuffer，就采样。
+    // 小于两倍不好采样。
+    if (xRange.size() <= PLOT_BUFFER_SIZE * 2) {
         m_graphData.getPlotValues(m_plot_data, xRange.lower, xRange.upper);
     }
-
+    // 大于两倍的时候采样输出，保证画图最大两倍plotbuffer数据，保证流畅性
+    else {
+        m_graphData.getCompressedPlotValues(m_plot_data, xRange.lower, xRange.upper);
+    }
     //qDebug() << "send ready for plot";
-    emit readyForPlot(m_plot_data);
+    emit readyForPlot(m_plot_data, QCPRange(), false);
 
 }
 

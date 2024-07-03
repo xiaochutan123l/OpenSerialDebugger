@@ -9,6 +9,7 @@ serialPlotter::serialPlotter(QObject *parent,
                              QPushButton *clear,
                              QPushButton *save,
                              QPushButton *stop,
+                             QPushButton *_auto,
                              QCustomPlot *display_plot,
                              QScrollBar *display_verticalScrollBar,
                              QScrollBar *display_horizontalScrollBar)
@@ -16,6 +17,7 @@ serialPlotter::serialPlotter(QObject *parent,
     m_button_clear(clear),
     m_button_save(save),
     m_button_stop(stop),
+    m_button_auto(_auto),
     m_display_plot(display_plot),
     m_display_verticalScrollBar(display_verticalScrollBar),
     m_display_horizontalScrollBar(display_horizontalScrollBar)
@@ -27,6 +29,7 @@ serialPlotter::serialPlotter(QObject *parent,
     connect(m_button_clear, &QPushButton::clicked, this, &serialPlotter::onClearButtonClicked);
     connect(m_button_save, &QPushButton::clicked, this, &serialPlotter::onSaveButtonClicked);
     connect(m_button_stop, &QPushButton::clicked, this, &serialPlotter::onStopButtonClicked);
+    connect(m_button_auto, &QPushButton::clicked, this, &serialPlotter::onAutoButtonClicked);
 
     connect(this, &serialPlotter::newLinesReceived, &m_plot_thread, &plotDataHandlerThread::onNewDataReceived);
     connect(&m_plot_thread, &plotDataHandlerThread::curveNumChanged, this, &serialPlotter::onCurveNumChanged);
@@ -40,11 +43,6 @@ serialPlotter::serialPlotter(QObject *parent,
     // divide scroll bar position values by 100 to provide a scroll range -5..5 in floating point
     // axis coordinates. if you want to dynamically grow the range accessible with the scroll bar,
     // just increase the minimum/maximum values of the scroll bars as needed.
-    //m_display_horizontalScrollBar->setRange(-1000, 1000);
-    //m_display_verticalScrollBar->setRange(-1000, 1000);
-    //m_display_horizontalScrollBar->setDisabled(true);
-    //m_display_verticalScrollBar->setDisabled(true);
-
     m_display_horizontalScrollBar->setHidden(true);
     m_display_verticalScrollBar->setHidden(true);
 
@@ -59,30 +57,33 @@ void serialPlotter::onNewLinesReceived(const QStringList &lines) {
     if (m_stop) {
         return;
     }
-
     m_x_axis_range_temp = getXAxis();
     m_y_axis_range_temp = getYAxis();
-    emit newLinesReceived(lines, getXAxis(), getYAxis());
+    emit newLinesReceived(lines, m_x_axis_range_temp, m_auto);
 }
 
 void serialPlotter::onCurveNumChanged(int new_num) {
     setupDisplayPlot(new_num);
 }
 
-void serialPlotter::onReadyForPlot(PlotDataPtrList &data) {
-    qDebug() << "plot: set data";
+void serialPlotter::onReadyForPlot(PlotDataPtrList &data, QCPRange xRange, bool auto_mode) {
+    //qDebug() << "plot: set data";
     for (int i = 0; i < data.size(); i++) {
         m_display_plot->graph(i)->setData(data[i]);
     }
-    qDebug() << "plot: set axis";
-    // int left = data[0]->at(0)->key;
-    // int right = data[0]->at(data[0]->size()-1)->key;
-    // m_display_plot->xAxis->setRange(left, right);
-    m_display_plot->xAxis->setRange(m_x_axis_range_temp);
-    m_display_plot->yAxis->setRange(m_y_axis_range_temp);
-
-    qDebug() << "plot";
+    //qDebug() << "plot: set axis";
+    if (auto_mode) {
+        m_display_plot->xAxis->setRange(xRange);
+        m_display_plot->yAxis->setRange(m_y_axis_range_temp);
+    }
+    else {
+        m_display_plot->xAxis->setRange(m_x_axis_range_temp);
+        m_display_plot->yAxis->setRange(m_y_axis_range_temp);
+    }
+    QElapsedTimer timer;
+    timer.start();
     m_display_plot->replot();
+    qDebug() << "raw plot timer: " << timer.elapsed() << "ms";
 }
 
 void serialPlotter::xAxisChanged(QCPRange range)
@@ -92,7 +93,7 @@ void serialPlotter::xAxisChanged(QCPRange range)
 
 void serialPlotter::yAxisChanged(QCPRange range)
 {
-  qDebug() << "y axis change: " << range;
+  //qDebug() << "y axis change: " << range;
   setYAxis(range);
 }
 
@@ -109,10 +110,13 @@ void serialPlotter::setupDisplayPlot(int numGraphs)
         m_display_plot->graph()->setPen(pen);
         //m_display_plot->graph()->setPen(m_pen_colors[i]);
         m_display_plot->legend->setVisible(true);
+        // 关闭抗锯齿
+        m_display_plot->graph()->setAntialiased(false);
     }
 
     m_display_plot->axisRect()->setupFullAxesBox(true);
     m_display_plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
+    m_display_plot->setNoAntialiasingOnDrag(true);
 }
 
 /*
@@ -143,6 +147,10 @@ void serialPlotter::onStopButtonClicked() {
     else {
         m_button_stop->setText("Stop");
     }
+}
+
+void serialPlotter::onAutoButtonClicked() {
+    m_auto = !m_auto;
 }
 
 void serialPlotter::savePlotDataToCSV(const QString &fileName) {

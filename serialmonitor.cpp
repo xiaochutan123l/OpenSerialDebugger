@@ -27,8 +27,10 @@ void serialMonitor::onSerialDataReceived(const QByteArray &data) {
     }
 
     writeText(text);
-
+    QElapsedTimer timer;
+    timer.start();
     emit newLinesReceived(lines);
+    qDebug() << "plot time: " << timer.elapsed() << "ms";
 
 }
 

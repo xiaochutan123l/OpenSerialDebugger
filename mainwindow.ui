@@ -666,6 +666,13 @@
              </widget>
             </item>
             <item>
+             <widget class="QPushButton" name="pushButton_plotter_auto">
+              <property name="text">
+               <string>Auto</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <spacer name="verticalSpacer">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
