@@ -214,7 +214,10 @@ void SerialController::closePort() {
 }
 
 SerialController::~SerialController(){
-    closePort();
+    if (m_port->isOpen()) {
+        m_port->close();
+        m_timer->stop();
+    }
 //    delete m_port;
 //    delete m_portInfo;
 //    delete m_timer;
@@ -232,6 +235,7 @@ void SerialController::onTimerTimeout() {
 
 void SerialController::updateConnectionStatus(bool connected)
 {
+    qDebug() << "update connection status" << connected;
     if (connected) {
         m_connectStatus->setPixmap(QPixmap(":/icons/icons/icon_connect.png"));
         m_combobox_com->setEnabled(false);
