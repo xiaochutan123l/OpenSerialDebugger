@@ -41,6 +41,7 @@ void serialMonitor::onClearBufferClicked() {
 void serialMonitor::writeText(const QString &data) {
     //m_textBrowser->append(data);
     m_textBrowser->insertPlainText(data);
+    m_textBrowser->moveCursor(QTextCursor::End);
 }
 
 void serialMonitor::clearText() {

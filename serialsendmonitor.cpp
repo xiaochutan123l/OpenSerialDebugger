@@ -35,6 +35,7 @@ void serialSendMonitor::connect_widgets() {
 
 void serialSendMonitor::updateHistory(QString &message) {
     m_send_history->append(message);
+    m_send_history->moveCursor(QTextCursor::End);
 }
 
 void serialSendMonitor::clearHistory() {
