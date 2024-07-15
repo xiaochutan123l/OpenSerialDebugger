@@ -13,7 +13,28 @@ void plotDataHandlerThread::onNewDataReceived(const QStringList lines, QCPRange 
 
 void plotDataHandlerThread::onAxisChanged(QCPRange range) {
     // TODO: add lock
-    m_axis_range = range;
+    size_t size = m_graphData.size();
+    //qDebug() << "lower: " << xRange.lower << ", upper: " << xRange.upper;
+    if (range.lower > size || range.upper <= 0) {
+        // out of range, return nothing
+        //m_graphData.clear();
+        emit readyForPlot(m_plot_data, QCPRange(), false);
+        qDebug() << "wrong range: return" << range;
+        return;
+    }
+    else {
+        if (range.lower < 0) {
+            range.lower = 0;
+        }
+        if (range.upper >= size) {
+            range.upper = size;
+        }
+    }
+    //m_axis_range = range;
+    qDebug() << range;
+    m_graphData.getPlotValues(m_plot_data, range.lower, range.upper);
+    qDebug() << "axis update, send ready for plot";
+    emit readyForPlot(m_plot_data, range, false);
 }
 
 void plotDataHandlerThread::onClearPlotData() {
@@ -65,7 +86,7 @@ void plotDataHandlerThread::handleData(const QStringList &lines, QCPRange xRange
     //qDebug() << "lower: " << xRange.lower << ", upper: " << xRange.upper;
     if (xRange.lower > size || xRange.upper <= 0) {
         // out of range, return nothing
-        m_graphData.clear();
+        //m_graphData.clear();
         emit readyForPlot(m_plot_data, QCPRange(), false);
         qDebug() << "wrong range: return" << xRange;
         return;

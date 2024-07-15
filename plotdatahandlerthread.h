@@ -40,8 +40,9 @@ public:
     }
 
     void getPlotValues(PlotDataPtrList &plot_data, size_t start, size_t end) {
+        if (plot_data.size() == 0) {return;}
         if (start >= buffer[0].size() || end > buffer[0].size() || start > end) {
-            // qDebug() << "start: " << start << ", end: " << end << "buffer size: " << buffer[0].size();
+            qDebug() << "start: " << start << ", end: " << end << "buffer size: " << buffer[0].size();
             throw std::out_of_range("Invalid range");
         }
         plotData.clear();
@@ -138,7 +139,7 @@ private:
 
     QVector<QCPDataContainer<QCPGraphData>> m_plot_data_content;
 
-    QCPRange m_axis_range;
+    //QCPRange m_axis_range;
     int m_curve_num = 0;
 };
 

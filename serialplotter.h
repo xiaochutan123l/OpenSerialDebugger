@@ -5,6 +5,8 @@
 #include "qcustomplot.h"
 #include <QDebug>
 #include <QThread>
+
+#include <atomic>
 #include "plotdatahandlerthread.h"
 
 #define MAX_GRAPH_NUM 5 // plot max 5 curve
@@ -26,6 +28,7 @@ public:
 
 signals:
     void newLinesReceived(const QStringList lines, QCPRange xRange, bool auto_mode = true);
+    void axisRangeChanged(QCPRange xRange);
     void clearPlotData();
     void savePlotDataToCSV(const QString &fileName);
 public slots:
@@ -59,7 +62,7 @@ private:
     QPushButton *m_button_save;
     QPushButton *m_button_stop;
     QPushButton *m_button_auto;
-    bool m_stop = true;
+    bool m_stop = false;
     bool m_auto = true;
 
     QCPRange m_x_axis_range;
@@ -67,12 +70,14 @@ private:
 
     QCPRange m_x_axis_range_temp;
     QCPRange m_y_axis_range_temp;
+
+    //std::atomic_bool m_axis_changed = false;
     // int m_hori_value = 0;
     // int m_verti_value = 0;
 
     plotDataHandlerThread m_plot_thread;
     QThread *m_thread;
-    bool m_plot_data_finished = true;
+    std::atomic_bool m_plot_data_finished = true;
     QStringList m_qeued_lines;
 
 

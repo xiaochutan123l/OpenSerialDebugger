@@ -38,6 +38,7 @@ serialPlotter::serialPlotter(QObject *parent,
     m_plot_thread.moveToThread(m_thread);
 
     connect(this, &serialPlotter::newLinesReceived, &m_plot_thread, &plotDataHandlerThread::onNewDataReceived);
+    connect(this, &serialPlotter::axisRangeChanged, &m_plot_thread, &plotDataHandlerThread::onAxisChanged);
     connect(&m_plot_thread, &plotDataHandlerThread::curveNumChanged, this, &serialPlotter::onCurveNumChanged);
     connect(&m_plot_thread, &plotDataHandlerThread::readyForPlot, this, &serialPlotter::onReadyForPlot);
     connect(this, &serialPlotter::clearPlotData, &m_plot_thread, &plotDataHandlerThread::onClearPlotData);
@@ -57,7 +58,7 @@ serialPlotter::serialPlotter(QObject *parent,
     m_display_horizontalScrollBar->setHidden(true);
     m_display_verticalScrollBar->setHidden(true);
 
-    m_button_stop->setText("Run");
+    m_button_stop->setText("Stop");
 }
 
 serialPlotter::~serialPlotter() {
@@ -115,7 +116,13 @@ void serialPlotter::onReadyForPlot(PlotDataPtrList data, QCPRange xRange, bool a
 void serialPlotter::xAxisChanged(QCPRange range)
 {
   setXAxis(range);
-  //m_auto = false;
+    // make zooming possible when plot stopped
+  if (m_x_axis_range_temp != range && m_plot_data_finished && m_stop) {
+      m_x_axis_range_temp = getXAxis();
+      m_y_axis_range_temp = getYAxis();
+      m_plot_data_finished = false;
+      emit axisRangeChanged(m_x_axis_range);
+  }
 }
 
 void serialPlotter::yAxisChanged(QCPRange range)
