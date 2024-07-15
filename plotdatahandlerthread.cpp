@@ -18,7 +18,7 @@ void plotDataHandlerThread::onAxisChanged(QCPRange range) {
     if (range.lower > size || range.upper <= 0) {
         // out of range, return nothing
         //m_graphData.clear();
-        emit readyForPlot(m_plot_data, QCPRange(), false);
+        emit readyForPlot(m_plot_data, QCPRange(), QCPRange(), false);
         qDebug() << "wrong range: return" << range;
         return;
     }
@@ -34,7 +34,7 @@ void plotDataHandlerThread::onAxisChanged(QCPRange range) {
     qDebug() << range;
     m_graphData.getPlotValues(m_plot_data, range.lower, range.upper);
     qDebug() << "axis update, send ready for plot";
-    emit readyForPlot(m_plot_data, range, false);
+    emit readyForPlot(m_plot_data, range, QCPRange(), false);
 }
 
 void plotDataHandlerThread::onClearPlotData() {
@@ -58,19 +58,20 @@ void plotDataHandlerThread::handleDataAuto(const QStringList &lines) {
         // do nothing if no data
         return;
     }
-    QCPRange range;
+    QCPRange xRange;
+    QCPRange yRange;
     if (size <= PLOT_BUFFER_SIZE ) {
-        range.lower = 0;
-        range.upper = size;
-        m_graphData.getPlotValues(m_plot_data, 0, size);
+        xRange.lower = 0;
+        xRange.upper = size;
+        yRange = m_graphData.getPlotValues(m_plot_data, 0, size);
     }
     else {
-        range.lower = size - PLOT_BUFFER_SIZE;
-        range.upper = size;
-        m_graphData.getPlotValues(m_plot_data, range.lower, range.upper);
+        xRange.lower = size - PLOT_BUFFER_SIZE;
+        xRange.upper = size;
+        yRange = m_graphData.getPlotValues(m_plot_data, xRange.lower, xRange.upper);
     }
     qDebug() << "send ready for plot";
-    emit readyForPlot(m_plot_data, range, true);
+    emit readyForPlot(m_plot_data, xRange, yRange, true);
 
 }
 
@@ -87,7 +88,7 @@ void plotDataHandlerThread::handleData(const QStringList &lines, QCPRange xRange
     if (xRange.lower > size || xRange.upper <= 0) {
         // out of range, return nothing
         //m_graphData.clear();
-        emit readyForPlot(m_plot_data, QCPRange(), false);
+        emit readyForPlot(m_plot_data, QCPRange(), QCPRange(), false);
         qDebug() << "wrong range: return" << xRange;
         return;
     }
@@ -110,7 +111,7 @@ void plotDataHandlerThread::handleData(const QStringList &lines, QCPRange xRange
         m_graphData.getCompressedPlotValues(m_plot_data, xRange.lower, xRange.upper);
     }
     //qDebug() << "send ready for plot";
-    emit readyForPlot(m_plot_data, QCPRange(), false);
+    emit readyForPlot(m_plot_data, QCPRange(), QCPRange(), false);
 
 }
 

@@ -43,7 +43,7 @@ public slots:
     void onAutoButtonClicked();
 
     void onCurveNumChanged(int new_num);
-    void onReadyForPlot(PlotDataPtrList data, QCPRange xRange, bool auto_mode);
+    void onReadyForPlot(PlotDataPtrList data, QCPRange xRange, QCPRange yRange, bool auto_mode);
 private:
     void setupDisplayPlot(int numGraphs);
 

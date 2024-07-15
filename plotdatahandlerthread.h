@@ -39,8 +39,8 @@ public:
         }
     }
 
-    void getPlotValues(PlotDataPtrList &plot_data, size_t start, size_t end) {
-        if (plot_data.size() == 0) {return;}
+    QCPRange getPlotValues(PlotDataPtrList &plot_data, size_t start, size_t end) {
+        //if (plot_data.size() == 0) {return QCPRange();}
         if (start >= buffer[0].size() || end > buffer[0].size() || start > end) {
             qDebug() << "start: " << start << ", end: " << end << "buffer size: " << buffer[0].size();
             throw std::out_of_range("Invalid range");
@@ -54,18 +54,44 @@ public:
         // }
         // qDebug() << "start: " << start << ", end: " << end << "buffer size: " << buffer[0].size();
         // qDebug() << "start processing data";
+        QCPRange range;
         for (int i = 0; i < buffer.size(); i++) {
             plotData.append(QVector<QCPGraphData>());
+            range.lower = buffer[0][0];
+            range.upper = buffer[0][0];
             for (int j = start; j < end; j++) {
+                double value = buffer[i][j];
                 plotData[i].emplace_back(j, buffer[i][j]);
+
+                if (value < range.lower) {
+                    range.lower = value;
+                }
+                if (value > range.upper) {
+                    range.upper = value;
+                }
             }
             // qDebug() << "plotData ok";
             plot_data[i]->set(plotData[i], true);
         }
         //qDebug() << "getPlotValues ok";
+        // 稍微缩小一点让顶部和底部留有空间
+        if (range.lower < 0) {
+            range.lower *= 1.25;
+        }
+        else {
+            range.lower *= 0.8;
+        }
+        if (range.upper < 0) {
+            range.upper *= 0.8;
+        }
+        else {
+            range.upper *= 1.25;
+        }
+        return range;
     }
 
     void getCompressedPlotValues(PlotDataPtrList &plot_data, size_t start, size_t end) {
+        //if (plot_data.size() == 0) {return;}
         if (start >= buffer[0].size() || end > buffer[0].size() || start > end) {
             // qDebug() << "start: " << start << ", end: " << end << "buffer size: " << buffer[0].size();
             throw std::out_of_range("Invalid range");
@@ -117,7 +143,7 @@ public:
     plotDataHandlerThread(){};
     ~plotDataHandlerThread(){};
 signals:
-    void readyForPlot(PlotDataPtrList data, QCPRange xRange, bool auto_mode);
+    void readyForPlot(PlotDataPtrList data, QCPRange xRange, QCPRange yRange, bool auto_mode);
     void curveNumChanged(int new_num);
 public slots:
     void onNewDataReceived(const QStringList lines, QCPRange xRange, bool auto_mode = true);

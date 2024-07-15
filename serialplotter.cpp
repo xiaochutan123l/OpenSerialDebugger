@@ -92,7 +92,7 @@ void serialPlotter::onCurveNumChanged(int new_num) {
     setupDisplayPlot(new_num);
 }
 
-void serialPlotter::onReadyForPlot(PlotDataPtrList data, QCPRange xRange, bool auto_mode) {
+void serialPlotter::onReadyForPlot(PlotDataPtrList data, QCPRange xRange, QCPRange yRange, bool auto_mode) {
     qDebug() << "plot: set data";
     for (int i = 0; i < data.size(); i++) {
         m_display_plot->graph(i)->setData(data[i]);
@@ -100,7 +100,7 @@ void serialPlotter::onReadyForPlot(PlotDataPtrList data, QCPRange xRange, bool a
     qDebug() << "plot: set axis";
     if (auto_mode) {
         m_display_plot->xAxis->setRange(xRange);
-        m_display_plot->yAxis->setRange(m_y_axis_range_temp);
+        m_display_plot->yAxis->setRange(yRange);
     }
     else {
         m_display_plot->xAxis->setRange(m_x_axis_range_temp);
