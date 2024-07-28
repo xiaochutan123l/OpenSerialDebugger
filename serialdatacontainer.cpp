@@ -38,6 +38,8 @@ void serialDataContainer::feedData(const QByteArray &data)
         // 从缓冲区中移除该行（包括换行符）
         m_buffer.remove(0, index + 1);
     }
+    // Packet with magic number has no '\n', extract packet again if a single packet left in buffer.
+    extractPackets(m_buffer);
 }
 
 QList<QByteArray> serialDataContainer::getPackets() const {
