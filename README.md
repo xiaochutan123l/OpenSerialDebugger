@@ -10,7 +10,7 @@ Based on it, it provides a flexible and scalable way to interacts with microcont
 - The only cost is to write a switch case block to handle the commands. (you can also copy paste my example:)) 
 
 ### Packet structure
-![packet_header](<截屏2024-07-25 21.13.31-1.png>)
+![packet_structure](packet_header.png)
 
 This is a 8 byte serial based packet, contains the following field:
 - Magic number: to verify if packet is valid
