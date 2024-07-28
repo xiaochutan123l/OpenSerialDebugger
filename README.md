@@ -59,4 +59,4 @@ Enable Motor, SWITCH, 0x07, bool
 This video shows an simple arduino example. Using just include the packet.h and add packet handling function, 
 you can easily control the led.
 
-<video controls src="OpenSerialDebugger_Led_simple_demo.mp4" title="Demo"></video>
+<video controls src="examples/arduino_led_simple/led_controll/OpenSerialDebugger_Led_simple_demo.mp4" title="Demo"></video>
