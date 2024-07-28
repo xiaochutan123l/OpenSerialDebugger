@@ -31,7 +31,7 @@ else ()
 endif ()
 
 # debug
-add_definitions(-DUSE_FAKE_SERIAL)
+#add_definitions(-DUSE_FAKE_SERIAL)
 
 #add_definitions(-DQCUSTOMPLOT_USE_OPENGL)
 

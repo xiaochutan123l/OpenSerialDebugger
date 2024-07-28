@@ -31,7 +31,7 @@ void plotDataHandlerThread::onAxisChanged(QCPRange range) {
         }
     }
     //m_axis_range = range;
-    qDebug() << range;
+    qDebug() << range << "range";
     m_graphData.getPlotValues(m_plot_data, range.lower, range.upper);
     qDebug() << "axis update, send ready for plot";
     emit readyForPlot(m_plot_data, range, QCPRange(), false);

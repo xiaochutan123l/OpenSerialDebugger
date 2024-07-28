@@ -40,20 +40,12 @@ public:
     }
 
     QCPRange getPlotValues(PlotDataPtrList &plot_data, size_t start, size_t end) {
-        //if (plot_data.size() == 0) {return QCPRange();}
+        if (plot_data.size() == 0 || start == end) {return QCPRange();}
         if (start >= buffer[0].size() || end > buffer[0].size() || start > end) {
             qDebug() << "start: " << start << ", end: " << end << "buffer size: " << buffer[0].size();
             throw std::out_of_range("Invalid range");
         }
         plotData.clear();
-        // plot_data.clear();
-        // for (int i = 0; i < end - start; i++) {
-        //     for (int j = 0; i < buffer.size(); j++) {
-        //         plot_data.emplace_back(buffer[j])
-        //     }
-        // }
-        // qDebug() << "start: " << start << ", end: " << end << "buffer size: " << buffer[0].size();
-        // qDebug() << "start processing data";
         QCPRange range;
         for (int i = 0; i < buffer.size(); i++) {
             plotData.append(QVector<QCPGraphData>());
@@ -70,7 +62,7 @@ public:
                     range.upper = value;
                 }
             }
-            // qDebug() << "plotData ok";
+             //qDebug() << "plotData ok";
             plot_data[i]->set(plotData[i], true);
         }
         //qDebug() << "getPlotValues ok";
@@ -91,7 +83,7 @@ public:
     }
 
     void getCompressedPlotValues(PlotDataPtrList &plot_data, size_t start, size_t end) {
-        //if (plot_data.size() == 0) {return;}
+        if (plot_data.size() == 0 || start == end) {return;}
         if (start >= buffer[0].size() || end > buffer[0].size() || start > end) {
             // qDebug() << "start: " << start << ", end: " << end << "buffer size: " << buffer[0].size();
             throw std::out_of_range("Invalid range");
