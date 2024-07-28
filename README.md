@@ -10,7 +10,7 @@ Based on it, it provides a flexible and scalable way to interacts with microcont
 - The only cost is to write a switch case block to handle the commands. (you can also copy paste my example:)) 
 
 ### Packet structure
-![packet_structure](packet_header.png)
+![packet_structure](images/packet_header.png)
 
 This is a 8 byte serial based packet, contains the following field:
 - Magic number: to verify if packet is valid
@@ -59,4 +59,4 @@ Enable Motor, SWITCH, 0x07, bool
 This video shows an simple arduino example. Using just include the packet.h and add packet handling function, 
 you can easily control the led.
 
-<video controls src="examples/arduino_led_simple/led_controll/OpenSerialDebugger_Led_simple_demo.mp4" title="Demo"></video>
+<video controls src="examples/arduino_led_simple/led_controll/OpenSerialDebugger_Led_simple_demo_compressed.mp4" title="Demo"></video>
