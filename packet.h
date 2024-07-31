@@ -12,15 +12,23 @@ extern "C"{
 #include <stdint.h>
 //#include <string.h>
 
+// Using raw uint8_t pointer
 #define IS_VALID_PACKET(packet) ((packet)[0] == MAGIC_NUM)
 #define GET_MAGIC_NUM(packet) ((packet)[0])
 #define GET_CHUNK_NUM(packet) ((packet)[1])
 #define GET_CMD_NUM(packet) (*(uint16_t*)&(packet)[2])
 
+// Using raw uint8_t pointer
 #define GET_RAW_DATA_UINT(packet) (*(uint32_t*)&(packet)[4])
 #define GET_RAW_DATA_BOOL(packet) (*(uint32_t*)&(packet)[4])
 #define GET_RAW_DATA_INT(packet) (*(int32_t*)&(packet)[4])
 #define GET_RAW_DATA_FLOAT(packet) (*(float*)&(packet)[4])
+
+// Using Packet struct
+#define GET_DATA_UINT(packet) ((packet)->data)
+#define GET_DATA_BOOL(packet) ((packet)->data)
+#define GET_DATA_INT(packet) ((int32_t)((packet)->data))
+#define GET_DATA_FLOAT(packet) ((float)((packet)->data))
 
 #define DATA_TO_UINT(data) (*(uint32_t*)(data))
 #define DATA_TO_BOOL(data) (*(uint32_t*)(data))

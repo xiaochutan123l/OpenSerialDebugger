@@ -41,41 +41,36 @@ public:
         qDebug() << "cmd number: " << GET_CMD_NUM(packet);
         switch(GET_CMD_NUM(packet)) {
             case SetKp: {
-                int32_t data = static_cast<int32_t>GET_RAW_DATA_INT(packet);
+                int32_t data = GET_RAW_DATA_INT(packet);
                 qDebug() << "set kp: " << data;
                 break;
             }
             case SetKi: {
-                //float data;
-                //memcpy(&data, &m_packet.data, sizeof(float)); // Ensure proper conversion
-                qDebug() << "set ki: " << (float)GET_RAW_DATA_FLOAT(packet);
+                qDebug() << "set ki: " << GET_RAW_DATA_FLOAT(packet);
                 break;
             }
             case SetKd: {
-                uint32_t data = GET_RAW_DATA_INT(packet);
+                uint32_t data = GET_RAW_DATA_UINT(packet);
                 qDebug() << "set kd: " << data;
                 break;
             }
             case GetPosition: {
-                int32_t data = static_cast<int32_t>GET_RAW_DATA_INT(packet);
+                int32_t data = GET_RAW_DATA_INT(packet);
                 qDebug() << "GetPosition: " << data;
                 return GetPosition;
                 break;
             }
             case GetVelocity: {
-                float data = (float)GET_RAW_DATA_FLOAT(packet);
-                //memcpy(&data, &m_packet.data, sizeof(float)); // Ensure proper conversion
+                float data = GET_RAW_DATA_FLOAT(packet);
                 qDebug() << "GetVelocity: " << data;
                 return GetVelocity;
                 break;
             }
             case Stop: {
-                //bool data = m_packet.data != 0;
                 qDebug() << "Stop: " << GET_RAW_DATA_UINT(packet);
                 break;
             }
             case Enable: {
-                //bool data = m_packet.data != 0;
                 qDebug() << "Enable: " << GET_RAW_DATA_UINT(packet);
                 break;
             }
