@@ -30,10 +30,10 @@ extern "C"{
 #define GET_DATA_INT(packet) ((int32_t)((packet)->data))
 #define GET_DATA_FLOAT(packet) ((float)((packet)->data))
 
-#define DATA_TO_UINT(data) (*(uint32_t*)(data))
-#define DATA_TO_BOOL(data) (*(uint32_t*)(data))
-#define DATA_TO_INT(data) (*(int32_t*)(data))
-#define DATA_TO_FLOAT(data) (*(float*)(data))
+#define DATA_TO_UINT(data) (*(uint32_t*)(&data))
+#define DATA_TO_BOOL(data) (*(uint32_t*)(&data))
+#define DATA_TO_INT(data) (*(int32_t*)(&data))
+#define DATA_TO_FLOAT(data) (*(float*)(&data))
 
 #define PACKET_ID_STR "--Packet-- "
 
