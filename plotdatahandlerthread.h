@@ -29,7 +29,7 @@ public:
 
     void add(const QVector<double> &yValues) {
         for(int i = 0; i < yValues.size(); i++) {
-            if (buffer[i].size() == maxSize) {
+            if (buffer[i].size() >= maxSize) {
                 buffer[i].pop_front();
             }
             buffer[i].push_back(yValues[i]);
@@ -47,10 +47,10 @@ public:
         }
         plotData.clear();
         QCPRange range;
+        range.lower = buffer[0][start];
+        range.upper = buffer[0][start];
         for (int i = 0; i < buffer.size(); i++) {
             plotData.append(QVector<QCPGraphData>());
-            range.lower = buffer[0][0];
-            range.upper = buffer[0][0];
             for (int j = start; j < end; j++) {
                 double value = buffer[i][j];
                 plotData[i].emplace_back(j, buffer[i][j]);
@@ -64,21 +64,15 @@ public:
             }
              //qDebug() << "plotData ok";
             plot_data[i]->set(plotData[i], true);
+            //qDebug() << "auto "  << i << ", range: " << range;
         }
         //qDebug() << "getPlotValues ok";
         // 稍微缩小一点让顶部和底部留有空间
-        if (range.lower < 0) {
-            range.lower *= 1.25;
-        }
-        else {
-            range.lower *= 0.8;
-        }
-        if (range.upper < 0) {
-            range.upper *= 0.8;
-        }
-        else {
-            range.upper *= 1.25;
-        }
+        double mid = (range.upper + range.lower) / 2;
+        double distance = (range.upper - range.lower) * 1.25;
+        range.upper = mid + distance / 2;
+        range.lower = mid - distance / 2;
+        //qDebug() << "auto range: " << range;
         return range;
     }
 
