@@ -32,11 +32,12 @@ void serialSendMonitor::onSendButtonClicked() {
 }
 
 void serialSendMonitor::onClearButtonClicked() {
-    m_message_input->clear();
+    clearHistory();
 }
 
 void serialSendMonitor::connect_widgets() {
     connect(m_send_message, &QPushButton::clicked, this, &serialSendMonitor::onSendButtonClicked);
+    connect(m_clear_button, &QPushButton::clicked, this, &serialSendMonitor::onClearButtonClicked);
 }
 
 void serialSendMonitor::updateHistory(QString &message) {
