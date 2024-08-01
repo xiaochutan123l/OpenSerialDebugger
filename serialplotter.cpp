@@ -93,11 +93,11 @@ void serialPlotter::onCurveNumChanged(int new_num) {
 }
 
 void serialPlotter::onReadyForPlot(PlotDataPtrList data, QCPRange xRange, QCPRange yRange, bool auto_mode) {
-    qDebug() << "plot: set data";
+    //qDebug() << "plot: set data";
     for (int i = 0; i < data.size(); i++) {
         m_display_plot->graph(i)->setData(data[i]);
     }
-    qDebug() << "plot: set axis";
+    //qDebug() << "plot: set axis";
     if (auto_mode) {
         m_display_plot->xAxis->setRange(xRange);
         m_display_plot->yAxis->setRange(yRange);
@@ -106,10 +106,10 @@ void serialPlotter::onReadyForPlot(PlotDataPtrList data, QCPRange xRange, QCPRan
         m_display_plot->xAxis->setRange(m_x_axis_range_temp);
         m_display_plot->yAxis->setRange(m_y_axis_range_temp);
     }
-    QElapsedTimer timer;
-    timer.start();
+    //QElapsedTimer timer;
+    //timer.start();
     m_display_plot->replot();
-    qDebug() << "raw plot timer: " << timer.elapsed() << "ms";
+    //qDebug() << "raw plot timer: " << timer.elapsed() << "ms";
     m_plot_data_finished = true;
 }
 
@@ -151,7 +151,7 @@ void serialPlotter::setupDisplayPlot(int numGraphs)
     m_display_plot->axisRect()->setupFullAxesBox(true);
     m_display_plot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom);
     m_display_plot->setNoAntialiasingOnDrag(true);
-    qDebug() << "set up display plot";
+    //qDebug() << "set up display plot";
     // if (m_thread->isRunning()) {
     //     m_thread->quit();
     //     m_thread->wait();

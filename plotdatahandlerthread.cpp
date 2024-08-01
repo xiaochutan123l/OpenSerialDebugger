@@ -1,8 +1,8 @@
 #include "plotdatahandlerthread.h"
 
 void plotDataHandlerThread::onNewDataReceived(const QStringList lines, QCPRange xRange, bool auto_mode) {
-    qDebug() << "on new data received";
-    qDebug() << "Worker thread ID:" << QThread::currentThreadId();
+    //qDebug() << "on new data received";
+    //qDebug() << "Worker thread ID:" << QThread::currentThreadId();
     if (auto_mode) {
         handleDataAuto(lines);
     }
@@ -31,9 +31,9 @@ void plotDataHandlerThread::onAxisChanged(QCPRange range) {
         }
     }
     //m_axis_range = range;
-    qDebug() << range << "range";
+    //qDebug() << range << "range";
     m_graphData.getPlotValues(m_plot_data, range.lower, range.upper);
-    qDebug() << "axis update, send ready for plot";
+    //qDebug() << "axis update, send ready for plot";
     emit readyForPlot(m_plot_data, range, QCPRange(), false);
 }
 
@@ -70,7 +70,7 @@ void plotDataHandlerThread::handleDataAuto(const QStringList &lines) {
         xRange.upper = size;
         yRange = m_graphData.getPlotValues(m_plot_data, xRange.lower, xRange.upper);
     }
-    qDebug() << "send ready for plot";
+    //qDebug() << "send ready for plot";
     emit readyForPlot(m_plot_data, xRange, yRange, true);
 
 }

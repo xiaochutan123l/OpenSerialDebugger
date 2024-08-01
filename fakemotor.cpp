@@ -39,16 +39,18 @@ void fakeMotor::receiveData(const QByteArray &data) {
             memcpy(&packet, raw_data, sizeof(Packet));
             if (type == packetHandler::CMDType::GetPosition) {
                 int32_t num = generatePositionValue();
-                memcpy(&packet.data, &num, sizeof(num));
+                packet.data = DATA_TO_UINT(num);
+
             }
             else {
                 // GetVelocity
                 float num = generateVelocityValue();
-                memcpy(&packet.data, &num, sizeof(float));
+                packet.data = DATA_TO_UINT(num);
 
             }
             QByteArray byteArray(sizeof(Packet), 0);
             memcpy(byteArray.data(), &packet, sizeof(Packet));
+            qDebug() << "motor send data" << byteArray.toHex(' ');
             emit sendData(byteArray);
             break;
         }
@@ -119,6 +121,6 @@ float generateVelocityValue() {
 }
 
 int generatePositionValue() {
-    static int value = 128;
+    static int value = -5;
     return ++value;
 }

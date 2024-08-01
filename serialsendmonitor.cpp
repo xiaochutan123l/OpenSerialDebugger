@@ -1,10 +1,12 @@
 #include "serialsendmonitor.h"
 
 serialSendMonitor::serialSendMonitor(QPushButton *send_button,
+                                     QPushButton *clear_button,
                                      QLineEdit *line_input,
                                      QTextBrowser *text_browser,
                                      QObject *parent)
     : m_send_message(send_button),
+    m_clear_button(clear_button),
     m_message_input(line_input),
     m_send_history(text_browser),
     QObject(parent) {}
@@ -27,6 +29,10 @@ void serialSendMonitor::onSendButtonClicked() {
         updateHistory(message);
         emit sendMessage(message);
     }
+}
+
+void serialSendMonitor::onClearButtonClicked() {
+    m_message_input->clear();
 }
 
 void serialSendMonitor::connect_widgets() {

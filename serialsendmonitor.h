@@ -10,6 +10,7 @@ class serialSendMonitor: public QObject {
     Q_OBJECT
 public:
     serialSendMonitor(QPushButton *send_button,
+                      QPushButton *clear_button,
                       QLineEdit *line_input,
                       QTextBrowser *text_browser,
                       QObject *parent = nullptr);
@@ -21,6 +22,7 @@ signals:
 public slots:
     void onSendCommand(QByteArray &command);
     void onSendButtonClicked();
+    void onClearButtonClicked();
     void onSendSuccess();
 
 public:
@@ -32,6 +34,7 @@ private:
 
 
     QPushButton *m_send_message;
+    QPushButton *m_clear_button;
     QLineEdit *m_message_input;
     QTextBrowser *m_send_history;
 };

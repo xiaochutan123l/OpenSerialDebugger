@@ -44,7 +44,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->display_plot->yAxis->setRange(0, 10, Qt::AlignCenter);
 
     /* ----------------------- Serial send monitor --------------------------*/
-    m_serial_send_monitor = new serialSendMonitor(ui->pushButton_serialSend, ui->lineEdit_serialSend, ui->textBrowser_send_history, this);
+    m_serial_send_monitor = new serialSendMonitor(ui->pushButton_serialSend, ui->pushButton_clear_send_history, ui->lineEdit_serialSend, ui->textBrowser_send_history, this);
     m_serial_send_monitor->connect_widgets();
     connect(m_serial_send_monitor, &serialSendMonitor::sendCommand, m_serial_controller, &SerialController::onSendCommand);
     connect(m_serial_send_monitor, &serialSendMonitor::sendMessage, m_serial_controller, &SerialController::onSendMessage);

@@ -168,23 +168,26 @@ void getParameterComboWidget::disconnect_widgets(parameterManager *pManager) {
 
 void getParameterComboWidget::onDataUpdated(const QByteArray &data, Command::DataType type) {
     // TODO get number from struct packet itself.
+    //qDebug() << "received data from motor" << data.toHex(' ');
     QString strValue;
     switch(type) {
         case Command::DataType::INT: {
-            int32_t intNum = DATA_TO_INT(reinterpret_cast<uint8_t*>(const_cast<char*>(data.data())));
+            int32_t intNum = DATA_TO_INT(*const_cast<char*>(data.data()));
             strValue = QString::number(intNum);
+            qDebug() << "int value: " << intNum;
             break;
         }
         case Command::DataType::UINT:
         case Command::DataType::BOOL: {
-            uint32_t uintNum = DATA_TO_UINT(reinterpret_cast<uint8_t*>(const_cast<char*>(data.data())));
+            uint32_t uintNum = DATA_TO_UINT(*const_cast<char*>(data.data()));
             strValue = QString::number(uintNum);
             break;
         }
         case Command::DataType::FLOAT: {
             float floatNum;
-            floatNum = DATA_TO_FLOAT(reinterpret_cast<uint8_t*>(const_cast<char*>(data.data())));
+             floatNum = DATA_TO_FLOAT(*const_cast<char*>(data.data()));
             strValue = QString::number(floatNum, 'f', 2); // 'f' for floating-point, 2 decimal places
+            qDebug() << "float value: " << floatNum;
             break;
         }
         case Command::DataType::UNKNOWN:

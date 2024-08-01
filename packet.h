@@ -24,7 +24,7 @@ extern "C"{
 #define GET_RAW_DATA_INT(packet) (*(int32_t*)&(packet)[4])
 #define GET_RAW_DATA_FLOAT(packet) (*(float*)&(packet)[4])
 
-// Using Packet struct
+// Using Packet struct pointer
 #define GET_DATA_UINT(packet) ((packet)->data)
 #define GET_DATA_BOOL(packet) ((packet)->data)
 #define GET_DATA_INT(packet) ((int32_t)((packet)->data))
@@ -44,7 +44,7 @@ struct Packet {
     uint8_t chunkNum;
     uint16_t cmdNum;
     uint32_t data;
-};
+}__attribute__((aligned(4)));
 
 // bool isValidPacket(uint8_t *packet);
 // uint8_t getChunkNum(uint8_t *packet);
