@@ -66,6 +66,6 @@ https://github.com/user-attachments/assets/07579193-73ff-4853-b639-029d5e8ee3be
 - Second demo, see example
 examples/motor/openSerialDebugger_motor_demo.mp4
   
-Code example on hardware side for this motor control demo please see here:
+Code example on hardware side for this motor control demo please see handle_packet() in the cpp:
 https://github.com/xiaochutan123l/MyRobotArm-stepperMotor/blob/main/App/Applications/Src/packet_test.cpp
 
