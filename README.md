@@ -56,10 +56,16 @@ Enable Motor, ACTION, 0x07, bool
 ![select_command](images/protocol.PNG)
 
 ## Code exapmle on microcontroller side.
-This video shows an simple arduino example. Using just include the packet.h and add packet handling function, 
+- This video shows an simple arduino example. Using just include the packet.h and add packet handling function, 
 you can easily control the led.
 
 
 
 https://github.com/user-attachments/assets/07579193-73ff-4853-b639-029d5e8ee3be
+
+- Second demo, see example
+examples/motor/openSerialDebugger_motor_demo.mp4
+  
+Code example on hardware side for this motor control demo please see here:
+https://github.com/xiaochutan123l/MyRobotArm-stepperMotor/blob/main/App/Applications/Src/packet_test.cpp
 
