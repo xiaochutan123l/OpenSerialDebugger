@@ -8,17 +8,17 @@
 #include "protocolparser.h"
 
 /* 一个qt WidgetTree的坑:
-比如在addSwitchComboWidget()里面
-void parameterManager::addSwitchComboWidget(QPushButton *action_button,
+比如在addActionComboWidget()里面
+void parameterManager::addActionComboWidget(QPushButton *action_button,
                                             QComboBox *combo_box)
 {
-    m_switchList.emplace_back(action_button,
+    m_actionList.emplace_back(action_button,
                            combo_box,
-                           &m_switchCommands,
-                           &m_switchCommandNames,
+                           &m_actionCommands,
+                           &m_actionCommandNames,
                            this);
 }
-这个switchList里面的元素会接收parameterManager指针作为元素的父类指针，
+这个actionList里面的元素会接收parameterManager指针作为元素的父类指针，
 然后在多次emplace_back元素之后，list或者vector会动态扩容，导致会调用构造函数，
 拷贝构造函数和移动构造函数，产生的临时变量都将this也就是parameterManager作为父类widget指针，
 导致parameerManager的children里面会有很多额外的child，
@@ -37,7 +37,7 @@ void parameterManager::addSwitchComboWidget(QPushButton *action_button,
         myUniqueVector.append(std::make_unique<MyClass>(this));
 3. 在所有元素添加完之后，手动设置parent.
 */
-#define SWITCH_COMBO_WIDGET_NUM 4
+#define ACTION_COMBO_WIDGET_NUM 4
 #define GET_COMBO_WIDGET_NUM 6
 #define SET_COMBO_WIDGET_NUM 10
 
@@ -133,13 +133,13 @@ public:
     void disconnect_widgets(parameterManager *pManager);
 };
 
-/* ----------------------- switchParameterComboWidget --------------------------*/
+/* ----------------------- actionParameterComboWidget --------------------------*/
 
-class switchParameterComboWidget: public ParameterComboWidget {
+class actionParameterComboWidget: public ParameterComboWidget {
     Q_OBJECT
 
 public:
-    explicit switchParameterComboWidget(QPushButton *action_button,
+    explicit actionParameterComboWidget(QPushButton *action_button,
                                         QComboBox *combo_box,
                                         QMap<QString, Command> *commands,
                                         QList<QString> *commandNames,
@@ -164,7 +164,7 @@ public:
     void addSetComboWidget(QPushButton *send_button,
                            QLineEdit *line_input,
                            QComboBox *combo_box);
-    void addSwitchComboWidget(QPushButton *action_button,
+    void addActionComboWidget(QPushButton *action_button,
                            QComboBox *combo_box);
     ~parameterManager() {
         qDebug() << "deconstruct parameter manager";
@@ -183,15 +183,15 @@ public slots:
 private:
     QVector<setParameterComboWidget> m_setList;
     QVector<getParameterComboWidget> m_getList;
-    QVector<switchParameterComboWidget> m_switchList;
+    QVector<actionParameterComboWidget> m_actionList;
 
     QMap<QString, Command> m_getCommands;
     QMap<QString, Command> m_setCommands;
-    QMap<QString, Command> m_switchCommands;
+    QMap<QString, Command> m_actionCommands;
 
     QList<QString> m_getCommandNames;
     QList<QString> m_setCommandNames;
-    QList<QString> m_switchCommandNames;
+    QList<QString> m_actionCommandNames;
 
     QPushButton *m_load_button;
     ProtocolParser *m_parser;

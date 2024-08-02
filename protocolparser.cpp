@@ -2,11 +2,11 @@
 
 ProtocolParser::ProtocolParser(QMap<QString, Command> *getCommands,
                                QMap<QString, Command> *setCommands,
-                               QMap<QString, Command> *switchCommands,
+                               QMap<QString, Command> *actionCommands,
                                QObject *parent)
     : m_getCommands(getCommands),
     m_setCommands(setCommands),
-    m_switchCommands(switchCommands),
+    m_actionCommands(actionCommands),
     QObject(parent) {}
 
 void ProtocolParser::bindButton(QPushButton *button) {
@@ -69,8 +69,12 @@ void ProtocolParser::parseLine(const QString &line) {
         type = Command::GET;
     } else if (typeStr == "SET" || typeStr == "Set" || typeStr == "set") {
         type = Command::SET;
-    } else if (typeStr == "SWITCH" || typeStr == "Switch" || typeStr == "switch") {
-        type = Command::SWITCH;
+    } else if (typeStr == "ACTION" || typeStr == "Action" || typeStr == "action") {
+        type = Command::ACTION;
+    }
+    // backward compatible for old version
+    else if (typeStr == "SWITCH" || typeStr == "Switch" || typeStr == "switch") {
+        type = Command::ACTION;
     } else {
         // Invalid command type
         return;
@@ -94,9 +98,9 @@ void ProtocolParser::parseLine(const QString &line) {
             qDebug() << "duplicated name: " << name;
         }
         break;
-    case Command::SWITCH:
-        if (!m_switchCommands->contains(name)) {
-            m_switchCommands->insert(name, command);
+    case Command::ACTION:
+        if (!m_actionCommands->contains(name)) {
+            m_actionCommands->insert(name, command);
         }
         else {
             qDebug() << "duplicated name: " << name;
@@ -113,8 +117,8 @@ void ProtocolParser::parseLine(const QString &line) {
 //         return m_getCommands;
 //     case Command::SET:
 //         return m_setCommands;
-//     case Command::SWITCH:
-//         return m_switchCommands;
+//     case Command::ACTION:
+//         return m_actionCommands;
 //     }
 
 //     // To handle compiler warnings

@@ -8,11 +8,11 @@ SetDceKd, SET, 0x07, int
 SetPosition, SET, 0x08, int
 SetVelocity, SET, 0x09, int
 
-SetSpeedMode, SWITCH, 0x0a, bool
-SetLocationMode, SWITCH, 0x0b, bool
+SetSpeedMode, ACTION, 0x0a, bool
+SetLocationMode, ACTION, 0x0b, bool
 
 GetPosition,  GET, 0x0c, int
 GetVelocity,  GET, 0x0d, int
 
-DoCalibrate, SWITCH, 0x0e, bool
-Reboot, SWITCH, 0x0f, bool
+DoCalibrate, ACTION, 0x0e, bool
+Reboot, ACTION, 0x0f, bool

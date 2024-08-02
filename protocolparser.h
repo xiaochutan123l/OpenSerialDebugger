@@ -16,7 +16,7 @@ class ProtocolParser : public QObject {
 public:
     explicit ProtocolParser(QMap<QString, Command> *getCommands,
                             QMap<QString, Command> *setCommands,
-                            QMap<QString, Command> *switchCommands,
+                            QMap<QString, Command> *actionCommands,
                             QObject *parent = nullptr);
 
     void bindButton(QPushButton *button);
@@ -34,7 +34,7 @@ private:
 
     QMap<QString, Command> *m_getCommands;
     QMap<QString, Command> *m_setCommands;
-    QMap<QString, Command> *m_switchCommands;
+    QMap<QString, Command> *m_actionCommands;
 };
 
 #endif // PROTOCOLPARSER_H

@@ -39,8 +39,8 @@ Set kd, SET, 0x03, uint
 Get Position, GET, 0x04, int
 Get Velocity, GET, 0x05, float
 
-Stop Motor, SWITCH, 0x06, bool
-Enable Motor, SWITCH, 0x07, bool
+Stop Motor, ACTION, 0x06, bool
+Enable Motor, ACTION, 0x07, bool
 ```
 ## UI
 

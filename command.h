@@ -9,7 +9,7 @@ public:
     enum CommandType {
         GET,
         SET,
-        SWITCH,
+        ACTION,
         NONE
     };
 

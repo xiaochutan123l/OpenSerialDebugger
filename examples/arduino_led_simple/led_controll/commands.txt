@@ -1,8 +1,8 @@
 GetBrightness, GET, 0x01, uint
 
-BlinkMode, SWITCH, 0x02, bool
-BreathMode, SWITCH, 0x03, bool
-DefaultMode, SWITCH, 0x04, bool
+BlinkMode, ACTION, 0x02, bool
+BreathMode, ACTION, 0x03, bool
+DefaultMode, ACTION, 0x04, bool
 
 SetBlinkInterval, SET, 0x05, uint
 SetBreathStep, SET, 0x06, uint

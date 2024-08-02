@@ -70,10 +70,10 @@ MainWindow::MainWindow(QWidget *parent)
     m_parameter_manager->addSetComboWidget(ui->pushButton_send9, ui->lineEdit_send9, ui->comboBox_send9);
     m_parameter_manager->addSetComboWidget(ui->pushButton_send10, ui->lineEdit_send10, ui->comboBox_send10);
 
-    m_parameter_manager->addSwitchComboWidget(ui->pushButton_action1, ui->comboBox_action1);
-    m_parameter_manager->addSwitchComboWidget(ui->pushButton_action2, ui->comboBox_action2);
-    m_parameter_manager->addSwitchComboWidget(ui->pushButton_action3, ui->comboBox_action3);
-    m_parameter_manager->addSwitchComboWidget(ui->pushButton_action4, ui->comboBox_action4);
+    m_parameter_manager->addActionComboWidget(ui->pushButton_action1, ui->comboBox_action1);
+    m_parameter_manager->addActionComboWidget(ui->pushButton_action2, ui->comboBox_action2);
+    m_parameter_manager->addActionComboWidget(ui->pushButton_action3, ui->comboBox_action3);
+    m_parameter_manager->addActionComboWidget(ui->pushButton_action4, ui->comboBox_action4);
 
     //connect(m_parameter_manager, &parameterManager::sendCommandBytes, m_serial_controller, &SerialController::onSendCommand);
     connect(m_parameter_manager, &parameterManager::sendCommandBytes, m_serial_send_monitor, &serialSendMonitor::onSendCommand);

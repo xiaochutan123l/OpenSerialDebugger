@@ -249,9 +249,9 @@ void setParameterComboWidget::onSendButtonPushed() {
     emit sendCommand(cmd);
 }
 
-/* ----------------------- switchParameterComboWidget --------------------------*/
+/* ----------------------- actionParameterComboWidget --------------------------*/
 
-switchParameterComboWidget::switchParameterComboWidget(QPushButton *action_button,
+actionParameterComboWidget::actionParameterComboWidget(QPushButton *action_button,
                            QComboBox *combo_box,
                            QMap<QString, Command> *commands,
                            QList<QString> *commandNames,
@@ -263,19 +263,19 @@ switchParameterComboWidget::switchParameterComboWidget(QPushButton *action_butto
                            commandNames,
                            parent) {}
 
-void switchParameterComboWidget::connect_widgets(parameterManager *pManager) {
-    connect(m_combo_box, &QComboBox::currentTextChanged, this, &switchParameterComboWidget::onCmdSelected);
-    connect(m_button, &QPushButton::clicked, this, &switchParameterComboWidget::onActionButtonPushed);
-    connect(this, &switchParameterComboWidget::sendCommand, pManager, &parameterManager::sendCommandBytes);
+void actionParameterComboWidget::connect_widgets(parameterManager *pManager) {
+    connect(m_combo_box, &QComboBox::currentTextChanged, this, &actionParameterComboWidget::onCmdSelected);
+    connect(m_button, &QPushButton::clicked, this, &actionParameterComboWidget::onActionButtonPushed);
+    connect(this, &actionParameterComboWidget::sendCommand, pManager, &parameterManager::sendCommandBytes);
 }
 
-void switchParameterComboWidget::disconnect_widgets(parameterManager *pManager) {
-    disconnect(m_combo_box, &QComboBox::currentTextChanged, this, &switchParameterComboWidget::onCmdSelected);
-    disconnect(m_button, &QPushButton::clicked, this, &switchParameterComboWidget::onActionButtonPushed);
-    disconnect(this, &switchParameterComboWidget::sendCommand, pManager, &parameterManager::sendCommandBytes);
+void actionParameterComboWidget::disconnect_widgets(parameterManager *pManager) {
+    disconnect(m_combo_box, &QComboBox::currentTextChanged, this, &actionParameterComboWidget::onCmdSelected);
+    disconnect(m_button, &QPushButton::clicked, this, &actionParameterComboWidget::onActionButtonPushed);
+    disconnect(this, &actionParameterComboWidget::sendCommand, pManager, &parameterManager::sendCommandBytes);
 }
 
-void switchParameterComboWidget::onActionButtonPushed() {
+void actionParameterComboWidget::onActionButtonPushed() {
     qDebug() << "onActionButtonPushed";
     if (m_command == nullptr) {
         qDebug() << "command not selected, send nothing";
@@ -293,11 +293,11 @@ parameterManager::parameterManager(QPushButton *load_button,
     : QObject(parent) , m_load_button(load_button){
 
     /* ----------------------- protocol parser --------------------------*/
-    m_parser = new ProtocolParser(&m_getCommands, &m_setCommands, &m_switchCommands, this);
+    m_parser = new ProtocolParser(&m_getCommands, &m_setCommands, &m_actionCommands, this);
     m_parser->bindButton(m_load_button);
     connect(m_parser, &ProtocolParser::newFileLoaded, this, &parameterManager::onNewFileLoaded);
     connect(m_parser, &ProtocolParser::newFileParsed, this, &parameterManager::onNewFileParsed);
-    m_switchList.reserve(SWITCH_COMBO_WIDGET_NUM);
+    m_actionList.reserve(ACTION_COMBO_WIDGET_NUM);
     m_setList.reserve(SET_COMBO_WIDGET_NUM);
     m_getList.reserve(GET_COMBO_WIDGET_NUM);
 }
@@ -326,13 +326,13 @@ void parameterManager::addSetComboWidget(QPushButton *send_button,
                          this);
 }
 
-void parameterManager::addSwitchComboWidget(QPushButton *action_button,
+void parameterManager::addActionComboWidget(QPushButton *action_button,
                                             QComboBox *combo_box)
 {
-    m_switchList.emplace_back(action_button,
+    m_actionList.emplace_back(action_button,
                            combo_box,
-                           &m_switchCommands,
-                           &m_switchCommandNames,
+                           &m_actionCommands,
+                           &m_actionCommandNames,
                            this);
 }
 
@@ -357,10 +357,10 @@ void parameterManager::onNewFileLoaded() {
     // clean maps before loading new data.
     m_getCommands.clear();
     m_setCommands.clear();
-    m_switchCommands.clear();
+    m_actionCommands.clear();
     m_getCommandNames.clear();
     m_setCommandNames.clear();
-    m_switchCommandNames.clear();
+    m_actionCommandNames.clear();
 }
 
 void parameterManager::onNewFileParsed() {
@@ -371,7 +371,7 @@ void parameterManager::onNewFileParsed() {
     // update commands combo list.
     m_getCommandNames = m_getCommands.keys();
     m_setCommandNames = m_setCommands.keys();
-    m_switchCommandNames = m_switchCommands.keys();
+    m_actionCommandNames = m_actionCommands.keys();
 
     int count = 0;
     int size = m_getCommandNames.size();
@@ -414,14 +414,14 @@ void parameterManager::onNewFileParsed() {
     }
 
     count = 0;
-    size = m_switchCommandNames.size();
+    size = m_actionCommandNames.size();
 
-    for (auto it = m_switchList.begin(); it != m_switchList.end(); ++it) {
+    for (auto it = m_actionList.begin(); it != m_actionList.end(); ++it) {
         if (!first_load) {
             it->clearWidget();
             it->disconnect_widgets(this);
         }
-        it->setComboBoxList(m_switchCommandNames);
+        it->setComboBoxList(m_actionCommandNames);
         it->connect_widgets(this);
 
         if (count < size) {
