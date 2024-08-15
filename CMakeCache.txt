@@ -25,7 +25,7 @@ CMAKE_AR:FILEPATH=C:/Program Files/LLVM/bin/llvm-ar.exe
 CMAKE_BUILD_TYPE:STRING=Debug
 
 //CXX compiler
-CMAKE_CXX_COMPILER:FILEPATH=C:/Program Files/LLVM/bin/clang++.exe
+CMAKE_CXX_COMPILER:STRING=C:/Program Files/LLVM/bin/clang++.exe
 
 //LLVM archiver
 CMAKE_CXX_COMPILER_AR:FILEPATH=C:/Program Files/LLVM/bin/llvm-ar.exe

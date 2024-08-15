@@ -1,3 +1,5 @@
+[中文版在这里](README-CN.md)
+
 # OpenSerialDebugger:
 
 The reason I implemented this software: recently I'm trying to make a close-looped stepper motor driver for my robot arm project. I want to tune PID and also want to control the motor by just cliking some buttons. But I don't find any serial debugger software which support both scenarios. There are some software which has buttons like "set kp", "set ki" to tune the pid, but can't control motor like "enable motor" or "set position".

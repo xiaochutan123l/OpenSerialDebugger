@@ -133,3 +133,131 @@ events:
         
       exitCode: 1
 ...
+
+---
+events:
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/ST/STM32CubeCLT_1.15.1/CMake/share/cmake-3.28/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
+      - "C:/ST/STM32CubeCLT_1.15.1/CMake/share/cmake-3.28/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "C:/ST/STM32CubeCLT_1.15.1/CMake/share/cmake-3.28/Modules/CMakeDetermineCXXCompiler.cmake:126 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:3 (project)"
+    message: |
+      Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+      Compiler: C:/Program Files/LLVM/bin/clang++.exe 
+      Build flags: 
+      Id flags:  
+      
+      The output was:
+      1
+      clang++: warning: unable to find a Visual Studio installation; try running Clang from a developer command prompt [-Wmsvc-not-found]
+      clang++: error: unable to execute command: program not executable
+      clang++: error: linker command failed with exit code 1 (use -v to see invocation)
+      
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/ST/STM32CubeCLT_1.15.1/CMake/share/cmake-3.28/Modules/CMakeDetermineCompilerId.cmake:17 (message)"
+      - "C:/ST/STM32CubeCLT_1.15.1/CMake/share/cmake-3.28/Modules/CMakeDetermineCompilerId.cmake:64 (__determine_compiler_id_test)"
+      - "C:/ST/STM32CubeCLT_1.15.1/CMake/share/cmake-3.28/Modules/CMakeDetermineCXXCompiler.cmake:126 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:3 (project)"
+    message: |
+      Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" succeeded.
+      Compiler: C:/Program Files/LLVM/bin/clang++.exe 
+      Build flags: 
+      Id flags: -c 
+      
+      The output was:
+      0
+      
+      
+      Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CMakeCXXCompilerId.o"
+      
+      The CXX compiler identification is Clang, found in:
+        D:/personal-projects/projects/robotarm/QMotorMaster/QMotorMaster/QMotorMaster/CMakeFiles/3.28.1/CompilerIdCXX/CMakeCXXCompilerId.o
+      
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/ST/STM32CubeCLT_1.15.1/CMake/share/cmake-3.28/Modules/CMakeDetermineCompilerId.cmake:1182 (message)"
+      - "C:/ST/STM32CubeCLT_1.15.1/CMake/share/cmake-3.28/Modules/CMakeDetermineCompilerId.cmake:247 (CMAKE_DETERMINE_MSVC_SHOWINCLUDES_PREFIX)"
+      - "C:/ST/STM32CubeCLT_1.15.1/CMake/share/cmake-3.28/Modules/CMakeDetermineCXXCompiler.cmake:126 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:3 (project)"
+    message: |
+      Detecting CXX compiler /showIncludes prefix:
+        
+  -
+    kind: "message-v1"
+    backtrace:
+      - "C:/ST/STM32CubeCLT_1.15.1/CMake/share/cmake-3.28/Modules/CMakeDetermineCompilerId.cmake:1182 (message)"
+      - "C:/ST/STM32CubeCLT_1.15.1/CMake/share/cmake-3.28/Modules/CMakeDetermineCompilerId.cmake:247 (CMAKE_DETERMINE_MSVC_SHOWINCLUDES_PREFIX)"
+      - "C:/ST/STM32CubeCLT_1.15.1/CMake/share/cmake-3.28/Modules/CMakeDetermineCXXCompiler.cmake:126 (CMAKE_DETERMINE_COMPILER_ID)"
+      - "CMakeLists.txt:3 (project)"
+    message: |
+      Detecting CXX compiler /showIncludes prefix:
+        
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/ST/STM32CubeCLT_1.15.1/CMake/share/cmake-3.28/Modules/CMakeDetermineCompilerABI.cmake:57 (try_compile)"
+      - "C:/ST/STM32CubeCLT_1.15.1/CMake/share/cmake-3.28/Modules/CMakeTestCXXCompiler.cmake:26 (CMAKE_DETERMINE_COMPILER_ABI)"
+      - "CMakeLists.txt:3 (project)"
+    checks:
+      - "Detecting CXX compiler ABI info"
+    directories:
+      source: "D:/personal-projects/projects/robotarm/QMotorMaster/QMotorMaster/QMotorMaster/CMakeFiles/CMakeScratch/TryCompile-ynir74"
+      binary: "D:/personal-projects/projects/robotarm/QMotorMaster/QMotorMaster/QMotorMaster/CMakeFiles/CMakeScratch/TryCompile-ynir74"
+    cmakeVariables:
+      CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS: "C:/Program Files/LLVM/bin/clang-scan-deps.exe"
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "CMAKE_CXX_ABI_COMPILED"
+      cached: true
+      stdout: |
+        Change Dir: 'D:/personal-projects/projects/robotarm/QMotorMaster/QMotorMaster/QMotorMaster/CMakeFiles/CMakeScratch/TryCompile-ynir74'
+        
+        Run Build Command(s): C:/ST/STM32CubeCLT_1.15.1/Ninja/bin/ninja.exe -v cmTC_a9adb
+        [1/2] C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE   -O0 -g -Xclang -gcodeview -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -MD -MT CMakeFiles/cmTC_a9adb.dir/CMakeCXXCompilerABI.cpp.obj -MF CMakeFiles\\cmTC_a9adb.dir\\CMakeCXXCompilerABI.cpp.obj.d -o CMakeFiles/cmTC_a9adb.dir/CMakeCXXCompilerABI.cpp.obj -c C:/ST/STM32CubeCLT_1.15.1/CMake/share/cmake-3.28/Modules/CMakeCXXCompilerABI.cpp
+        [2/2] cmd.exe /C "cd . && C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE -fuse-ld=lld-link -nostartfiles -nostdlib -O0 -g -Xclang -gcodeview -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -Xlinker /subsystem:console CMakeFiles/cmTC_a9adb.dir/CMakeCXXCompilerABI.cpp.obj -o cmTC_a9adb.exe -Xlinker /MANIFEST:EMBED -Xlinker /implib:cmTC_a9adb.lib -Xlinker /pdb:cmTC_a9adb.pdb -Xlinker /version:0.0     && cd ."
+        FAILED: cmTC_a9adb.exe 
+        cmd.exe /C "cd . && C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE -fuse-ld=lld-link -nostartfiles -nostdlib -O0 -g -Xclang -gcodeview -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -Xlinker /subsystem:console CMakeFiles/cmTC_a9adb.dir/CMakeCXXCompilerABI.cpp.obj -o cmTC_a9adb.exe -Xlinker /MANIFEST:EMBED -Xlinker /implib:cmTC_a9adb.lib -Xlinker /pdb:cmTC_a9adb.pdb -Xlinker /version:0.0     && cd ."
+        lld-link: error: could not open 'msvcrtd.lib': no such file or directory\x0d
+        clang++: error: linker command failed with exit code 1 (use -v to see invocation)\x0d
+        ninja: build stopped: subcommand failed.
+        
+      exitCode: 1
+  -
+    kind: "try_compile-v1"
+    backtrace:
+      - "C:/ST/STM32CubeCLT_1.15.1/CMake/share/cmake-3.28/Modules/CMakeTestCXXCompiler.cmake:49 (try_compile)"
+      - "CMakeLists.txt:3 (project)"
+    checks:
+      - "Check for working CXX compiler: C:/Program Files/LLVM/bin/clang++.exe"
+    directories:
+      source: "D:/personal-projects/projects/robotarm/QMotorMaster/QMotorMaster/QMotorMaster/CMakeFiles/CMakeScratch/TryCompile-skhjwd"
+      binary: "D:/personal-projects/projects/robotarm/QMotorMaster/QMotorMaster/QMotorMaster/CMakeFiles/CMakeScratch/TryCompile-skhjwd"
+    cmakeVariables:
+      CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS: "C:/Program Files/LLVM/bin/clang-scan-deps.exe"
+      CMAKE_CXX_FLAGS: ""
+      CMAKE_EXE_LINKER_FLAGS: ""
+    buildResult:
+      variable: "CMAKE_CXX_COMPILER_WORKS"
+      cached: true
+      stdout: |
+        Change Dir: 'D:/personal-projects/projects/robotarm/QMotorMaster/QMotorMaster/QMotorMaster/CMakeFiles/CMakeScratch/TryCompile-skhjwd'
+        
+        Run Build Command(s): C:/ST/STM32CubeCLT_1.15.1/Ninja/bin/ninja.exe -v cmTC_3ba9a
+        [1/2] C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE   -O0 -g -Xclang -gcodeview -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -MD -MT CMakeFiles/cmTC_3ba9a.dir/testCXXCompiler.cxx.obj -MF CMakeFiles\\cmTC_3ba9a.dir\\testCXXCompiler.cxx.obj.d -o CMakeFiles/cmTC_3ba9a.dir/testCXXCompiler.cxx.obj -c D:/personal-projects/projects/robotarm/QMotorMaster/QMotorMaster/QMotorMaster/CMakeFiles/CMakeScratch/TryCompile-skhjwd/testCXXCompiler.cxx
+        [2/2] cmd.exe /C "cd . && C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE -fuse-ld=lld-link -nostartfiles -nostdlib -O0 -g -Xclang -gcodeview -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -Xlinker /subsystem:console CMakeFiles/cmTC_3ba9a.dir/testCXXCompiler.cxx.obj -o cmTC_3ba9a.exe -Xlinker /MANIFEST:EMBED -Xlinker /implib:cmTC_3ba9a.lib -Xlinker /pdb:cmTC_3ba9a.pdb -Xlinker /version:0.0   -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 -loldnames  && cd ."
+        FAILED: cmTC_3ba9a.exe 
+        cmd.exe /C "cd . && C:\\PROGRA~1\\LLVM\\bin\\CLANG_~1.EXE -fuse-ld=lld-link -nostartfiles -nostdlib -O0 -g -Xclang -gcodeview -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -Xlinker /subsystem:console CMakeFiles/cmTC_3ba9a.dir/testCXXCompiler.cxx.obj -o cmTC_3ba9a.exe -Xlinker /MANIFEST:EMBED -Xlinker /implib:cmTC_3ba9a.lib -Xlinker /pdb:cmTC_3ba9a.pdb -Xlinker /version:0.0   -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 -loldnames  && cd ."
+        lld-link: error: could not open 'oldnames.lib': no such file or directory\x0d
+        lld-link: error: could not open 'msvcrtd.lib': no such file or directory\x0d
+        clang++: error: linker command failed with exit code 1 (use -v to see invocation)\x0d
+        ninja: build stopped: subcommand failed.
+        
+      exitCode: 1
+...
