@@ -10,9 +10,11 @@ SetVelocity, SET, 0x09, int
 
 SetSpeedMode, ACTION, 0x0a, bool
 SetLocationMode, ACTION, 0x0b, bool
+SetVelocityLimit, SET, 0x0c, int
 
-GetPosition,  GET, 0x0c, int
-GetVelocity,  GET, 0x0d, int
+GetPosition,  GET, 0x0d, int
+GetVelocity,  GET, 0x0e, int
 
-DoCalibrate, ACTION, 0x0e, bool
-Reboot, ACTION, 0x0f, bool
+Stop, ACTION, 0x0f, bool
+DoCalibrate, ACTION, 0x10, bool
+Reboot, ACTION, 0x11, bool

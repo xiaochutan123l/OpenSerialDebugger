@@ -7,7 +7,7 @@
 #include <deque>
 
 #define RING_BUFFER_SIZE 50000
-#define PLOT_BUFFER_SIZE 1000
+#define PLOT_BUFFER_SIZE 500 // 1000
 
 using PlotDataPtr = QSharedPointer<QCPDataContainer<QCPGraphData>>;
 using PlotDataPtrList = QVector<PlotDataPtr>;
